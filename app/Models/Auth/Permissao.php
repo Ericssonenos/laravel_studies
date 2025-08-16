@@ -4,6 +4,7 @@ namespace App\Models\Auth;
 
 use InvalidArgumentException;
 use PDO;
+use App\Services\Operations;
 
 class Permissao
 {
@@ -45,23 +46,33 @@ class Permissao
                 ORDER BY $orderBy
                 LIMIT :_limit OFFSET :_offset";
 
-        $stmt = $pdo->prepare($sql);
+        try {
+            $stmt = $pdo->prepare($sql);
 
-        foreach ($params as $k => $v) {
-            if ($k !== ':ativo') $stmt->bindValue($k, $v);
-            else $stmt->bindValue($k, $v, PDO::PARAM_BOOL);
+            foreach ($params as $chave => $valor) {
+                if ($chave !== ':ativo') {
+                    $stmt->bindValue($chave, $valor);
+                } else {
+                    $stmt->bindValue($chave, $valor, PDO::PARAM_BOOL);
+                }
+            }
+
+            if (!empty($filtros['ids'])) {
+                $stmt = $pdo->prepare(str_replace("IN ($in)", "IN (" . implode(',', $ids) . ")", $sql));
+                foreach ($params as $chave => $valor) $stmt->bindValue($chave, $valor);
+            }
+
+            $stmt->bindValue(':_limit',  $limit,  PDO::PARAM_INT);
+            $stmt->bindValue(':_offset', $offset, PDO::PARAM_INT);
+
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            return Operations::mapearExcecaoPDO($e, [
+                'funcao' => 'Permissao::procurar',
+                'filtros' => $filtros,
+            ]);
         }
-
-        if (!empty($filtros['ids'])) {
-            $stmt = $pdo->prepare(str_replace("IN ($in)", "IN (" . implode(',', $ids) . ")", $sql));
-            foreach ($params as $k => $v) $stmt->bindValue($k, $v);
-        }
-
-        $stmt->bindValue(':_limit',  $limit,  PDO::PARAM_INT);
-        $stmt->bindValue(':_offset', $offset, PDO::PARAM_INT);
-
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /** Busca 1 permissão por ID */
@@ -69,10 +80,17 @@ class Permissao
     {
         $sql = "SELECT * FROM auth.permissoes
                 WHERE id_permissao = :id AND dat_cancelamento_em IS NULL";
-        $st = $pdo->prepare($sql);
-        $st->execute([':id' => $id_permissao]);
-        $row = $st->fetch(PDO::FETCH_ASSOC);
-        return $row ?: null;
+        try {
+            $st = $pdo->prepare($sql);
+            $st->execute([':id' => $id_permissao]);
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\PDOException $e) {
+            return Operations::mapearExcecaoPDO($e, [
+                'funcao' => 'Permissao::procurar_por_id',
+                'id_permissao' => $id_permissao,
+            ]);
+        }
     }
 
     /** Cria permissão */
@@ -83,12 +101,19 @@ class Permissao
                 ) VALUES (
                     :codigo, :descricao, :ativo
                 ) RETURNING *";
-        $st = $pdo->prepare($sql);
-        $st->bindValue(':codigo', $codigo);
-        $st->bindValue(':descricao', $descricao);
-        $st->bindValue(':ativo', $ativo, PDO::PARAM_BOOL);
-        $st->execute();
-        return $st->fetch(PDO::FETCH_ASSOC);
+        try {
+            $st = $pdo->prepare($sql);
+            $st->bindValue(':codigo', $codigo);
+            $st->bindValue(':descricao', $descricao);
+            $st->bindValue(':ativo', $ativo, PDO::PARAM_BOOL);
+            $st->execute();
+            return $st->fetch(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            return Operations::mapearExcecaoPDO($e, [
+                'funcao' => 'Permissao::inserir',
+                'cod_permissao' => $codigo,
+            ]);
+        }
     }
 
     /** Atualiza permissão */
@@ -104,11 +129,19 @@ class Permissao
                 WHERE id_permissao = :id
                 RETURNING *";
 
-        $st = $pdo->prepare($sql);
-        foreach ($data as $col => $val) $st->bindValue(":$col", $val);
-        $st->bindValue(':id', $id_permissao, PDO::PARAM_INT);
-        $st->execute();
-        return $st->fetch(PDO::FETCH_ASSOC);
+        try {
+            $st = $pdo->prepare($sql);
+            foreach ($data as $col => $val) $st->bindValue(":$col", $val);
+            $st->bindValue(':id', $id_permissao, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetch(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            return Operations::mapearExcecaoPDO($e, [
+                'funcao' => 'Permissao::atualizar',
+                'id_permissao' => $id_permissao,
+                'data' => $data,
+            ]);
+        }
     }
 
     /** Soft-delete */
@@ -117,8 +150,16 @@ class Permissao
         $sql = "UPDATE auth.permissoes
                 SET dat_cancelamento_em = now()
                 WHERE id_permissao = :id AND dat_cancelamento_em IS NULL";
-        $st = $pdo->prepare($sql);
-        $st->execute([':id' => $id_permissao]);
-        return $st->rowCount() > 0;
+        try {
+            $st = $pdo->prepare($sql);
+            $st->execute([':id' => $id_permissao]);
+            return $st->rowCount() > 0;
+        } catch (\PDOException $e) {
+            Operations::mapearExcecaoPDO($e, [
+                'funcao' => 'Permissao::remover_logicamente',
+                'id_permissao' => $id_permissao,
+            ]);
+            return false;
+        }
     }
 }
