@@ -12,7 +12,7 @@ class Usuario
        CRUD PRINCIPAL DE USUÁRIO
        ============================== */
 
-    function procurar(PDO $pdo, array $filtros = [], array $opts = []): array
+    function Procurar(PDO $pdo, array $filtros = [], array $opts = []): array
     {
         $where = ['dat_cancelamento_em IS NULL'];
         $params = [];

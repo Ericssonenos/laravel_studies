@@ -218,6 +218,19 @@ class Operations
                     continue;
                 }
 
+                // password: requer pelo menos uma letra, um número e uma letra maiúscula
+                if ($rName === 'password') {
+                    $valStr = (string)$value;
+                    $hasLetter = preg_match('/[a-z]/', $valStr);
+                    $hasNumber = preg_match('/\d/', $valStr);
+                    $hasUpper  = preg_match('/[A-Z]/', $valStr);
+
+                    if (!$hasLetter || !$hasNumber || !$hasUpper) {
+                        $errors[$field][] = $messages["{$field}.password"] ?? "O campo {$field} deve conter pelo menos uma letra minuscula, um número e uma letra maiúscula.";
+                    }
+                    continue;
+                }
+
                 // boolean
                 if ($rName === 'boolean') {
                     $validBool = is_bool($value) || in_array($value, [0,1,'0','1','true','false'], true);
@@ -279,7 +292,7 @@ class Operations
             'http_status' => 200,
             'error_code'  => null,
             'sqlstate'    => null,
-            'message'     => 'OK',
+            'message'     => 'Validação bem-sucedida.',
             'detail'      => [],
             'contexto'    => $contexto,
         ];

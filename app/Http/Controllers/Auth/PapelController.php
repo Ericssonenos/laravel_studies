@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\auth\Papel;
+use App\Models\Auth\Papel;
+use App\Services\Operations;
 
 class PapelController extends Controller
 {
@@ -30,12 +31,28 @@ class PapelController extends Controller
             ]
         );
 
-        return response()->json($papeis);
+        if (is_array($papeis) && isset($papeis['http_status'])) {
+            return response()->json($papeis, (int)$papeis['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso($papeis, 200, 'Lista de papéis retornada com sucesso.', ['locatario_id' => (int)$request->input('locatario_id', 1)]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Cria papel */
     public function store(Request $request)
     {
+        $regras = [
+            'locatario_id' => ['required', 'integer'],
+            'nome' => ['required', 'string', 'max:120'],
+            'nivel' => ['sometimes', 'integer'],
+            'ativo' => ['sometimes', 'boolean'],
+        ];
+
+        $validacao = Operations::validarRegras($request->all(), $regras);
+        if ($validacao['http_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
         $pdo = DB::connection()->getPdo();
         $m = new Papel();
 
@@ -47,19 +64,38 @@ class PapelController extends Controller
             ativo: $request->boolean('ativo', true)
         );
 
-        return response()->json($novo, 201);
+        if (is_array($novo) && isset($novo['http_status'])) {
+            return response()->json($novo, (int)$novo['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso($novo, 201, 'Papel criado com sucesso.', ['locatario_id' => (int)$request->input('locatario_id', 1), 'nome' => (string)$request->input('nome')]), 201, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Atualiza papel */
     public function update(Request $request, int $id)
     {
+        $regras = [
+            'txt_nome_papel' => ['sometimes', 'string', 'max:120'],
+            'num_nivel_papel' => ['sometimes', 'integer'],
+            'flg_ativo_papel' => ['sometimes', 'boolean'],
+        ];
+
+        $validacao = Operations::validarRegras($request->all(), $regras);
+        if ($validacao['http_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
         $pdo = DB::connection()->getPdo();
         $m = new Papel();
 
         $dados = $request->only(['txt_nome_papel','num_nivel_papel','flg_ativo_papel']);
         $atual = $m->atualizar($pdo, $id, $dados);
 
-        return response()->json($atual);
+        if (is_array($atual) && isset($atual['http_status'])) {
+            return response()->json($atual, (int)$atual['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso($atual, 200, 'Papel atualizado com sucesso.', ['id_papel' => $id]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Soft-delete */
@@ -69,7 +105,15 @@ class PapelController extends Controller
         $m = new Papel();
 
         $ok = $m->remover_logicamente($pdo, $id);
-        return response()->json(['sucesso' => $ok]);
+        if (is_array($ok) && isset($ok['http_status'])) {
+            return response()->json($ok, (int)$ok['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($ok === false) {
+            return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso(['sucesso' => true], 200, 'Papel removido com sucesso.', ['id_papel' => $id]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /* -------- Relação papeis_permissoes -------- */
@@ -81,7 +125,16 @@ class PapelController extends Controller
         $m = new Papel();
 
         $ok = $m->atribuir_permissao($pdo, $id_papel, (int)$request->input('permissao_id'));
-        return response()->json(['sucesso' => $ok]);
+
+        if (is_array($ok) && isset($ok['http_status'])) {
+            return response()->json($ok, (int)$ok['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($ok === false) {
+            return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso(['sucesso' => true], 200, 'Permissão atribuída ao papel.', ['id_papel' => $id_papel, 'permissao_id' => (int)$request->input('permissao_id')]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Remove permissão do papel */
@@ -91,7 +144,16 @@ class PapelController extends Controller
         $m = new Papel();
 
         $ok = $m->remover_permissao($pdo, $id_papel, (int)$request->input('permissao_id'));
-        return response()->json(['sucesso' => $ok]);
+
+        if (is_array($ok) && isset($ok['http_status'])) {
+            return response()->json($ok, (int)$ok['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($ok === false) {
+            return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso(['sucesso' => true], 200, 'Permissão removida do papel.', ['id_papel' => $id_papel, 'permissao_id' => (int)$request->input('permissao_id')]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Lista permissões do papel */
@@ -101,6 +163,11 @@ class PapelController extends Controller
         $m = new Papel();
 
         $permissoes = $m->listar_permissoes($pdo, $id_papel);
-        return response()->json($permissoes);
+
+        if (is_array($permissoes) && isset($permissoes['http_status'])) {
+            return response()->json($permissoes, (int)$permissoes['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso($permissoes, 200, 'Lista de permissões do papel retornada com sucesso.', ['id_papel' => $id_papel]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 }

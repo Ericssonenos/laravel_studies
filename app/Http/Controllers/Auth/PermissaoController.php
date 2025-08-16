@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\auth\Permissao;
+use App\Models\Auth\Permissao;
+use App\Services\Operations;
 
 class PermissaoController extends Controller
 {
@@ -30,12 +31,27 @@ class PermissaoController extends Controller
             ]
         );
 
-        return response()->json($permissoes);
+        if (is_array($permissoes) && isset($permissoes['http_status'])) {
+            return response()->json($permissoes, (int)$permissoes['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso($permissoes, 200, 'Lista de permissões retornada com sucesso.'), 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Cria permissão */
     public function store(Request $request)
     {
+        $regras = [
+            'codigo' => ['required', 'string', 'max:80'],
+            'descricao' => ['sometimes', 'string', 'max:400'],
+            'ativo' => ['sometimes', 'boolean']
+        ];
+
+        $validacao = Operations::validarRegras($request->all(), $regras);
+        if ($validacao['http_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
         $pdo = DB::connection()->getPdo();
         $m = new Permissao();
 
@@ -46,19 +62,38 @@ class PermissaoController extends Controller
             ativo:      $request->boolean('ativo', true)
         );
 
-        return response()->json($novo, 201);
+        if (is_array($novo) && isset($novo['http_status'])) {
+            return response()->json($novo, (int)$novo['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso($novo, 201, 'Permissão criada com sucesso.', ['cod_permissao' => (string)$request->input('codigo'), 'codigo' => (string)$request->input('codigo')]), 201, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Atualiza permissão */
     public function update(Request $request, int $id)
     {
+        $regras = [
+            'cod_permissao' => ['sometimes', 'string', 'max:80'],
+            'txt_descricao_permissao' => ['sometimes', 'string', 'max:400'],
+            'flg_ativo_permissao' => ['sometimes', 'boolean'],
+        ];
+
+        $validacao = Operations::validarRegras($request->all(), $regras);
+        if ($validacao['http_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
         $pdo = DB::connection()->getPdo();
         $m = new Permissao();
 
         $dados = $request->only(['cod_permissao','txt_descricao_permissao','flg_ativo_permissao']);
         $atual = $m->atualizar($pdo, $id, $dados);
 
-        return response()->json($atual);
+        if (is_array($atual) && isset($atual['http_status'])) {
+            return response()->json($atual, (int)$atual['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso($atual, 200, 'Permissão atualizada com sucesso.', ['id_permissao' => $id]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Soft-delete */
@@ -68,6 +103,14 @@ class PermissaoController extends Controller
         $m = new Permissao();
 
         $ok = $m->remover_logicamente($pdo, $id);
-        return response()->json(['sucesso' => $ok]);
+        if (is_array($ok) && isset($ok['http_status'])) {
+            return response()->json($ok, (int)$ok['http_status'], [], JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($ok === false) {
+            return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
+        }
+
+        return response()->json(Operations::padronizarRespostaSucesso(['sucesso' => true], 200, 'Permissão removida com sucesso.', ['id_permissao' => $id]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 }

@@ -8,17 +8,17 @@ use App\Http\Controllers\Auth\PermissaoController;
 
 Route::prefix('auth')->group(function () {
     // Usuarios
-    Route::get('usuarios', [UsuarioController::class, 'index']);
-    Route::post('usuarios', [UsuarioController::class, 'store']);
-    Route::post('usuarios/{id}/grupos', [UsuarioController::class, 'atribuirGrupo']);
-    Route::delete('usuarios/{id}/grupos', [UsuarioController::class, 'removerGrupo']);
-    Route::get('usuarios/{id}/grupos', [UsuarioController::class, 'listarGrupos']);
-    Route::post('usuarios/{id}/papeis', [UsuarioController::class, 'atribuirPapel']);
-    Route::delete('usuarios/{id}/papeis', [UsuarioController::class, 'removerPapel']);
-    Route::get('usuarios/{id}/papeis', [UsuarioController::class, 'listarPapeis']);
-    Route::post('usuarios/{id}/permissoes', [UsuarioController::class, 'atribuirPermissao']);
-    Route::delete('usuarios/{id}/permissoes', [UsuarioController::class, 'removerPermissao']);
-    Route::get('usuarios/{id}/permissoes', [UsuarioController::class, 'listarPermissoes']);
+    Route::get('usuarios', [UsuarioController::class, 'Lista']);
+    Route::post('usuarios', [UsuarioController::class, 'Criar']);
+    Route::post('usuarios/{id}/grupos', [UsuarioController::class, 'AtribuirGrupo']);
+    Route::delete('usuarios/{id}/grupos', [UsuarioController::class, 'RemoverGrupo']);
+    Route::get('usuarios/{id}/grupos', [UsuarioController::class, 'ListarGrupos']);
+    Route::post('usuarios/{id}/papeis', [UsuarioController::class, 'AtribuirPapel']);
+    Route::delete('usuarios/{id}/papeis', [UsuarioController::class, 'RemoverPapel']);
+    Route::get('usuarios/{id}/papeis', [UsuarioController::class, 'ListarPapeis']);
+    Route::post('usuarios/{id}/permissoes', [UsuarioController::class, 'AtribuirPermissao']);
+    Route::delete('usuarios/{id}/permissoes', [UsuarioController::class, 'RemoverPermissao']);
+    Route::get('usuarios/{id}/permissoes', [UsuarioController::class, 'ListarPermissoes']);
 
     // Grupos
     Route::get('grupos', [GrupoController::class, 'index']);

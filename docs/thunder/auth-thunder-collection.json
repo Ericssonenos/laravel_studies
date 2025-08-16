@@ -1,0 +1,123 @@
+{
+  "info": {
+    "name": "Auth - Testes Manuais (Thunder/Postman)",
+    "_postman_id": "auth-tests-collection",
+    "description": "Coleção com requests de exemplo para testar o módulo Auth: usuários, grupos, papéis e permissões. Inclui cenários de sucesso e erros de banco (FK ausente, duplicata). Ajuste {{baseUrl}} e paths conforme necessário.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Usuário - Criar (sucesso)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"locatario_id\": 1,\n  \"nome\": \"Teste Usuário\",\n  \"email\": \"teste+unique@example.com\",\n  \"senha\": \"SenhaForte123\",\n  \"ativo\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/usuarios",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth","usuarios"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Usuário - Criar (FK inexistente)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"locatario_id\": 999999,\n  \"nome\": \"FK Missing\",\n  \"email\": \"fk-missing@example.com\",\n  \"senha\": \"SenhaForte123\",\n  \"ativo\": true\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/auth/usuarios", "host": ["{{baseUrl}}"], "path": ["auth","usuarios"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Usuário - Criar (duplicado email) - executar duas vezes",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"locatario_id\": 1,\n  \"nome\": \"Usuário Duplicado\",\n  \"email\": \"dup@example.com\",\n  \"senha\": \"SenhaForte123\",\n  \"ativo\": true\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/auth/usuarios", "host": ["{{baseUrl}}"], "path": ["auth","usuarios"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Grupo - Criar (FK inexistente)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"locatario_id\": 999999,\n  \"nome\": \"Grupo FK Missing\",\n  \"descricao\": \"Teste FK inexistente\",\n  \"ativo\": true\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/auth/grupos", "host": ["{{baseUrl}}"], "path": ["auth","grupos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Papel - Criar (sucesso)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"locatario_id\": 1,\n  \"nome\": \"Operador\",\n  \"nivel\": 10,\n  \"ativo\": true\n}" },
+        "url": { "raw": "{{baseUrl}}/api/auth/papeis", "host": ["{{baseUrl}}"], "path": ["auth","papeis"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Atribuir Grupo a Usuário (sucesso)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"grupo_id\": 1\n}" },
+        "url": { "raw": "{{baseUrl}}/api/auth/usuarios/1/grupos", "host": ["{{baseUrl}}"], "path": ["auth","usuarios","1","grupos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Atribuir Grupo a Usuário (grupo inexistente)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"grupo_id\": 999999\n}" },
+        "url": { "raw": "{{baseUrl}}/api/auth/usuarios/1/grupos", "host": ["{{baseUrl}}"], "path": ["auth","usuarios","1","grupos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Usuários",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Accept", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/usuarios?locatario_id=1&limit=10", "host": ["{{baseUrl}}"], "path": ["auth","usuarios"], "query": [ { "key": "locatario_id", "value": "1" }, { "key": "limit", "value": "10" } ] }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" }
+  ]
+}
