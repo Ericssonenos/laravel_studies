@@ -39,7 +39,7 @@ class Papel
         $offset  = isset($opts['offset']) ? (int)$opts['offset'] : 0;
 
         $sql = "SELECT *
-                FROM papeis
+                FROM auth.papeis
                 WHERE " . implode(' AND ', $where) . "
                 ORDER BY $orderBy
                 LIMIT :_limit OFFSET :_offset";
@@ -65,7 +65,7 @@ class Papel
 
     function procurar_por_id(PDO $pdo, int $id_papel): ?array
     {
-        $sql = "SELECT * FROM papeis
+        $sql = "SELECT * FROM auth.papeis
                 WHERE id_papel = :id AND dat_cancelamento_em IS NULL";
         $st = $pdo->prepare($sql);
         $st->execute([':id' => $id_papel]);
@@ -75,7 +75,7 @@ class Papel
 
     function inserir(PDO $pdo, int $locatario_id, string $nome, int $nivel, bool $ativo = true): array
     {
-        $sql = "INSERT INTO papeis (
+        $sql = "INSERT INTO auth.papeis (
                     locatario_id, txt_nome_papel, num_nivel_papel, flg_ativo_papel
                 ) VALUES (
                     :loc, :nome, :nivel, :ativo
@@ -97,7 +97,7 @@ class Papel
         $sets = [];
         foreach ($data as $col => $_) $sets[] = "$col = :$col";
 
-        $sql = "UPDATE papeis SET " . implode(', ', $sets) . "
+        $sql = "UPDATE auth.papeis SET " . implode(', ', $sets) . "
                 WHERE id_papel = :id
                 RETURNING *";
 
@@ -110,7 +110,7 @@ class Papel
 
     function remover_logicamente(PDO $pdo, int $id_papel): bool
     {
-        $sql = "UPDATE papeis
+        $sql = "UPDATE auth.papeis
                 SET dat_cancelamento_em = now()
                 WHERE id_papel = :id AND dat_cancelamento_em IS NULL";
         $st = $pdo->prepare($sql);
@@ -125,7 +125,7 @@ class Papel
     /** Atribui permissão a papel */
     function atribuir_permissao(PDO $pdo, int $id_papel, int $id_permissao): bool
     {
-        $sql = "INSERT INTO papeis_permissoes (papel_id, permissao_id)
+        $sql = "INSERT INTO auth.papeis_permissoes (papel_id, permissao_id)
                 VALUES (:papel, :permissao)
                 ON CONFLICT (papel_id, permissao_id) DO NOTHING";
         $st = $pdo->prepare($sql);
@@ -135,7 +135,7 @@ class Papel
     /** Remove permissão de papel */
     function remover_permissao(PDO $pdo, int $id_papel, int $id_permissao): bool
     {
-        $sql = "DELETE FROM papeis_permissoes
+        $sql = "DELETE FROM auth.papeis_permissoes
                 WHERE papel_id = :papel AND permissao_id = :permissao";
         $st = $pdo->prepare($sql);
         $st->execute([':papel' => $id_papel, ':permissao' => $id_permissao]);
@@ -146,8 +146,8 @@ class Papel
     function listar_permissoes(PDO $pdo, int $id_papel): array
     {
         $sql = "SELECT p.*
-                FROM permissoes p
-                INNER JOIN papeis_permissoes pp ON pp.permissao_id = p.id_permissao
+                FROM auth.permissoes p
+                INNER JOIN auth.papeis_permissoes pp ON pp.permissao_id = p.id_permissao
                 WHERE pp.papel_id = :papel
                   AND p.dat_cancelamento_em IS NULL";
         $st = $pdo->prepare($sql);

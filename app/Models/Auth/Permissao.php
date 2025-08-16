@@ -40,7 +40,7 @@ class Permissao
         $offset  = isset($opts['offset']) ? (int)$opts['offset'] : 0;
 
         $sql = "SELECT *
-                FROM permissoes
+                FROM auth.permissoes
                 WHERE " . implode(' AND ', $where) . "
                 ORDER BY $orderBy
                 LIMIT :_limit OFFSET :_offset";
@@ -67,7 +67,7 @@ class Permissao
     /** Busca 1 permissão por ID */
     function procurar_por_id(PDO $pdo, int $id_permissao): ?array
     {
-        $sql = "SELECT * FROM permissoes
+        $sql = "SELECT * FROM auth.permissoes
                 WHERE id_permissao = :id AND dat_cancelamento_em IS NULL";
         $st = $pdo->prepare($sql);
         $st->execute([':id' => $id_permissao]);
@@ -78,7 +78,7 @@ class Permissao
     /** Cria permissão */
     function inserir(PDO $pdo, string $codigo, ?string $descricao = null, bool $ativo = true): array
     {
-        $sql = "INSERT INTO permissoes (
+        $sql = "INSERT INTO auth.permissoes (
                     cod_permissao, txt_descricao_permissao, flg_ativo_permissao
                 ) VALUES (
                     :codigo, :descricao, :ativo
@@ -100,7 +100,7 @@ class Permissao
         $sets = [];
         foreach ($data as $col => $_) $sets[] = "$col = :$col";
 
-        $sql = "UPDATE permissoes SET " . implode(', ', $sets) . "
+        $sql = "UPDATE auth.permissoes SET " . implode(', ', $sets) . "
                 WHERE id_permissao = :id
                 RETURNING *";
 
@@ -114,7 +114,7 @@ class Permissao
     /** Soft-delete */
     function remover_logicamente(PDO $pdo, int $id_permissao): bool
     {
-        $sql = "UPDATE permissoes
+        $sql = "UPDATE auth.permissoes
                 SET dat_cancelamento_em = now()
                 WHERE id_permissao = :id AND dat_cancelamento_em IS NULL";
         $st = $pdo->prepare($sql);

@@ -39,7 +39,7 @@ class Grupo
         $offset  = isset($opts['offset']) ? (int)$opts['offset'] : 0;
 
         $sql = "SELECT *
-                FROM grupos
+                FROM auth.grupos
                 WHERE " . implode(' AND ', $where) . "
                 ORDER BY $orderBy
                 LIMIT :_limit OFFSET :_offset";
@@ -65,7 +65,7 @@ class Grupo
 
     function procurar_por_id(PDO $pdo, int $id_grupo): ?array
     {
-        $sql = "SELECT * FROM grupos
+        $sql = "SELECT * FROM auth.grupos
                 WHERE id_grupo = :id AND dat_cancelamento_em IS NULL";
         $st = $pdo->prepare($sql);
         $st->execute([':id' => $id_grupo]);
@@ -75,7 +75,7 @@ class Grupo
 
     function inserir(PDO $pdo, int $locatario_id, string $nome, ?string $descricao = null, bool $ativo = true): array
     {
-        $sql = "INSERT INTO grupos (
+        $sql = "INSERT INTO auth.grupos (
                     locatario_id, txt_nome_grupo, txt_descricao_grupo, flg_ativo_grupo
                 ) VALUES (
                     :loc, :nome, :desc, :ativo
@@ -97,7 +97,7 @@ class Grupo
         $sets = [];
         foreach ($data as $col => $_) $sets[] = "$col = :$col";
 
-        $sql = "UPDATE grupos SET " . implode(', ', $sets) . "
+        $sql = "UPDATE auth.grupos SET " . implode(', ', $sets) . "
                 WHERE id_grupo = :id
                 RETURNING *";
 
@@ -110,7 +110,7 @@ class Grupo
 
     function remover_logicamente(PDO $pdo, int $id_grupo): bool
     {
-        $sql = "UPDATE grupos
+        $sql = "UPDATE auth.grupos
                 SET dat_cancelamento_em = now()
                 WHERE id_grupo = :id AND dat_cancelamento_em IS NULL";
         $st = $pdo->prepare($sql);
@@ -125,7 +125,7 @@ class Grupo
     /** Atribui um papel a um grupo (evita duplicata) */
     function atribuir_papel(PDO $pdo, int $id_grupo, int $id_papel): bool
     {
-        $sql = "INSERT INTO grupos_papeis (grupo_id, papel_id)
+        $sql = "INSERT INTO auth.grupos_papeis (grupo_id, papel_id)
                 VALUES (:grupo, :papel)
                 ON CONFLICT (grupo_id, papel_id) DO NOTHING";
         $st = $pdo->prepare($sql);
@@ -135,7 +135,7 @@ class Grupo
     /** Remove um papel de um grupo */
     function remover_papel(PDO $pdo, int $id_grupo, int $id_papel): bool
     {
-        $sql = "DELETE FROM grupos_papeis
+        $sql = "DELETE FROM auth.grupos_papeis
                 WHERE grupo_id = :grupo AND papel_id = :papel";
         $st = $pdo->prepare($sql);
         $st->execute([':grupo' => $id_grupo, ':papel' => $id_papel]);
@@ -146,8 +146,8 @@ class Grupo
     function listar_papeis(PDO $pdo, int $id_grupo): array
     {
         $sql = "SELECT p.*
-                FROM papeis p
-                INNER JOIN grupos_papeis gp ON gp.papel_id = p.id_papel
+                FROM auth.papeis p
+                INNER JOIN auth.grupos_papeis gp ON gp.papel_id = p.id_papel
                 WHERE gp.grupo_id = :grupo
                   AND p.dat_cancelamento_em IS NULL";
         $st = $pdo->prepare($sql);

@@ -4,15 +4,17 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use App\Models\auth\Usuario;
-use app\Http\Controllers\Controller;
-
+use App\Http\Controllers\Controller;
+use App\Services\Operations;
 
 class UsuarioController extends Controller
 {
     /** Lista usuários */
     public function index(Request $request)
     {
+
         $pdo = DB::connection()->getPdo();
         $usuarioModel = new Usuario();
 
@@ -35,19 +37,57 @@ class UsuarioController extends Controller
     /** Cria novo usuário */
     public function store(Request $request)
     {
-        $pdo = DB::connection()->getPdo();
+        $regras = [
+            'locatario_id' => ['required', 'integer'],
+            'nome'         => ['required', 'string', 'max:120'],
+            'email'        => ['required', 'email', 'max:160'],
+            'senha'        => ['required', 'string', 'min:8', 'max:255'],
+            'ativo'        => ['sometimes', 'boolean'],
+        ];
+
+        // variável mais descritiva para o resultado da validação
+        $resultadoDaValidacao = Operations::validarRegras($request->all(), $regras);
+
+        if ($resultadoDaValidacao['http_status'] !== 200) {
+            return response()->json($resultadoDaValidacao, $resultadoDaValidacao['http_status']);
+        }
+
+        $pdoConnection = DB::connection()->getPdo();
         $usuarioModel = new Usuario();
 
-        $novo = $usuarioModel->inserir(
-            $pdo,
+        // gerar hash e chamar model (ainda tratar PDOException depois)
+        $senhaHash = password_hash($request->input('senha'), PASSWORD_DEFAULT);
+
+        $resultadoInsercao = $usuarioModel->inserir(
+            $pdoConnection,
             locatario_id: $request->input('locatario_id', 1),
-            nome:  $request->input('nome'),
+            nome: $request->input('nome'),
             email: $request->input('email'),
-            senha_hash: password_hash($request->input('senha'), PASSWORD_DEFAULT),
+            senha_hash: $senhaHash,
             ativo: $request->boolean('ativo', true)
         );
 
-        return response()->json($novo, 201);
+        // repassa diretamente se for objeto padronizado (erro ou sucesso já padronizado pelo model)
+        if (is_array($resultadoInsercao) && isset($resultadoInsercao['http_status'])) {
+            return response()->json($resultadoInsercao, (int)$resultadoInsercao['http_status']);
+        }
+
+        // se o model retornou dados crus, montamos a resposta padronizada aqui
+        $contextoResposta = [
+            'locatario_id' => (int)$request->input('locatario_id', 1),
+            'email' => $request->input('email')
+        ];
+
+        $respostaSucesso = [
+            'http_status' => 201,
+            'error_code'  => null,
+            'sqlstate'    => null,
+            'message'     => 'Usuário criado com sucesso.',
+            'detail'      => $resultadoInsercao,
+            'contexto'    => $contextoResposta,
+        ];
+
+        return response()->json($respostaSucesso, 201);
     }
 
     /** Atribui grupo ao usuário */
