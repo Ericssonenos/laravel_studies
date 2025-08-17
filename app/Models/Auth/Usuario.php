@@ -12,69 +12,30 @@ class Usuario
        CRUD PRINCIPAL DE USUÁRIO
        ============================== */
 
-    function Procurar(PDO $pdo, array $filtros = [], array $opts = []): array
+    function Procurar(PDO $pdo, array $filtros = []): array
     {
-        $where = ['dat_cancelamento_em IS NULL'];
-        $params = [];
-        $contexto = [];
+        $Parametrizacao = Operations::Parametrizar($filtros);
+        $where = $Parametrizacao['where_parts'];
+        $params = $Parametrizacao['params'];
+        $opts = $Parametrizacao['opts'];
 
-        if (isset($filtros['locatario_id'])) {
-            $where[] = 'locatario_id = :locatario_id';
-            $params[':locatario_id'] = (int)$filtros['locatario_id'];
-            $contexto['locatario_id'] = $filtros['locatario_id'];
-        }
-        if (!empty($filtros['nome'])) {
-            $where[] = 'txt_nome_usuario ILIKE :nome';
-            $params[':nome'] = '%' . $filtros['nome'] . '%';
-            $contexto['nome'] = $filtros['nome'];
-        }
-        if (!empty($filtros['email'])) {
-            $where[] = 'txt_email_usuario ILIKE :email';
-            $params[':email'] = '%' . $filtros['email'] . '%';
-            $contexto['email'] = $filtros['email'];
-        }
-        if (isset($filtros['ativo'])) {
-            $where[] = 'flg_ativo_usuario = :ativo';
-            $params[':ativo'] = (bool)$filtros['ativo'];
-            $contexto['ativo'] = $filtros['ativo'];
-        }
-        if (!empty($filtros['ids'])) {
-            $ids = array_values(array_map('intval', $filtros['ids']));
-            $in = implode(',', array_fill(0, count($ids), '?'));
-            $where[] = "id_usuario IN ($in)";
-            $contexto['ids'] = $filtros['ids'];
-        }
 
-        $orderBy = $opts['order_by'] ?? 'id_usuario DESC';
-        $limit   = isset($opts['limit'])  ? (int)$opts['limit']  : 1000;
-        $offset  = isset($opts['offset']) ? (int)$opts['offset'] : 0;
 
         $sql = "SELECT *
                 FROM auth.usuarios
-                WHERE " . implode(' AND ', $where) . "
-                ORDER BY $orderBy
-                LIMIT :_limit OFFSET :_offset";
+                WHERE dat_cancelamento_em IS NULL"
+                . implode(' ', $where)
+                .  ($opts['order_by'] ?? ' ')
+                .  ($opts['limit'] ?? ' ')
+                .  ($opts['offset'] ?? ' ');
 
         $stmt = $pdo->prepare($sql);
 
-        foreach ($params as $chave => $valor) {
-            if ($chave !== ':ativo') $stmt->bindValue($chave, $valor);
-            else $stmt->bindValue($chave, $valor, PDO::PARAM_BOOL);
-        }
-
-        if (!empty($filtros['ids'])) {
-            $stmt = $pdo->prepare(str_replace("IN ($in)", "IN (" . implode(',', $ids) . ")", $sql));
-            foreach ($params as $chave => $valor) $stmt->bindValue($chave, $valor);
-        }
-
-        $stmt->bindValue(':_limit',  $limit,  PDO::PARAM_INT);
-        $stmt->bindValue(':_offset', $offset, PDO::PARAM_INT);
-
         try {
-            $stmt->execute();
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::procurar'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::procurar'], $filtros));
         }
     }
 

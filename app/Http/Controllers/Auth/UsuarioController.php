@@ -13,28 +13,35 @@ class UsuarioController extends Controller
     /** Lista usuários */
     public function Lista(Request $request)
     {
-
+        //Conexao
         $pdo = DB::connection()->getPdo();
+        // Modulo Usuário
         $usuarioModel = new Usuario();
 
-        $usuarios = $usuarioModel->Procurar(
-            $pdo,
-            [
-                'ativo' => $request->boolean('ativo', true),
-                'locatario_id' => $request->input('locatario_id', 1)
-            ],
-            [
-                'order_by' => 'txt_nome_usuario ASC',
-                'limit' => $request->input('limit', 50),
-                'offset' => $request->input('offset', 0)
-            ]
+        // Obter lista de Usuários, passando conexão e parametros
+        $ResultadoUsuarios = $usuarioModel->Procurar(
+            pdo: $pdo,
+            filtros: $request->all()
         );
 
-        if (is_array($usuarios) && isset($usuarios['http_status'])) {
-            return response()->json($usuarios, (int)$usuarios['http_status'], [], JSON_UNESCAPED_UNICODE);
+        //Verifica se houve erro na busca
+        if (is_array($ResultadoUsuarios) && isset($ResultadoUsuarios['http_status'])) {
+            return response()->json($ResultadoUsuarios, (int)$ResultadoUsuarios['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
-        return response()->json($usuarios, 200, [], JSON_UNESCAPED_UNICODE);
+        // Se retorno com sucesso, padronizar retorno
+        $respostaSucesso = Operations::padronizarRespostaSucesso(
+            $ResultadoUsuarios,
+            200,
+            'Registros retornados com sucesso.',
+            $request->all()
+        );
+
+        // Retornar com a Lista
+        return response()->json(
+            $respostaSucesso,
+            200, [], JSON_UNESCAPED_UNICODE
+        );
     }
 
     /** Cria novo usuário */

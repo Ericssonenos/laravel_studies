@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use PDOException;
+use InvalidArgumentException;
 
 class Operations
 {
@@ -135,6 +136,25 @@ class Operations
                 $userFriendlyMessage = "Condição de concorrência detectada. Por favor, tente novamente.";
                 $httpStatusCode = 503;
                 $errorCode = 'concurrency_failure';
+                break;
+
+            case '42601': // syntax_error
+                // Detectar palavras-chave específicas no erro para dar mensagem mais direcionada
+                if (preg_match('/syntax error at or near ["\']?(order by|limit|offset)["\']?/i', $detailedMessage, $matches)) {
+                    $keyword = strtolower($matches[1]);
+                    $userFriendlyMessage = match ($keyword) {
+                        'order by' => "Erro na ordenação dos dados. Verifique os campos utilizados para ordenação e tente novamente.",
+                        'limit' => "Erro no limite de registros. Verifique se o valor do limite é um número válido.",
+                        'offset' => "Erro no deslocamento de registros. Verifique se o valor do offset é um número válido.",
+                        default => "Erro de sintaxe na consulta. Verifique os parâmetros de busca e tente novamente."
+                    };
+                } elseif (preg_match('/syntax error at or near/i', $detailedMessage)) {
+                    $userFriendlyMessage = "Erro de sintaxe na consulta ao banco de dados. Verifique os parâmetros de busca e tente novamente.";
+                } else {
+                    $userFriendlyMessage = "Consulta inválida. Verifique os dados enviados e tente novamente.";
+                }
+                $httpStatusCode = 400;
+                $errorCode = 'syntax_error';
                 break;
 
             default:
@@ -317,5 +337,75 @@ class Operations
             'detail'      => $data,
             'contexto'    => $contexto,
         ];
+    }
+
+    public static function Parametrizar(array $filtros): array
+    {
+        $where = [];
+        $params = [];
+        $opts = [];
+
+        foreach ($filtros as $key => $val) {
+            if ($val === null || $val === '') continue;
+
+            // plural -> IN (...) quando valor for array
+            if (str_ends_with($key, 's') && is_array($val)) {
+                $column = substr($key, 0, -1);
+
+                $safe = preg_replace('/[^a-zA-Z0-9_]/', '_', $key);
+                $placeholders = [];
+                foreach (array_values($val) as $i => $v) {
+                    $ph = ':' . $safe . '_' . $i;
+                    $placeholders[] = $ph;
+                    // se coluna sugere id, cast para int
+                    $params[$ph] = (str_ends_with($column, 'id_') === true || str_ends_with($column, '_id') === true) ? (int)$v : $v;
+                }
+
+                if (count($placeholders) > 0) {
+                    $where[] = " AND $column IN (" . implode(', ', $placeholders) . ")";
+                }
+                continue;
+            }
+
+            // colunas de texto -> busca parcial
+            if (str_starts_with($key, 'txt_') === true ) {
+                $where[] = " AND $key ILIKE :$key";
+                $params[':' . $key] = '%' . $val . '%';
+                continue;
+            }
+
+            // flags booleanas
+            if (str_starts_with($key, 'flg_') === true) {
+                $where[] = " AND $key = :$key";
+                $params[':' . $key] = (bool)$val;
+                continue;
+            }
+            // se o parametro for order_by, limit ou offset atribuir a opts
+            if (in_array($key, ['order_by', 'limit', 'offset'])) {
+                // manter em opts para uso na query e também registrar em params caso exista
+                if (in_array($key, ['limit', 'offset'], true)) {
+                    $opts[$key] = " $key  :$key";
+                    $params[':' . $key] = (int)$val;
+                } else {
+                    // verificar se val não é um sql injection
+                    // se contem select, delete ou drop ou comandos perigosos
+                    if (preg_match('/\b(SELECT|DELETE|DROP|INSERT|UPDATE|TRUNCATE|MERGE|EXEC)\b/i', $val)) {
+                       $opts[$key] = null;
+                       //TODO: Log warning about potential SQL injection
+                    }else{
+                        // A chave vem como order_by , mas quando utilizada na query, deve ser substituída por "order by"
+                        $sql_key = str_replace('_', ' ', $key);
+                        $opts[$key] = " $sql_key  $val";
+                    }
+                }
+                continue;
+            }
+
+            // fallback: igualdade direta
+            $where[] = " AND $key = :$key";
+            $params[':' . $key] = $val;
+        }
+
+        return ['where_parts' => $where, 'params' => $params, 'opts' => $opts];
     }
 }

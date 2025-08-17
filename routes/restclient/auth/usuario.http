@@ -1,0 +1,290 @@
+### Configuração de Variáveis
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+@timestamp = {{$timestamp}}
+@guid = {{$guid}}
+
+### ========================================
+### CRUD PRINCIPAL DE USUÁRIOS
+### ========================================
+
+### 1. Listar Todos os Usuários (sem filtros)
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+### 2. Listar Usuários com Filtros de Texto (ILIKE)
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_nome_usuario": "João",
+    "txt_email_usuario": "teste@"
+}
+
+### 3. Listar Usuários com Filtros Booleanos
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "flg_ativo_usuario": true
+}
+
+### 4. Listar Usuários com ID específico (igualdade direta)
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "id_usuario": 1,
+    "locatario_id": 1
+}
+
+### 5. Listar Usuários com Arrays (IN clause)
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "id_usuarios": [1, 2, 3, 4, 5],
+    "locatario_ids": [1, 2]
+}
+
+### 6. Listar Usuários com Ordenação
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "order_by": "txt_nome_usuario ASC",
+    "limit": 10,
+    "offset": 0
+}
+
+### 7. Listar Usuários com Ordenação Decrescente e Paginação
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_nome_usuario": "a",
+    "order_by": "dat_criado_em DESC",
+    "limit": 5,
+    "offset": 10
+}
+
+### 8. Busca Complexa com Múltiplos Filtros
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_nome_usuario": "admin",
+    "flg_ativo_usuario": true,
+    "locatario_id": 1,
+    "order_by": "txt_email_usuario ASC",
+    "limit": 20
+}
+
+### ========================================
+### CRIAÇÃO DE USUÁRIOS
+### ========================================
+
+### 9. Criar Usuário Válido
+# @name criarUsuario
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Usuário Teste {{$timestamp}}",
+    "email": "teste{{$randomInt 1000 9999}}@exemplo.com",
+    "senha": "MinhaSenh@123",
+    "ativo": true
+}
+
+### 10. Criar Usuário sem Campo Opcional (ativo)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "João da Silva",
+    "email": "joao.silva{{$randomInt 1000 9999}}@empresa.com",
+    "senha": "SenhaForte456!"
+}
+
+### 11. Teste de Validação - Campo Obrigatório Ausente
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Usuário Sem Email",
+    "senha": "MinhaSenh@123"
+}
+
+### 12. Teste de Validação - Email Inválido
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Usuário Email Inválido",
+    "email": "email-invalido",
+    "senha": "MinhaSenh@123"
+}
+
+### 13. Teste de Validação - Senha Fraca
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Usuário Senha Fraca",
+    "email": "senha.fraca{{$randomInt 1000 9999}}@exemplo.com",
+    "senha": "123456"
+}
+
+### 14. Teste de Duplicação - Email Duplicado
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Usuário Duplicado",
+    "email": "admin@exemplo.com",
+    "senha": "MinhaSenh@123"
+}
+
+### ========================================
+### GESTÃO DE GRUPOS
+### ========================================
+
+### 15. Atribuir Grupo ao Usuário
+@usuarioId = 1
+POST {{baseUrl}}/usuarios/{{usuarioId}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 1
+}
+
+### 16. Listar Grupos do Usuário
+GET {{baseUrl}}/usuarios/{{usuarioId}}/grupos HTTP/1.1
+
+### 17. Remover Grupo do Usuário
+DELETE {{baseUrl}}/usuarios/{{usuarioId}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 1
+}
+
+### ========================================
+### GESTÃO DE PAPÉIS
+### ========================================
+
+### 18. Atribuir Papel ao Usuário
+POST {{baseUrl}}/usuarios/{{usuarioId}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2
+}
+
+### 19. Listar Papéis do Usuário
+GET {{baseUrl}}/usuarios/{{usuarioId}}/papeis HTTP/1.1
+
+### 20. Remover Papel do Usuário
+DELETE {{baseUrl}}/usuarios/{{usuarioId}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2
+}
+
+### ========================================
+### GESTÃO DE PERMISSÕES
+### ========================================
+
+### 21. Atribuir Permissão ao Usuário
+POST {{baseUrl}}/usuarios/{{usuarioId}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "permissao_id": 5
+}
+
+### 22. Listar Permissões do Usuário
+GET {{baseUrl}}/usuarios/{{usuarioId}}/permissoes HTTP/1.1
+
+### 23. Remover Permissão do Usuário
+DELETE {{baseUrl}}/usuarios/{{usuarioId}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "permissao_id": 5
+}
+
+### ========================================
+### TESTES DE CASOS EXTREMOS
+### ========================================
+
+### 24. Teste com Usuario Inexistente
+@usuarioInexistente = 99999
+GET {{baseUrl}}/usuarios/{{usuarioInexistente}}/grupos HTTP/1.1
+
+### 25. Teste com Limite Máximo de Registros
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "limit": 1000,
+    "order_by": "id_usuario DESC"
+}
+
+### 26. Teste com Offset Alto (Paginação)
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "limit": 10,
+    "offset": 500,
+    "order_by": "dat_criado_em ASC"
+}
+
+### 27. Teste com Nome Muito Longo (Truncation)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Este é um nome extremamente longo que provavelmente excederá o limite máximo permitido para o campo nome do usuário no banco de dados",
+    "email": "nome.longo{{$randomInt 1000 9999}}@exemplo.com",
+    "senha": "MinhaSenh@123"
+}
+
+### 28. Teste com Caracteres Especiais
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "José da Silva & Ção Açúcar",
+    "email": "jose.acentos{{$randomInt 1000 9999}}@exemplo.com",
+    "senha": "SeñhaEspecial@123"
+}
+
+### 29. Busca por Múltiplos Emails (Simulando Busca Avançada)
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_email_usuario": "@exemplo.com",
+    "flg_ativo_usuario": true,
+    "order_by": "txt_email_usuario ASC",
+    "limit": 50
+}
+
+### 30. Teste de Performance - Sem Filtros e Sem Limite
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "order_by": "dat_criado_em DESC"
+}
