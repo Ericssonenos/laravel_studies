@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use PDOException;
-use InvalidArgumentException;
+
 
 class Operations
 {
@@ -155,6 +155,33 @@ class Operations
                 }
                 $httpStatusCode = 400;
                 $errorCode = 'syntax_error';
+                break;
+
+            case '42703': // undefined_column
+                // ex: ERROR:  column "txt_teste" does not exist
+                $col = null;
+                if (preg_match('/column "([^"]+)" does not exist/i', $detailedMessage, $m)) {
+                    $col = $m[1];
+                } elseif (preg_match('/column ([\w.]+)/i', $detailedMessage, $m2)) {
+                    $col = $m2[1];
+                }
+
+                // tentar extrair trecho da LINE para mostrar contexto do erro
+                $hint = null;
+                if (preg_match('/LINE \d+:\s*(.+)$/m', $detailedMessage, $mLine)) {
+                    $hint = trim($mLine[1]);
+                }
+
+                $userFriendlyMessage = $col
+                    ? "Coluna inválida ou inexistente: a coluna \"{$col}\" não existe na tabela ou no conjunto de colunas referenciadas na consulta. Verifique ortografia, aliases e se a coluna pertence à tabela correta."
+                    : "A consulta refere-se a uma coluna inexistente. Verifique os nomes das colunas, aliases e a estrutura do banco.";
+
+                if ($hint) {
+                    $userFriendlyMessage .= " Trecho provável do problema: \"{$hint}\".";
+                }
+
+                $httpStatusCode = 500;
+                $errorCode = 'undefined_column';
                 break;
 
             default:
@@ -394,25 +421,22 @@ class Operations
      * @param array $contexto
      * @return array
      */
-    public static function padronizarRespostaSucesso(array $data, int $httpStatus = 201, string $msg = 'Operação realizada com sucesso.', array $contexto = []): array
+    public static function padronizarRespostaSucesso(array $data, string $msg, array $contexto = []): array
     {
         return [
-            'http_status' => $httpStatus,
-            'error_code'  => null,
-            'sqlstate'    => null,
             'msg'     => $msg,
             'detail'      => $data,
             'contexto'    => $contexto,
         ];
     }
 
-    public static function Parametrizar(array $filtros): array
+    public static function Parametrizar(array $Params): array
     {
-        $where = [];
+        $whereParams = [];
         $execParams = [];
         $optsParams = [];
 
-        foreach ($filtros as $key => $val) {
+        foreach ($Params as $key => $val) {
             if ($val === null || $val === '') continue;
 
             // plural -> IN (...) quando valor for array
@@ -429,21 +453,21 @@ class Operations
                 }
 
                 if (count($placeholders) > 0) {
-                    $where[] = " AND $column IN (" . implode(', ', $placeholders) . ")";
+                    $whereParams[] = " AND $column IN (" . implode(', ', $placeholders) . ")";
                 }
                 continue;
             }
 
             // colunas de texto -> busca parcial
             if (str_starts_with($key, 'txt_') === true) {
-                $where[] = " AND $key ILIKE :$key";
+                $whereParams[] = " AND $key ILIKE :$key";
                 $execParams[':' . $key] = '%' . $val . '%';
                 continue;
             }
 
             // flags booleanas
             if (str_starts_with($key, 'flg_') === true) {
-                $where[] = " AND $key = :$key";
+                $whereParams[] = " AND $key = :$key";
                 $execParams[':' . $key] = (bool)$val;
                 continue;
             }
@@ -469,10 +493,158 @@ class Operations
             }
 
             // fallback: igualdade direta
-            $where[] = " AND $key = :$key";
+            $whereParams[] = " AND $key = :$key";
             $execParams[':' . $key] = $val;
         }
 
-        return ['whereParams' => $where, 'execParams' => $execParams, 'optsParams' => $optsParams];
+        return ['whereParams' => $whereParams, 'execParams' => $execParams, 'optsParams' => $optsParams];
+    }
+
+    /**
+     * Gera headers de segurança padrão para endpoints de autenticação
+     *
+     * @param string|null $requestId ID único da requisição
+     * @return array Headers de segurança
+     */
+    public static function gerarHeadersSeguranca(?string $requestId = null): array
+    {
+        return [
+            'Content-Type' => 'application/json; charset=utf-8',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, private',
+            'X-Content-Type-Options' => 'nosniff',
+            'Referrer-Policy' => 'no-referrer',
+            'X-Request-Id' => $requestId ?? uniqid('auth-', true),
+            'X-API-Version' => 'v1',
+            'Content-Language' => 'pt-BR'
+        ];
+    }
+
+    /**
+     * Gera headers específicos para erros (RFC 9457)
+     *
+     * @param string|null $requestId ID único da requisição
+     * @return array Headers para erro
+     */
+    public static function gerarHeadersErro(?string $requestId = null): array
+    {
+        $headersBase = self::gerarHeadersSeguranca($requestId);
+        $headersBase['Content-Type'] = 'application/problem+json; charset=utf-8';
+
+        return $headersBase;
+    }
+
+    /**
+     * Gera headers de paginação baseado nos dados de entrada e resultados
+     *
+     * @param array $request Dados da requisição
+     * @param int $totalRegistros Total de registros encontrados
+     * @param string $baseUrl URL base para navegação
+     * @return array Headers de paginação
+     */
+    public static function gerarHeadersPaginacao(array $request, int $totalRegistros, string $baseUrl): array
+    {
+        $limit = (int)($request['limit'] ?? null);
+        $offset = (int)($request['offset'] ?? null);
+        $currentPage = $limit ? floor($offset / $limit) + 1 : 1;
+
+        $headers = [
+            'X-Total-Count' => (string)$totalRegistros,
+            'X-Page' => (string)$currentPage,
+            'X-Per-Page' => (string)$limit
+        ];
+
+        $linkParts = [];
+        $queryParams = $request;
+
+        // Link para próxima página
+        if ($totalRegistros > ($offset + $limit)) {
+            $queryParams['offset'] = $offset + $limit;
+            $nextUrl = $baseUrl . '?' . http_build_query($queryParams);
+            $linkParts[] = "<{$nextUrl}>; rel=\"next\"";
+        }
+
+        // Link para página anterior
+        if ($offset > 0) {
+            $queryParams['offset'] = max(0, $offset - $limit);
+            $prevUrl = $baseUrl . '?' . http_build_query($queryParams);
+            $linkParts[] = "<{$prevUrl}>; rel=\"prev\"";
+
+            // Link para primeira página
+            $queryParams['offset'] = 0;
+            $firstUrl = $baseUrl . '?' . http_build_query($queryParams);
+            $linkParts[] = "<{$firstUrl}>; rel=\"first\"";
+        }
+
+        // Link para última página
+        if ($totalRegistros > $limit) {
+            $lastOffset = $limit ? floor(($totalRegistros - 1) / $limit) * $limit : 1;
+            if ($lastOffset > $offset) {
+                $queryParams['offset'] = $lastOffset;
+                $lastUrl = $baseUrl . '?' . http_build_query($queryParams);
+                $linkParts[] = "<{$lastUrl}>; rel=\"last\"";
+            }
+        }
+
+        if (!empty($linkParts)) {
+            $headers['Link'] = implode(', ', $linkParts);
+        }
+
+        return $headers;
+    }
+
+
+    /**
+     * Processa resposta de erro com headers apropriados
+     *
+     * @param array $dadosErro Dados do erro (já formatados)
+     * @param string|null $requestId ID da requisição
+     * @return array Resposta de erro com headers
+     */
+    public static function processarRespostaErro(array $dadosErro, ?string $requestId = null): array
+    {
+        $headers = self::gerarHeadersErro($requestId);
+
+        return [
+            'dados' => $dadosErro,
+            'status' => (int)$dadosErro['http_status'],
+            'headers' => $headers
+        ];
+    }
+
+    /**
+     * Extrai ou gera Request ID da requisição
+     *
+     * @param \Illuminate\Http\Request $request Instância da requisição
+     * @param string $prefixo Prefixo para o ID único
+     * @return string Request ID
+     */
+    public static function extrairRequestId($request, string $prefixo = 'auth'): string
+    {
+        return $request->header('X-Request-Id', uniqid($prefixo . '-', true));
+    }
+
+
+
+    /**
+     * Gera headers completos (segurança + paginação) para respostas de sucesso
+     *
+     * @param string $requestId Request ID único
+     * @param array $requestData Dados da requisição para paginação
+     * @param string $baseUrl URL base para links de paginação
+     * @param array $dados Dados da resposta para cálculo de paginação
+     * @return array Headers completos
+     */
+    public static function gerarHeadersCompletos(string $requestId, array $requestData, string $baseUrl, array $dados): array
+    {
+        // Headers de segurança base
+        $headers = self::gerarHeadersSeguranca($requestId);
+
+        // Adicionar headers de paginação se for listagem
+        if (is_array($dados) && !isset($dados['http_status'])) {
+            $headersPaginacao = self::gerarHeadersPaginacao($requestData, count($dados), $baseUrl);
+            $headers = array_merge($headers, $headersPaginacao);
+        }
+
+        return $headers;
     }
 }
