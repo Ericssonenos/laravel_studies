@@ -194,51 +194,32 @@ class UsuarioController extends Controller
         );
 
         if (is_array($Retorno_Papel_atribuido) && isset($Retorno_Papel_atribuido['http_status'])) {
-            $resposta = Operations::processarRespostaErro($Retorno_Papel_atribuido, $requestId);
             return response()->json(
-                $resposta['dados'],
-                $resposta['status'],
-                $resposta['headers'],
-                JSON_UNESCAPED_UNICODE
+                data: $Retorno_Papel_atribuido,
+                status: (int)$Retorno_Papel_atribuido['http_status'],
+                options: JSON_UNESCAPED_UNICODE,
+                headers: [
+                    'Content-Type' => 'application/problem+json; charset=utf-8',
+                    'X-Request-Id' => $requestId
+                ]
             );
         }
 
         if ($Retorno_Papel_atribuido === false) {
-            $dadosErro = [
-                'http_status' => 500,
-                'error_code' => 'operation_failed',
-                'msg' => 'Falha na operação. Tente novamente.',
-                'detail' => 'A operação não pôde ser completada.',
-                'contexto' => ['id_usuario' => $id_usuario, 'papel_id' => (int)$request->input('papel_id')]
-            ];
-
-            $resposta = Operations::processarRespostaErro($dadosErro, $requestId);
-            return response()->json(
-                $resposta['dados'],
-                $resposta['status'],
-                $resposta['headers'],
-                JSON_UNESCAPED_UNICODE
-            );
+            return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
         }
 
-        // sucesso - usar Operations para headers
-        $dadosSucesso = ['sucesso' => true];
-        $contexto = ['id_usuario' => $id_usuario, 'papel_id' => (int)$request->input('papel_id')];
-
-        $resposta = Operations::processarRespostaComHeaders(
-            dados: $dadosSucesso,
-            httpStatus: 200,
-            mensagem: 'Papel atribuído ao usuário com sucesso.',
-            contexto: $contexto,
-            requestData: $request->all(),
-            baseUrl: $request->url(),
-            requestId: $requestId
-        );
+        // sucesso - gerar headers
+        $headers = Operations::gerarHeadersSeguranca($requestId);
 
         return response()->json(
-            $resposta['dados'],
-            $resposta['status'],
-            $resposta['headers'],
+            Operations::padronizarRespostaSucesso(
+                data: ['sucesso' => true],
+                msg: 'Papel atribuído ao usuário com sucesso.',
+                contexto: ['id_usuario' => $id_usuario, 'papel_id' => (int)$request->input('papel_id')]
+            ),
+            200,
+            $headers,
             JSON_UNESCAPED_UNICODE
         );
     }
@@ -257,51 +238,32 @@ class UsuarioController extends Controller
         );
 
         if (is_array($Retorno_Permissao_atribuido) && isset($Retorno_Permissao_atribuido['http_status'])) {
-            $resposta = Operations::processarRespostaErro($Retorno_Permissao_atribuido, $requestId);
             return response()->json(
-                $resposta['dados'],
-                $resposta['status'],
-                $resposta['headers'],
-                JSON_UNESCAPED_UNICODE
+                data: $Retorno_Permissao_atribuido,
+                status: (int)$Retorno_Permissao_atribuido['http_status'],
+                options: JSON_UNESCAPED_UNICODE,
+                headers: [
+                    'Content-Type' => 'application/problem+json; charset=utf-8',
+                    'X-Request-Id' => $requestId
+                ]
             );
         }
 
         if ($Retorno_Permissao_atribuido === false) {
-            $dadosErro = [
-                'http_status' => 500,
-                'error_code' => 'operation_failed',
-                'msg' => 'Falha na operação. Tente novamente.',
-                'detail' => 'A operação não pôde ser completada.',
-                'contexto' => ['id_usuario' => $id_usuario, 'permissao_id' => (int)$request->input('permissao_id')]
-            ];
-
-            $resposta = Operations::processarRespostaErro($dadosErro, $requestId);
-            return response()->json(
-                $resposta['dados'],
-                $resposta['status'],
-                $resposta['headers'],
-                JSON_UNESCAPED_UNICODE
-            );
+            return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
         }
 
-        // sucesso - usar Operations para headers
-        $dadosSucesso = ['sucesso' => true];
-        $contexto = ['id_usuario' => $id_usuario, 'permissao_id' => (int)$request->input('permissao_id')];
-
-        $resposta = Operations::processarRespostaComHeaders(
-            dados: $dadosSucesso,
-            httpStatus: 200,
-            mensagem: 'Permissão atribuída ao usuário com sucesso.',
-            contexto: $contexto,
-            requestData: $request->all(),
-            baseUrl: $request->url(),
-            requestId: $requestId
-        );
+        // sucesso - gerar headers
+        $headers = Operations::gerarHeadersSeguranca($requestId);
 
         return response()->json(
-            $resposta['dados'],
-            $resposta['status'],
-            $resposta['headers'],
+            Operations::padronizarRespostaSucesso(
+                data: ['sucesso' => true],
+                msg: 'Permissão atribuída ao usuário com sucesso.',
+                contexto: ['id_usuario' => $id_usuario, 'permissao_id' => (int)$request->input('permissao_id')]
+            ),
+            200,
+            $headers,
             JSON_UNESCAPED_UNICODE
         );
     }
@@ -317,32 +279,28 @@ class UsuarioController extends Controller
         $grupos = $usuarioModel->listar_grupos($id_usuario);
 
         if (is_array($grupos) && isset($grupos['http_status'])) {
-            $resposta = Operations::processarRespostaErro($grupos, $requestId);
             return response()->json(
-                $resposta['dados'],
-                $resposta['status'],
-                $resposta['headers'],
-                JSON_UNESCAPED_UNICODE
+                data: $grupos,
+                status: (int)$grupos['http_status'],
+                options: JSON_UNESCAPED_UNICODE,
+                headers: [
+                    'Content-Type' => 'application/problem+json; charset=utf-8',
+                    'X-Request-Id' => $requestId
+                ]
             );
         }
 
-        // sucesso - usar Operations para headers
-        $contexto = ['id_usuario' => $id_usuario];
-
-        $resposta = Operations::processarRespostaComHeaders(
-            dados: $grupos,
-            httpStatus: 200,
-            mensagem: 'Grupos do usuário retornados com sucesso.',
-            contexto: $contexto,
-            requestData: $request->all(),
-            baseUrl: $request->url(),
-            requestId: $requestId
-        );
+        // gerar headers
+        $headers = Operations::gerarHeadersSeguranca($requestId);
 
         return response()->json(
-            $resposta['dados'],
-            $resposta['status'],
-            $resposta['headers'],
+            Operations::padronizarRespostaSucesso(
+                data: $grupos,
+                msg: 'Grupos do usuário retornados com sucesso.',
+                contexto: ['id_usuario' => $id_usuario]
+            ),
+            200,
+            $headers,
             JSON_UNESCAPED_UNICODE
         );
     }
@@ -358,32 +316,28 @@ class UsuarioController extends Controller
         $papeis = $usuarioModel->listar_papeis($id_usuario);
 
         if (is_array($papeis) && isset($papeis['http_status'])) {
-            $resposta = Operations::processarRespostaErro($papeis, $requestId);
             return response()->json(
-                $resposta['dados'],
-                $resposta['status'],
-                $resposta['headers'],
-                JSON_UNESCAPED_UNICODE
+                data: $papeis,
+                status: (int)$papeis['http_status'],
+                options: JSON_UNESCAPED_UNICODE,
+                headers: [
+                    'Content-Type' => 'application/problem+json; charset=utf-8',
+                    'X-Request-Id' => $requestId
+                ]
             );
         }
 
-        // sucesso - usar Operations para headers
-        $contexto = ['id_usuario' => $id_usuario];
-
-        $resposta = Operations::processarRespostaComHeaders(
-            dados: $papeis,
-            httpStatus: 200,
-            mensagem: 'Papéis do usuário retornados com sucesso.',
-            contexto: $contexto,
-            requestData: $request->all(),
-            baseUrl: $request->url(),
-            requestId: $requestId
-        );
+        // gerar headers
+        $headers = Operations::gerarHeadersSeguranca($requestId);
 
         return response()->json(
-            $resposta['dados'],
-            $resposta['status'],
-            $resposta['headers'],
+            Operations::padronizarRespostaSucesso(
+                data: $papeis,
+                msg: 'Papéis do usuário retornados com sucesso.',
+                contexto: ['id_usuario' => $id_usuario]
+            ),
+            200,
+            $headers,
             JSON_UNESCAPED_UNICODE
         );
     }
@@ -399,32 +353,28 @@ class UsuarioController extends Controller
         $permissoes = $usuarioModel->listar_permissoes($id_usuario);
 
         if (is_array($permissoes) && isset($permissoes['http_status'])) {
-            $resposta = Operations::processarRespostaErro($permissoes, $requestId);
             return response()->json(
-                $resposta['dados'],
-                $resposta['status'],
-                $resposta['headers'],
-                JSON_UNESCAPED_UNICODE
+                data: $permissoes,
+                status: (int)$permissoes['http_status'],
+                options: JSON_UNESCAPED_UNICODE,
+                headers: [
+                    'Content-Type' => 'application/problem+json; charset=utf-8',
+                    'X-Request-Id' => $requestId
+                ]
             );
         }
 
-        // sucesso - usar Operations para headers
-        $contexto = ['id_usuario' => $id_usuario];
-
-        $resposta = Operations::processarRespostaComHeaders(
-            dados: $permissoes,
-            httpStatus: 200,
-            mensagem: 'Permissões do usuário retornadas com sucesso.',
-            contexto: $contexto,
-            requestData: $request->all(),
-            baseUrl: $request->url(),
-            requestId: $requestId
-        );
+        // gerar headers
+        $headers = Operations::gerarHeadersSeguranca($requestId);
 
         return response()->json(
-            $resposta['dados'],
-            $resposta['status'],
-            $resposta['headers'],
+            Operations::padronizarRespostaSucesso(
+                data: $permissoes,
+                msg: 'Permissões do usuário retornadas com sucesso.',
+                contexto: ['id_usuario' => $id_usuario]
+            ),
+            200,
+            $headers,
             JSON_UNESCAPED_UNICODE
         );
     }

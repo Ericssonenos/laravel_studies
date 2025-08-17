@@ -1,0 +1,24 @@
+### ========================================
+### GRUPO - REMOVER PAPEL
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Remover papel do grupo (sucesso)
+# @name removerPapelGrupoSucesso
+DELETE {{baseUrl}}/grupos/1/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1
+}
+
+### 2. TESTE FALHA - Remover papel não atribuído
+# @name removerPapelNaoAtribuido
+DELETE {{baseUrl}}/grupos/1/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2
+}

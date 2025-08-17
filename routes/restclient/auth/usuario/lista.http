@@ -1,0 +1,53 @@
+### ========================================
+### USUÁRIO - LISTAR
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Listar todos os usuários (sucesso)
+# @name listarUsuariosSucesso
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+### 2. Listar usuários com filtros (sucesso)
+# @name listarUsuariosComFiltro
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "flg_ativo_usuario": true,
+    "order_by": "txt_nome_usuario ASC",
+    "limit": 10
+}
+
+### 3. Buscar usuário por email (sucesso)
+# @name buscarUsuarioPorEmail
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_email_usuario": "joao.dono@padaria.com"
+}
+
+### 4. TESTE FALHA - Filtro com tipo inválido
+# @name listarUsuariosTipoInvalido
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": "texto_invalido",
+    "flg_ativo_usuario": "sim"
+}
+
+### 5. Teste paginação (sucesso)
+# @name testarPaginacaoUsuarios
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "limit": 5,
+    "offset": 0,
+    "order_by": "dat_criado_em DESC"
+}

@@ -1,0 +1,16 @@
+### ========================================
+### GRUPO - LISTAR PAPEIS
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Listar papéis do grupo (sucesso)
+# @name listarPapeisGrupoSucesso
+GET {{baseUrl}}/grupos/1/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+### 2. TESTE FALHA - Grupo inexistente
+# @name listarPapeisGrupoInexistente
+GET {{baseUrl}}/grupos/9999/papeis HTTP/1.1
+Content-Type: {{contentType}}

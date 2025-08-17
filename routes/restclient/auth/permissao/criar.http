@@ -1,0 +1,26 @@
+### ========================================
+### PERMISSÃO - CRIAR
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Criar permissão válida (sucesso)
+# @name criarPermissaoSucesso
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "gerenciar_usuarios",
+    "txt_descricao_permissao": "Permissão para gerenciar usuários do sistema",
+    "flg_ativo_permissao": true
+}
+
+### 2. TESTE FALHA - Sem código obrigatório
+# @name criarPermissaoSemCodigo
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_descricao_permissao": "Permissão sem código"
+}

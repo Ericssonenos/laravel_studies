@@ -1,0 +1,27 @@
+### ========================================
+### PAPEL - CRIAR
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Criar papel válido (sucesso)
+# @name criarPapelSucesso
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_papel": "Supervisor",
+    "num_nivel_papel": 15,
+    "flg_ativo_papel": true
+}
+
+### 2. TESTE FALHA - Sem campos obrigatórios
+# @name criarPapelSemCampos
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_nome_papel": "Papel Sem Locatário"
+}

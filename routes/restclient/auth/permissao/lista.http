@@ -1,0 +1,20 @@
+### ========================================
+### PERMISSÃO - LISTAR
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Listar todas as permissões (sucesso)
+# @name listarPermissoesSucesso
+GET {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+### 2. TESTE FALHA - Parâmetro inválido
+# @name listarPermissoesParametroInvalido
+GET {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "flg_ativo_permissao": "texto_invalido"
+}

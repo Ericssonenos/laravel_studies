@@ -1,0 +1,33 @@
+### ========================================
+### USUÁRIO - ATRIBUIR PERMISSÃO
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Atribuir permissão ao usuário (sucesso)
+# @name atribuirPermissaoUsuarioSucesso
+POST {{baseUrl}}/usuarios/1/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "permissao_id": 1
+}
+
+### 2. TESTE FALHA - Permissão inexistente
+# @name atribuirPermissaoInexistente
+POST {{baseUrl}}/usuarios/1/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "permissao_id": 9999
+}
+
+### 3. TESTE FALHA - Usuário inexistente
+# @name atribuirPermissaoUsuarioInexistente
+POST {{baseUrl}}/usuarios/9999/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "permissao_id": 1
+}

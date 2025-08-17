@@ -1,0 +1,59 @@
+### ========================================
+### GRUPO - CRIAR
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Criar grupo válido (sucesso)
+# @name criarGrupoSucesso
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_grupo": "Desenvolvedores",
+    "txt_descricao_grupo": "Equipe de desenvolvimento de software",
+    "flg_ativo_grupo": true
+}
+
+### 2. Criar grupo mínimo (só campos obrigatórios)
+# @name criarGrupoMinimo
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_grupo": "Testadores QA"
+}
+
+### 3. TESTE FALHA - Sem campos obrigatórios
+# @name criarGrupoSemCampos
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_descricao_grupo": "Grupo sem locatário nem nome"
+}
+
+### 4. TESTE FALHA - Nome muito longo
+# @name criarGrupoNomeLongo
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_grupo": "Este é um nome de grupo extremamente longo que ultrapassa o limite máximo de 120 caracteres permitidos para o campo txt_nome_grupo conforme definido nas regras de validação do sistema",
+    "txt_descricao_grupo": "Teste de nome muito longo"
+}
+
+### 5. TESTE FALHA - Tipo inválido
+# @name criarGrupoTipoInvalido
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": "texto_invalido",
+    "txt_nome_grupo": "Grupo Teste",
+    "flg_ativo_grupo": "sim"
+}

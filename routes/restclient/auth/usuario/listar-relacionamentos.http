@@ -1,0 +1,44 @@
+### ========================================
+### USUÁRIO - LISTAR GRUPOS
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Listar grupos do usuário (sucesso)
+# @name listarGruposUsuarioSucesso
+GET {{baseUrl}}/usuarios/1/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+### 2. TESTE FALHA - Usuário inexistente
+# @name listarGruposUsuarioInexistente
+GET {{baseUrl}}/usuarios/9999/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+### ========================================
+### USUÁRIO - LISTAR PAPEIS
+### ========================================
+
+### 3. Listar papéis do usuário (sucesso)
+# @name listarPapeisUsuarioSucesso
+GET {{baseUrl}}/usuarios/1/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+### 4. TESTE FALHA - Usuário sem papéis
+# @name listarPapeisUsuarioSemPapeis
+GET {{baseUrl}}/usuarios/10/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+### ========================================
+### USUÁRIO - LISTAR PERMISSÕES
+### ========================================
+
+### 5. Listar permissões do usuário (sucesso)
+# @name listarPermissoesUsuarioSucesso
+GET {{baseUrl}}/usuarios/1/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+### 6. TESTE FALHA - Usuário inexistente
+# @name listarPermissoesUsuarioInexistente
+GET {{baseUrl}}/usuarios/9999/permissoes HTTP/1.1
+Content-Type: {{contentType}}

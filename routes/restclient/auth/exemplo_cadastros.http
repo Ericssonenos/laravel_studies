@@ -15,6 +15,7 @@ POST {{baseUrl}}/locatarios HTTP/1.1
 Content-Type: {{contentType}}
 {
     "txt_nome_locatario": "Padaria do João",
+    "txt_identificador_locatario": "padaria-joao",
     "txt_descricao_locatario": "Padaria familiar tradicional",
     "flg_ativo_locatario": true
 }
@@ -27,8 +28,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "nome": "Administradores",
-    "descricao": "Proprietários e sócios da padaria"
+    "txt_nome_grupo": "Administradores",
+    "txt_descricao_grupo": "Proprietários e sócios da padaria",
+    "flg_ativo_grupo": true
 }
 
 ### Grupo: Funcionários
@@ -38,8 +40,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "nome": "Funcionários",
-    "descricao": "Funcionários operacionais da padaria"
+    "txt_nome_grupo": "Funcionários",
+    "txt_descricao_grupo": "Funcionários operacionais da padaria",
+    "flg_ativo_grupo": true
 }
 
 ### 1.3. Criar Papéis da Padaria
@@ -50,9 +53,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "nome": "Proprietário",
-    "descricao": "Dono da padaria com acesso total",
-    "nivel_hierarquia": 10
+    "txt_nome_papel": "Proprietário",
+    "num_nivel_papel": 10,
+    "flg_ativo_papel": true
 }
 
 ### Papel: Funcionário
@@ -62,9 +65,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "nome": "Funcionário",
-    "descricao": "Funcionário operacional básico",
-    "nivel_hierarquia": 1
+    "txt_nome_papel": "Funcionário",
+    "num_nivel_papel": 1,
+    "flg_ativo_papel": true
 }
 
 ### 1.4. Criar Permissões da Padaria
@@ -73,9 +76,9 @@ POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "ver_vendas",
-    "descricao": "Visualizar relatórios de vendas",
-    "modulo": "vendas"
+    "cod_permissao": "ver_vendas",
+    "txt_descricao_permissao": "Visualizar relatórios de vendas",
+    "flg_ativo_permissao": true
 }
 
 ### Permissão: Criar Produto
@@ -83,9 +86,9 @@ POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "criar_produto",
-    "descricao": "Cadastrar novos produtos",
-    "modulo": "produtos"
+    "cod_permissao": "criar_produto",
+    "txt_descricao_permissao": "Cadastrar novos produtos",
+    "flg_ativo_permissao": true
 }
 
 ### Permissão: Registrar Venda
@@ -93,9 +96,9 @@ POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "registrar_venda",
-    "descricao": "Registrar vendas no sistema",
-    "modulo": "vendas"
+    "cod_permissao": "registrar_venda",
+    "txt_descricao_permissao": "Registrar vendas no sistema",
+    "flg_ativo_permissao": true
 }
 
 ### 1.5. Cadastrar Usuários da Padaria
@@ -106,10 +109,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "nome": "João Santos",
-    "email": "joao.dono@padaria.com",
-    "senha": "MinhaSenh@123",
-    "ativo": true
+    "txt_nome_usuario": "João Santos",
+    "txt_email_usuario": "joao.dono@padaria.com",
+    "txt_senha_usuario": "MinhaSenh@123",
+    "flg_ativo_usuario": true
 }
 
 ### Maria (Caixa)
@@ -119,10 +122,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "nome": "Maria Silva",
-    "email": "maria.caixa@padaria.com",
-    "senha": "SenhaForte456!",
-    "ativo": true
+    "txt_nome_usuario": "Maria Silva",
+    "txt_email_usuario": "maria.caixa@padaria.com",
+    "txt_senha_usuario": "SenhaForte456!",
+    "flg_ativo_usuario": true
 }
 
 ### Pedro (Padeiro)
@@ -132,10 +135,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "nome": "Pedro Oliveira",
-    "email": "pedro.padeiro@padaria.com",
-    "senha": "PedroPão2024@",
-    "ativo": true
+    "txt_nome_usuario": "Pedro Oliveira",
+    "txt_email_usuario": "pedro.padeiro@padaria.com",
+    "txt_senha_usuario": "PedroPão2024@",
+    "flg_ativo_usuario": true
 }
 
 ### 1.6. Atribuir Grupos aos Usuários
@@ -198,9 +201,10 @@ POST {{baseUrl}}/locatarios HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "TechCorp Solutions",
-    "descricao": "Empresa de tecnologia e desenvolvimento de software",
-    "ativo": true
+    "txt_nome_locatario": "TechCorp Solutions",
+    "txt_identificador_locatario": "techcorp",
+    "txt_descricao_locatario": "Empresa de tecnologia e desenvolvimento de software",
+    "flg_ativo_locatario": true
 }
 
 ### 2.2. Criar Grupos por Departamento
@@ -210,8 +214,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "TI",
-    "descricao": "Departamento de Tecnologia da Informação"
+    "txt_nome_grupo": "TI",
+    "txt_descricao_grupo": "Departamento de Tecnologia da Informação",
+    "flg_ativo_grupo": true
 }
 
 ### Grupo: RH
@@ -220,8 +225,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "RH",
-    "descricao": "Departamento de Recursos Humanos"
+    "txt_nome_grupo": "RH",
+    "txt_descricao_grupo": "Departamento de Recursos Humanos",
+    "flg_ativo_grupo": true
 }
 
 ### Grupo: Vendas
@@ -230,8 +236,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Vendas",
-    "descricao": "Departamento Comercial e Vendas"
+    "txt_nome_grupo": "Vendas",
+    "txt_descricao_grupo": "Departamento Comercial e Vendas",
+    "flg_ativo_grupo": true
 }
 
 ### Grupo: Financeiro
@@ -240,8 +247,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Financeiro",
-    "descricao": "Departamento Financeiro e Contábil"
+    "txt_nome_grupo": "Financeiro",
+    "txt_descricao_grupo": "Departamento Financeiro e Contábil",
+    "flg_ativo_grupo": true
 }
 
 ### 2.3. Criar Papéis Hierárquicos
@@ -251,9 +259,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "CEO",
-    "descricao": "Chief Executive Officer",
-    "nivel_hierarquia": 100
+    "txt_nome_papel": "CEO",
+    "num_nivel_papel": 100,
+    "flg_ativo_papel": true
 }
 
 ### Papel: Diretor
@@ -262,9 +270,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Diretor",
-    "descricao": "Diretor de departamento",
-    "nivel_hierarquia": 50
+    "txt_nome_papel": "Diretor",
+    "num_nivel_papel": 50,
+    "flg_ativo_papel": true
 }
 
 ### Papel: Gerente
@@ -273,9 +281,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Gerente",
-    "descricao": "Gerente de equipe",
-    "nivel_hierarquia": 25
+    "txt_nome_papel": "Gerente",
+    "num_nivel_papel": 25,
+    "flg_ativo_papel": true
 }
 
 ### Papel: Analista
@@ -284,9 +292,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Analista",
-    "descricao": "Analista especialista",
-    "nivel_hierarquia": 10
+    "txt_nome_papel": "Analista",
+    "num_nivel_papel": 10,
+    "flg_ativo_papel": true
 }
 
 ### 2.4. Criar Permissões por Módulo
@@ -295,18 +303,18 @@ POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "ver_relatorios",
-    "descricao": "Visualizar relatórios financeiros",
-    "modulo": "financeiro"
+    "cod_permissao": "ver_relatorios",
+    "txt_descricao_permissao": "Visualizar relatórios financeiros",
+    "flg_ativo_permissao": true
 }
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "aprovar_despesas",
-    "descricao": "Aprovar despesas e investimentos",
-    "modulo": "financeiro"
+    "cod_permissao": "aprovar_despesas",
+    "txt_descricao_permissao": "Aprovar despesas e investimentos",
+    "flg_ativo_permissao": true
 }
 
 ### Módulo RH
@@ -314,27 +322,27 @@ POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "contratar",
-    "descricao": "Contratar novos funcionários",
-    "modulo": "rh"
+    "cod_permissao": "contratar",
+    "txt_descricao_permissao": "Contratar novos funcionários",
+    "flg_ativo_permissao": true
 }
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "demitir",
-    "descricao": "Demitir funcionários",
-    "modulo": "rh"
+    "cod_permissao": "demitir",
+    "txt_descricao_permissao": "Demitir funcionários",
+    "flg_ativo_permissao": true
 }
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "avaliar",
-    "descricao": "Avaliar desempenho de funcionários",
-    "modulo": "rh"
+    "cod_permissao": "avaliar",
+    "txt_descricao_permissao": "Avaliar desempenho de funcionários",
+    "flg_ativo_permissao": true
 }
 
 ### Módulo TI
@@ -342,27 +350,27 @@ POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "deploy",
-    "descricao": "Fazer deploy de aplicações",
-    "modulo": "ti"
+    "cod_permissao": "deploy",
+    "txt_descricao_permissao": "Fazer deploy de aplicações",
+    "flg_ativo_permissao": true
 }
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "backup",
-    "descricao": "Gerenciar backups do sistema",
-    "modulo": "ti"
+    "cod_permissao": "backup",
+    "txt_descricao_permissao": "Gerenciar backups do sistema",
+    "flg_ativo_permissao": true
 }
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "configurar",
-    "descricao": "Configurar sistemas e serviços",
-    "modulo": "ti"
+    "cod_permissao": "configurar",
+    "txt_descricao_permissao": "Configurar sistemas e serviços",
+    "flg_ativo_permissao": true
 }
 
 ### 2.5. Cadastrar Usuários TechCorp
@@ -372,10 +380,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Carlos Alberto",
-    "email": "carlos.ceo@techcorp.com",
-    "senha": "CEOSeguro2024!",
-    "ativo": true
+    "txt_nome_usuario": "Carlos Alberto",
+    "txt_email_usuario": "carlos.ceo@techcorp.com",
+    "txt_senha_usuario": "CEOSeguro2024!",
+    "flg_ativo_usuario": true
 }
 
 ### Ana (Diretora de RH)
@@ -384,10 +392,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Ana Santos",
-    "email": "ana.rh@techcorp.com",
-    "senha": "AnaDiretora123@",
-    "ativo": true
+    "txt_nome_usuario": "Ana Santos",
+    "txt_email_usuario": "ana.rh@techcorp.com",
+    "txt_senha_usuario": "AnaDiretora123@",
+    "flg_ativo_usuario": true
 }
 
 ### Ricardo (Gerente de TI)
@@ -396,10 +404,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Ricardo Silva",
-    "email": "ricardo.ti@techcorp.com",
-    "senha": "RicardoTI456!",
-    "ativo": true
+    "txt_nome_usuario": "Ricardo Silva",
+    "txt_email_usuario": "ricardo.ti@techcorp.com",
+    "txt_senha_usuario": "RicardoTI456!",
+    "flg_ativo_usuario": true
 }
 
 ### Juliana (Analista Financeiro)
@@ -408,10 +416,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Juliana Costa",
-    "email": "juliana.financeiro@techcorp.com",
-    "senha": "JuFinancas789@",
-    "ativo": true
+    "txt_nome_usuario": "Juliana Costa",
+    "txt_email_usuario": "juliana.financeiro@techcorp.com",
+    "txt_senha_usuario": "JuFinancas789@",
+    "flg_ativo_usuario": true
 }
 
 ### 2.6. Configurar Relacionamentos TechCorp
@@ -468,7 +476,7 @@ Content-Type: {{contentType}}
     "grupo_id": 6
 }
 
-POST {{baseUrl}>/usuarios/7/papeis HTTP/1.1
+POST {{baseUrl}}/usuarios/7/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -487,10 +495,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Lucas Pereira",
-    "email": "lucas.dev@techcorp.com",
-    "senha": "LucasDev2024!",
-    "ativo": true
+    "txt_nome_usuario": "Lucas Pereira",
+    "txt_email_usuario": "lucas.dev@techcorp.com",
+    "txt_senha_usuario": "LucasDev2024!",
+    "flg_ativo_usuario": true
 }
 
 ### 3.2. Adicionar aos Grupos Apropriados
@@ -508,8 +516,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 2,
-    "nome": "Novatos",
-    "descricao": "Funcionários em período de experiência"
+    "txt_nome_grupo": "Novatos",
+    "txt_descricao_grupo": "Funcionários em período de experiência",
+    "flg_ativo_grupo": true
 }
 
 ### Adicionar Lucas ao grupo Novatos
@@ -547,9 +556,10 @@ POST {{baseUrl}}/locatarios HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "nome": "MegaStore Online",
-    "descricao": "Plataforma de e-commerce completa",
-    "ativo": true
+    "txt_nome_locatario": "MegaStore Online",
+    "txt_identificador_locatario": "megastore",
+    "txt_descricao_locatario": "Plataforma de e-commerce completa",
+    "flg_ativo_locatario": true
 }
 
 ### 4.2. Grupos por Função
@@ -558,8 +568,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 3,
-    "nome": "Marketing",
-    "descricao": "Equipe de marketing digital"
+    "txt_nome_grupo": "Marketing",
+    "txt_descricao_grupo": "Equipe de marketing digital",
+    "flg_ativo_grupo": true
 }
 
 POST {{baseUrl}}/grupos HTTP/1.1
@@ -567,8 +578,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 3,
-    "nome": "Logística",
-    "descricao": "Equipe de estoque e entregas"
+    "txt_nome_grupo": "Logística",
+    "txt_descricao_grupo": "Equipe de estoque e entregas",
+    "flg_ativo_grupo": true
 }
 
 ### 4.3. Papéis Operacionais
@@ -577,9 +589,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 3,
-    "nome": "Operador",
-    "descricao": "Operador de sistema básico",
-    "nivel_hierarquia": 5
+    "txt_nome_papel": "Operador",
+    "num_nivel_papel": 5,
+    "flg_ativo_papel": true
 }
 
 POST {{baseUrl}}/papeis HTTP/1.1
@@ -587,9 +599,9 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 3,
-    "nome": "Coordenador",
-    "descricao": "Coordenador de equipe",
-    "nivel_hierarquia": 15
+    "txt_nome_papel": "Coordenador",
+    "num_nivel_papel": 15,
+    "flg_ativo_papel": true
 }
 
 ### 4.4. Usuários E-commerce
@@ -599,10 +611,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 3,
-    "nome": "Fernanda Lima",
-    "email": "fernanda.marketing@megastore.com",
-    "senha": "FernandaMarketing2024!",
-    "ativo": true
+    "txt_nome_usuario": "Fernanda Lima",
+    "txt_email_usuario": "fernanda.marketing@megastore.com",
+    "txt_senha_usuario": "FernandaMarketing2024!",
+    "flg_ativo_usuario": true
 }
 
 ### Roberto (Logística)
@@ -611,10 +623,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 3,
-    "nome": "Roberto Santos",
-    "email": "roberto.logistica@megastore.com",
-    "senha": "RobertoLog456@",
-    "ativo": true
+    "txt_nome_usuario": "Roberto Santos",
+    "txt_email_usuario": "roberto.logistica@megastore.com",
+    "txt_senha_usuario": "RobertoLog456@",
+    "flg_ativo_usuario": true
 }
 
 ### ========================================
@@ -627,9 +639,10 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "nome": "João Duplicado",
-    "email": "joao.dono@padaria.com",
-    "senha": "SenhaDuplicada123!"
+    "txt_nome_usuario": "João Duplicado",
+    "txt_email_usuario": "joao.dono@padaria.com",
+    "txt_senha_usuario": "SenhaDuplicada123!",
+    "flg_ativo_usuario": true
 }
 
 ### 5.2. Teste: Usuário em Locatário Errado
@@ -660,7 +673,8 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "order_by": "txt_nome_usuario ASC"
+    "order_by": "txt_nome_usuario ASC",
+    "txt_teste": "teste"
 }
 
 ### 6.2. Verificar Estrutura TechCorp

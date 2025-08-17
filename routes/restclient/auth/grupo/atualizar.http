@@ -1,0 +1,53 @@
+### ========================================
+### GRUPO - ATUALIZAR
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Atualizar grupo existente (sucesso)
+# @name atualizarGrupoSucesso
+PUT {{baseUrl}}/grupos/1 HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_nome_grupo": "Administradores Atualizados",
+    "txt_descricao_grupo": "Grupo de administradores com descrição atualizada",
+    "flg_ativo_grupo": true
+}
+
+### 2. Atualizar apenas nome
+# @name atualizarApenasNome
+PUT {{baseUrl}}/grupos/2 HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_nome_grupo": "Funcionários Modificados"
+}
+
+### 3. Desativar grupo
+# @name desativarGrupo
+PUT {{baseUrl}}/grupos/3 HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "flg_ativo_grupo": false
+}
+
+### 4. TESTE FALHA - Grupo inexistente
+# @name atualizarGrupoInexistente
+PUT {{baseUrl}}/grupos/9999 HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_nome_grupo": "Grupo Inexistente"
+}
+
+### 5. TESTE FALHA - Nome muito longo
+# @name atualizarNomeLongo
+PUT {{baseUrl}}/grupos/1 HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "txt_nome_grupo": "Este é um nome de grupo extremamente longo que ultrapassa o limite máximo de 120 caracteres permitidos para o campo txt_nome_grupo conforme definido nas regras de validação do sistema"
+}

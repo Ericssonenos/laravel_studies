@@ -1,0 +1,20 @@
+### ========================================
+### PAPEL - LISTAR
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Listar todos os papéis (sucesso)
+# @name listarPapeisSucesso
+GET {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+### 2. TESTE FALHA - Parâmetro inválido
+# @name listarPapeisParametroInvalido
+GET {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": "texto_invalido"
+}
