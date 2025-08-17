@@ -44,29 +44,35 @@ class GrupoController extends Controller
     }
 
     /** Cria grupo */
-    public function store(Request $request)
+    public function Criar(Request $request)
     {
-        $regras = [
-            'locatario_id' => ['required', 'integer'],
-            'nome' => ['required', 'string', 'max:120'],
-            'descricao' => ['quandoPresente ', 'string', 'max:400'],
-            'ativo' => ['quandoPresente ', 'boolean'],
-        ];
+        // Validação dos dados de entrada
+        $parametrosValidados = Operations::validarRegras(
+            filtros: $request->all(),
+            regrasValidacao: [
+                'locatario_id' => ['required', 'integer'],
+                'txt_nome_grupo' => ['required', 'string', 'max:120'],
+                'txt_descricao_grupo' => ['quandoPresente ', 'string', 'max:400'],
+                'flg_ativo_grupo' => ['quandoPresente ', 'boolean'],
+            ]
+        );
 
-        $validacao = Operations::validarRegras($request->all(), $regras);
-        if ($validacao['http_status'] !== 200) {
-            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        // Verifica se houve erro na validação
+        if ($parametrosValidados['http_status'] !== 200) {
+            return response()->json($parametrosValidados, (int)$parametrosValidados['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
-        $pdo = DB::connection()->getPdo();
-        $m = new Grupo();
+        // Conexão com o banco de dados
+        $pdoConnection = DB::connection()->getPdo();
 
-        $novo = $m->inserir(
-            $pdo,
-            locatario_id: (int)$request->input('locatario_id', 1),
-            nome: (string)$request->input('nome'),
-            descricao: $request->input('descricao'),
-            ativo: $request->boolean('ativo', true)
+        // Instância do Grupo
+        $grupoModel = new Grupo();
+
+        // chamar o model para criar o grupo
+        // passando os parametros já validados
+        $novo = $grupoModel->Criar(
+            pdo: $pdoConnection,
+            params:$parametrosValidados
         );
 
         if (is_array($novo) && isset($novo['http_status'])) {

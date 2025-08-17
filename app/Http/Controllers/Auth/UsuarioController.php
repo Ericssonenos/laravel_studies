@@ -56,35 +56,35 @@ class UsuarioController extends Controller
          * conforme permissões
          */
 
-        // Regras de validação
-        $regrasValidacao = [
-            'locatario_id' => ['required', 'integer'],
-            'txt_email_usuario'        => ['required', 'email', 'max:160'],
-            'txt_senha_usuario'        => ['required', 'password', 'min:8', 'max:14'],
-        ];
 
         // Validação dos dados de entrada
         $resultadoDaValidacao = Operations::validarRegras(
-             $request->all()
-            , $regrasValidacao);
+                filtros:  $request->all()
+            ,   regrasValidacao: [
+                'locatario_id' => ['required', 'integer'],
+                'txt_email_usuario'        => ['required', 'email', 'max:160'],
+                'txt_senha_usuario'        => ['required', 'password', 'min:8', 'max:14'],
+            ]
+        );
 
+        // Verifica se houve erro na validação
         if ($resultadoDaValidacao['http_status'] !== 200) {
             return response()->json($resultadoDaValidacao, $resultadoDaValidacao['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
+        // Conexão com o banco de dados
         $pdoConnection = DB::connection()->getPdo();
+
+        // Instância do Usuario
         $usuarioModel = new Usuario();
 
         // gerar hash e chamar model (ainda tratar PDOException depois)
         $senhaHash = password_hash($request->input('senha'), PASSWORD_DEFAULT);
 
-        $resultadoInsercao = $usuarioModel->inserir(
-            $pdoConnection,
-            locatario_id: $request->input('locatario_id', 1),
-            nome: $request->input('nome'),
-            email: $request->input('email'),
-            senha_hash: $senhaHash,
-            ativo: $request->boolean('ativo', true)
+        // Chamar o model para criar o usuário
+        $resultadoInsercao = $usuarioModel->Criar(
+            pdo: $pdoConnection,
+
         );
 
         // repassa diretamente se for objeto padronizado (erro ou sucesso já padronizado pelo model)

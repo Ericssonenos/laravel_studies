@@ -358,6 +358,9 @@ class Operations
             }
         }
 
+        // filtrar apenas chaves que existem nas regras de validação
+        $contextoFiltrado = array_intersect_key($filtros, $regrasValidacao);
+
         if (!empty($errors)) {
             // pega a primeira mensagem amigável
             $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
@@ -367,7 +370,7 @@ class Operations
                 'sqlstate'    => null,
                 'message'     => $firstMessage,
                 'detail'      => $errors,
-                'contexto'    => $filtros,
+                'contexto'    => $contextoFiltrado,
             ];
         }
 
@@ -378,7 +381,7 @@ class Operations
             'sqlstate'    => null,
             'message'     => 'Validação bem-sucedida.',
             'detail'      => [],
-            'contexto'    => $filtros,
+            'contexto'    => $contextoFiltrado,
         ];
     }
 
@@ -406,8 +409,8 @@ class Operations
     public static function Parametrizar(array $filtros): array
     {
         $where = [];
-        $params = [];
-        $opts = [];
+        $execParams = [];
+        $optsParams = [];
 
         foreach ($filtros as $key => $val) {
             if ($val === null || $val === '') continue;
@@ -422,7 +425,7 @@ class Operations
                     $ph = ':' . $safe . '_' . $i;
                     $placeholders[] = $ph;
                     // se coluna sugere id, cast para int
-                    $params[$ph] = (str_ends_with($column, 'id_') === true || str_ends_with($column, '_id') === true) ? (int)$v : $v;
+                    $execParams[$ph] = (str_ends_with($column, 'id_') === true || str_ends_with($column, '_id') === true) ? (int)$v : $v;
                 }
 
                 if (count($placeholders) > 0) {
@@ -434,32 +437,32 @@ class Operations
             // colunas de texto -> busca parcial
             if (str_starts_with($key, 'txt_') === true) {
                 $where[] = " AND $key ILIKE :$key";
-                $params[':' . $key] = '%' . $val . '%';
+                $execParams[':' . $key] = '%' . $val . '%';
                 continue;
             }
 
             // flags booleanas
             if (str_starts_with($key, 'flg_') === true) {
                 $where[] = " AND $key = :$key";
-                $params[':' . $key] = (bool)$val;
+                $execParams[':' . $key] = (bool)$val;
                 continue;
             }
-            // se o parametro for order_by, limit ou offset atribuir a opts
+            // se o parametro for order_by, limit ou offset atribuir a optsParams
             if (in_array($key, ['order_by', 'limit', 'offset'])) {
-                // manter em opts para uso na query e também registrar em params caso exista
+                // manter em optsParams para uso na query e também registrar em execParams caso exista
                 if (in_array($key, ['limit', 'offset'], true)) {
-                    $opts[$key] = " $key  :$key";
-                    $params[':' . $key] = (int)$val;
+                    $optsParams[$key] = " $key  :$key";
+                    $execParams[':' . $key] = (int)$val;
                 } else {
                     // verificar se val não é um sql injection
                     // se contem select, delete ou drop ou comandos perigosos
                     if (preg_match('/\b(SELECT|DELETE|DROP|INSERT|UPDATE|TRUNCATE|MERGE|EXEC)\b/i', $val)) {
-                        $opts[$key] = null;
+                        $optsParams[$key] = null;
                         //TODO: Log warning about potential SQL injection
                     } else {
                         // A chave vem como order_by , mas quando utilizada na query, deve ser substituída por "order by"
                         $sql_key = str_replace('_', ' ', $key);
-                        $opts[$key] = " $sql_key  $val";
+                        $optsParams[$key] = " $sql_key  $val";
                     }
                 }
                 continue;
@@ -467,9 +470,9 @@ class Operations
 
             // fallback: igualdade direta
             $where[] = " AND $key = :$key";
-            $params[':' . $key] = $val;
+            $execParams[':' . $key] = $val;
         }
 
-        return ['where_parts' => $where, 'params' => $params, 'opts' => $opts];
+        return ['whereParams' => $where, 'execParams' => $execParams, 'optsParams' => $optsParams];
     }
 }

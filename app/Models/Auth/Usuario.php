@@ -8,44 +8,50 @@ use PDO;
 
 class Usuario
 {
-    /* ==============================
-       CRUD PRINCIPAL DE USUÁRIO
-       ============================== */
+    private PDO $pdo;
 
-    function Lista(PDO $pdo, array $filtros = []): array
+    public function __construct(PDO $pdo)
     {
-        $Parametrizacao = Operations::Parametrizar($filtros);
-        $where = $Parametrizacao['where_parts'];
-        $params = $Parametrizacao['params'];
-        $opts = $Parametrizacao['opts'];
+        $this->pdo = $pdo;
+    }
 
+    public function Lista(array $params = []): array
+    {
+        // Parametriza os filtros de busca, ordenação e paginação
+        $parametrizacao = Operations::Parametrizar($params);
+        $whereParams = $parametrizacao['whereParams'];
+        $optsParams  = $parametrizacao['optsParams'];
+        $execParams  = $parametrizacao['execParams'];
 
+        // Monta a consulta SQL
+        $consultaSql = "SELECT *
+                    FROM auth.usuarios
+                    WHERE dat_cancelamento_em IS NULL"
+            . implode(' ', $whereParams)
+            . ($optsParams['order_by'] ?? ' ')
+            . ($optsParams['limit']    ?? ' ')
+            . ($optsParams['offset']   ?? ' ');
 
-        $sql = "SELECT *
-                FROM auth.usuarios
-                WHERE dat_cancelamento_em IS NULL"
-                . implode(' ', $where)
-                .  ($opts['order_by'] ?? ' ')
-                .  ($opts['limit'] ?? ' ')
-                .  ($opts['offset'] ?? ' ');
-
-        $stmt = $pdo->prepare($sql);
+        $declaracao = $this->pdo->prepare($consultaSql);
 
         try {
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            // Devolve msg de erro, açao, e parametros rescebidos
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::procurar'], $filtros));
+            $declaracao->execute($execParams);
+            return $declaracao->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\PDOException $excecaoPDO) {
+            // Devolve mensagem de erro, ação e parâmetros recebidos
+            return Operations::mapearExcecaoPDO(
+                $excecaoPDO,
+                array_merge(['funcao' => __METHOD__], $params)
+            );
         }
     }
 
-    function procurar_por_id(PDO $pdo, int $id_usuario): ?array
+    public function procurar_por_id(int $id_usuario): ?array
     {
         $contexto = ['id_usuario' => $id_usuario];
         $sql = "SELECT * FROM auth.usuarios
                 WHERE id_usuario = :id AND dat_cancelamento_em IS NULL";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             $st->execute([':id' => $id_usuario]);
             $row = $st->fetch(PDO::FETCH_ASSOC);
@@ -55,33 +61,34 @@ class Usuario
         }
     }
 
-    function Criar(PDO $pdo, int $locatario_id, string $txt_nome_usuario, string $txt_email_usuario, string $txt_senha_usuario, bool $flg_ativo_usuario = true): array
+    function Criar($params): array
     {
-        $contexto = ['locatario_id' => $locatario_id, 'email' => $txt_email_usuario];
+
         $sql = "INSERT INTO auth.usuarios (
                     locatario_id, txt_nome_usuario, txt_email_usuario, txt_senha_usuario, flg_ativo_usuario
                 ) VALUES (
                     :locatario_id, :txt_nome_usuario, :txt_email_usuario, :txt_senha_usuario, :flg_ativo_usuario
                 ) RETURNING *";
-        $st = $pdo->prepare($sql);
-        $st->bindValue(':locatario_id',   $locatario_id, PDO::PARAM_INT);
-        $st->bindValue(':txt_nome_usuario',  $txt_nome_usuario);
-        $st->bindValue(':txt_email_usuario', $txt_email_usuario);
-        $st->bindValue(':txt_senha_usuario', $txt_senha_usuario);
-        $st->bindValue(':flg_ativo_usuario', $flg_ativo_usuario, PDO::PARAM_BOOL);
+
+        $st = $this->pdo->prepare($sql);
+        $st->bindValue(':locatario_id',      $params["locatario_id"], PDO::PARAM_INT);
+        $st->bindValue(':txt_nome_usuario',  $params["txt_nome_usuario"]);
+        $st->bindValue(':txt_email_usuario', $params["txt_email_usuario"]);
+        $st->bindValue(':txt_senha_usuario', $params["txt_senha_usuario"]);
+        $st->bindValue(':flg_ativo_usuario', $params["flg_ativo_usuario"], PDO::PARAM_BOOL);
 
         try {
             $st->execute();
             $dados = $st->fetch(PDO::FETCH_ASSOC);
             return $dados;
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::inserir'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::Criar'], $params));
         }
     }
 
-    function atualizar(PDO $pdo, int $id_usuario, array $data): array
+    function atualizar(int $id_usuario, array $data): array
     {
-    $contexto = ['id_usuario' => $id_usuario, 'data' => $data];
+        $contexto = ['id_usuario' => $id_usuario, 'data' => $data];
         unset($data['dat_criado_em'], $data['dat_atualizado_em'], $data['dat_cancelamento_em'], $data['id_usuario']);
         if (!$data) throw new InvalidArgumentException('Nada para atualizar.');
 
@@ -92,7 +99,7 @@ class Usuario
                 WHERE id_usuario = :id
                 RETURNING *";
 
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         foreach ($data as $col => $val) $st->bindValue(":$col", $val);
         $st->bindValue(':id', $id_usuario, PDO::PARAM_INT);
 
@@ -104,13 +111,13 @@ class Usuario
         }
     }
 
-    function remover_logicamente(PDO $pdo, int $id_usuario): bool
+    function remover_logicamente(int $id_usuario): bool
     {
-    $contexto = ['id_usuario' => $id_usuario];
+        $contexto = ['id_usuario' => $id_usuario];
         $sql = "UPDATE auth.usuarios
                 SET dat_cancelamento_em = now()
                 WHERE id_usuario = :id AND dat_cancelamento_em IS NULL";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             $st->execute([':id' => $id_usuario]);
             return $st->rowCount() > 0;
@@ -125,13 +132,13 @@ class Usuario
        ============================== */
 
     /** Atribui grupo a usuário */
-    function atribuir_grupo(PDO $pdo, int $id_usuario, int $id_grupo): bool
+    function atribuir_grupo(int $id_usuario, int $id_grupo): bool
     {
-    $contexto = ['id_usuario' => $id_usuario, 'grupo_id' => $id_grupo];
+        $contexto = ['id_usuario' => $id_usuario, 'grupo_id' => $id_grupo];
         $sql = "INSERT INTO auth.usuarios_grupos (usuario_id, grupo_id)
                 VALUES (:usuario, :grupo)
                 ON CONFLICT (usuario_id, grupo_id) DO NOTHING";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             return $st->execute([':usuario' => $id_usuario, ':grupo' => $id_grupo]);
         } catch (\PDOException $e) {
@@ -141,12 +148,12 @@ class Usuario
     }
 
     /** Remove grupo de usuário */
-    function remover_grupo(PDO $pdo, int $id_usuario, int $id_grupo): bool
+    function remover_grupo(int $id_usuario, int $id_grupo): bool
     {
-    $contexto = ['id_usuario' => $id_usuario, 'grupo_id' => $id_grupo];
+        $contexto = ['id_usuario' => $id_usuario, 'grupo_id' => $id_grupo];
         $sql = "DELETE FROM auth.usuarios_grupos
                 WHERE usuario_id = :usuario AND grupo_id = :grupo";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             $st->execute([':usuario' => $id_usuario, ':grupo' => $id_grupo]);
             return $st->rowCount() > 0;
@@ -157,15 +164,15 @@ class Usuario
     }
 
     /** Lista grupos do usuário */
-    function listar_grupos(PDO $pdo, int $id_usuario): array
+    function listar_grupos(int $id_usuario): array
     {
-    $contexto = ['id_usuario' => $id_usuario];
+        $contexto = ['id_usuario' => $id_usuario];
         $sql = "SELECT g.*
                 FROM auth.grupos g
                 INNER JOIN auth.usuarios_grupos ug ON ug.grupo_id = g.id_grupo
                 WHERE ug.usuario_id = :usuario
                   AND g.dat_cancelamento_em IS NULL";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             $st->execute([':usuario' => $id_usuario]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
@@ -175,13 +182,13 @@ class Usuario
     }
 
     /** Atribui papel a usuário */
-    function atribuir_papel(PDO $pdo, int $id_usuario, int $id_papel): bool
+    function atribuir_papel(int $id_usuario, int $id_papel): bool
     {
-    $contexto = ['id_usuario' => $id_usuario, 'papel_id' => $id_papel];
+        $contexto = ['id_usuario' => $id_usuario, 'papel_id' => $id_papel];
         $sql = "INSERT INTO auth.usuarios_papeis (usuario_id, papel_id)
                 VALUES (:usuario, :papel)
                 ON CONFLICT (usuario_id, papel_id) DO NOTHING";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             return $st->execute([':usuario' => $id_usuario, ':papel' => $id_papel]);
         } catch (\PDOException $e) {
@@ -191,12 +198,12 @@ class Usuario
     }
 
     /** Remove papel de usuário */
-    function remover_papel(PDO $pdo, int $id_usuario, int $id_papel): bool
+    function remover_papel(int $id_usuario, int $id_papel): bool
     {
-    $contexto = ['id_usuario' => $id_usuario, 'papel_id' => $id_papel];
+        $contexto = ['id_usuario' => $id_usuario, 'papel_id' => $id_papel];
         $sql = "DELETE FROM auth.usuarios_papeis
                 WHERE usuario_id = :usuario AND papel_id = :papel";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             $st->execute([':usuario' => $id_usuario, ':papel' => $id_papel]);
             return $st->rowCount() > 0;
@@ -207,15 +214,15 @@ class Usuario
     }
 
     /** Lista papéis do usuário */
-    function listar_papeis(PDO $pdo, int $id_usuario): array
+    function listar_papeis(int $id_usuario): array
     {
-    $contexto = ['id_usuario' => $id_usuario];
+        $contexto = ['id_usuario' => $id_usuario];
         $sql = "SELECT p.*
                 FROM auth.papeis p
                 INNER JOIN auth.usuarios_papeis up ON up.papel_id = p.id_papel
                 WHERE up.usuario_id = :usuario
                   AND p.dat_cancelamento_em IS NULL";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             $st->execute([':usuario' => $id_usuario]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
@@ -225,13 +232,13 @@ class Usuario
     }
 
     /** Atribui permissão a usuário */
-    function atribuir_permissao(PDO $pdo, int $id_usuario, int $id_permissao): bool
+    function atribuir_permissao(int $id_usuario, int $id_permissao): bool
     {
-    $contexto = ['id_usuario' => $id_usuario, 'permissao_id' => $id_permissao];
+        $contexto = ['id_usuario' => $id_usuario, 'permissao_id' => $id_permissao];
         $sql = "INSERT INTO auth.usuarios_permissoes (usuario_id, permissao_id)
                 VALUES (:usuario, :permissao)
                 ON CONFLICT (usuario_id, permissao_id) DO NOTHING";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             return $st->execute([':usuario' => $id_usuario, ':permissao' => $id_permissao]);
         } catch (\PDOException $e) {
@@ -241,12 +248,12 @@ class Usuario
     }
 
     /** Remove permissão de usuário */
-    function remover_permissao(PDO $pdo, int $id_usuario, int $id_permissao): bool
+    function remover_permissao(int $id_usuario, int $id_permissao): bool
     {
-    $contexto = ['id_usuario' => $id_usuario, 'permissao_id' => $id_permissao];
+        $contexto = ['id_usuario' => $id_usuario, 'permissao_id' => $id_permissao];
         $sql = "DELETE FROM auth.usuarios_permissoes
                 WHERE usuario_id = :usuario AND permissao_id = :permissao";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             $st->execute([':usuario' => $id_usuario, ':permissao' => $id_permissao]);
             return $st->rowCount() > 0;
@@ -257,15 +264,15 @@ class Usuario
     }
 
     /** Lista permissões do usuário */
-    function listar_permissoes(PDO $pdo, int $id_usuario): array
+    function listar_permissoes(int $id_usuario): array
     {
-    $contexto = ['id_usuario' => $id_usuario];
+        $contexto = ['id_usuario' => $id_usuario];
         $sql = "SELECT p.*
                 FROM auth.permissoes p
                 INNER JOIN auth.usuarios_permissoes up ON up.permissao_id = p.id_permissao
                 WHERE up.usuario_id = :usuario
                   AND p.dat_cancelamento_em IS NULL";
-        $st = $pdo->prepare($sql);
+        $st = $this->pdo->prepare($sql);
         try {
             $st->execute([':usuario' => $id_usuario]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
