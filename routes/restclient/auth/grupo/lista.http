@@ -17,7 +17,7 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "order_by": "txt_nome_grupo ASC",
+    "order_by": "txt_nome_grupo , dat_criado_em ASC",
     "limit": 10
 }
 

@@ -12,7 +12,7 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "txt_nome_grupo": "Desenvolvedores",
+    "txt_nome_grupo": "Desenvolvedores{{$randomInt 10 20}}",
     "txt_descricao_grupo": "Equipe de desenvolvimento de software",
     "flg_ativo_grupo": true
 }
@@ -24,7 +24,7 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "txt_nome_grupo": "Testadores QA"
+    "txt_nome_grupo": "Testadores QA{{$randomInt 10 20}}"
 }
 
 ### 3. TESTE FALHA - Sem campos obrigatórios
@@ -54,6 +54,6 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": "texto_invalido",
-    "txt_nome_grupo": "Grupo Teste",
+    "txt_nome_grupo": 123,
     "flg_ativo_grupo": "sim"
 }

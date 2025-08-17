@@ -6,4 +6,4 @@
 -- );
 --DELETE FROM auth.usuarios;
 
-SELECT * from auth.usuarios;
+SELECT * from auth.usuarios ORDER BY dat_criado_em DESC;

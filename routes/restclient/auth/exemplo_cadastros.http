@@ -8,7 +8,7 @@
 ### CENÁRIO 1: PADARIA DO JOÃO (Empresa Pequena)
 ### ========================================
 
-#TODO FALTA CRIAR O CRUD DO LOCATÁRIO
+#[ ] FALTA CRIAR O CRUD DO LOCATÁRIO
 ### 1.1. Cadastrar Locatário: Padaria do João
 # @name criarLocatarioPadaria
 POST {{baseUrl}}/locatarios HTTP/1.1

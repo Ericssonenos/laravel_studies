@@ -530,7 +530,7 @@ class Operations
                     // se contem select, delete ou drop ou comandos perigosos
                     if (preg_match('/\b(SELECT|DELETE|DROP|INSERT|UPDATE|TRUNCATE|MERGE|EXEC)\b/i', $val)) {
                         $optsParams[$key] = null;
-                        //TODO: Log warning about potential SQL injection
+                        //[ ]: armazenar log de potencial SQL injection
                     } else {
                         // A chave vem como order_by , mas quando utilizada na query, deve ser substituída por "order by"
                         $sql_key = str_replace('_', ' ', $key);
