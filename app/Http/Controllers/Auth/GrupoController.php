@@ -11,31 +11,36 @@ use App\Services\Operations;
 class GrupoController extends Controller
 {
     /** Lista grupos com filtros/opções */
-    public function index(Request $request)
+    public function Lista(Request $request)
     {
+        //Conexão
         $pdo = DB::connection()->getPdo();
-        $m = new Grupo();
+        //Modulo Grupo
+        $grupoModel = new Grupo();
 
-    $grupos = $m->procurar(
-            $pdo,
-            [
-                'locatario_id' => (int)$request->input('locatario_id', 1),
-                'nome'         => $request->input('nome'),
-                'ativo'        => $request->has('ativo') ? $request->boolean('ativo') : null,
-                'ids'          => $request->input('ids') ? array_map('intval', (array)$request->input('ids')) : null,
-            ],
-            [
-                'order_by' => $request->input('order_by', 'txt_nome_grupo ASC'),
-                'limit'    => (int)$request->input('limit', 50),
-                'offset'   => (int)$request->input('offset', 0),
-            ]
+        // Obter lista de grupos, passando conexão e parâmetros
+        $resultadosGrupos = $grupoModel->Lista(
+            pdo: $pdo,
+            filtros: $request->all()
         );
 
-        if (is_array($grupos) && isset($grupos['http_status'])) {
-            return response()->json($grupos, (int)$grupos['http_status'], [], JSON_UNESCAPED_UNICODE);
+        //Verifica se houve erro na busca
+        if (is_array($resultadosGrupos) && isset($resultadosGrupos['http_status'])) {
+            return response()->json($resultadosGrupos, (int)$resultadosGrupos['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
-        return response()->json(Operations::padronizarRespostaSucesso($grupos, 200, 'Lista de grupos retornada com sucesso.', ['locatario_id' => (int)$request->input('locatario_id', 1)]), 200, [], JSON_UNESCAPED_UNICODE);
+        // Se retorno com sucesso, padronizar retorno
+        $respostaSucesso = Operations::padronizarRespostaSucesso(
+            $resultadosGrupos,
+            200,
+            'Lista de grupos retornada com sucesso.',
+            ['locatario_id' => (int)$request->input('locatario_id', 1)]
+        );
+
+        // Retornar com a Lista
+        return response()->json(
+            $respostaSucesso, 200, [], JSON_UNESCAPED_UNICODE
+        );
     }
 
     /** Cria grupo */
@@ -44,8 +49,8 @@ class GrupoController extends Controller
         $regras = [
             'locatario_id' => ['required', 'integer'],
             'nome' => ['required', 'string', 'max:120'],
-            'descricao' => ['sometimes', 'string', 'max:400'],
-            'ativo' => ['sometimes', 'boolean'],
+            'descricao' => ['quandoPresente ', 'string', 'max:400'],
+            'ativo' => ['quandoPresente ', 'boolean'],
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
@@ -59,9 +64,9 @@ class GrupoController extends Controller
         $novo = $m->inserir(
             $pdo,
             locatario_id: (int)$request->input('locatario_id', 1),
-            nome:        (string)$request->input('nome'),
-            descricao:   $request->input('descricao'),
-            ativo:       $request->boolean('ativo', true)
+            nome: (string)$request->input('nome'),
+            descricao: $request->input('descricao'),
+            ativo: $request->boolean('ativo', true)
         );
 
         if (is_array($novo) && isset($novo['http_status'])) {
@@ -75,9 +80,9 @@ class GrupoController extends Controller
     public function update(Request $request, int $id)
     {
         $regras = [
-            'txt_nome_grupo' => ['sometimes', 'string', 'max:120'],
-            'txt_descricao_grupo' => ['sometimes', 'string', 'max:400'],
-            'flg_ativo_grupo' => ['sometimes', 'boolean'],
+            'txt_nome_grupo' => ['quandoPresente ', 'string', 'max:120'],
+            'txt_descricao_grupo' => ['quandoPresente ', 'string', 'max:400'],
+            'flg_ativo_grupo' => ['quandoPresente ', 'boolean'],
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
@@ -88,7 +93,7 @@ class GrupoController extends Controller
         $pdo = DB::connection()->getPdo();
         $m = new Grupo();
 
-        $dados = $request->only(['txt_nome_grupo','txt_descricao_grupo','flg_ativo_grupo']);
+        $dados = $request->only(['txt_nome_grupo', 'txt_descricao_grupo', 'flg_ativo_grupo']);
         $atual = $m->atualizar($pdo, $id, $dados);
 
         if (is_array($atual) && isset($atual['http_status'])) {

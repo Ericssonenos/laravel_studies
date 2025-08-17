@@ -12,7 +12,7 @@ class Grupo
        CRUD PRINCIPAL DE GRUPO
        ============================== */
 
-    function procurar(PDO $pdo, array $filtros = [], array $opts = []): array
+    function Lista(PDO $pdo, array $filtros = []): array
     {
         $where = ['dat_cancelamento_em IS NULL'];
         $params = [];
@@ -91,26 +91,26 @@ class Grupo
         }
     }
 
-    function inserir(PDO $pdo, int $locatario_id, string $nome, ?string $descricao = null, bool $ativo = true): array
+    function inserir(PDO $pdo, int $locatario_id, string $txt_nome_grupo, ?string $txt_descricao_grupo = null, bool $flg_ativo_grupo = true): array
     {
         try {
             $sql = "INSERT INTO auth.grupos (
                     locatario_id, txt_nome_grupo, txt_descricao_grupo, flg_ativo_grupo
                 ) VALUES (
-                    :loc, :nome, :desc, :ativo
+                    :locatario_id, :txt_nome_grupo, :txt_descricao_grupo, :flg_ativo_grupo
                 ) RETURNING *";
             $st = $pdo->prepare($sql);
-            $st->bindValue(':loc',  $locatario_id, PDO::PARAM_INT);
-            $st->bindValue(':nome', $nome);
-            $st->bindValue(':desc', $descricao);
-            $st->bindValue(':ativo', $ativo, PDO::PARAM_BOOL);
+            $st->bindValue(':locatario_id',  $locatario_id, PDO::PARAM_INT);
+            $st->bindValue(':txt_nome_grupo', $txt_nome_grupo);
+            $st->bindValue(':txt_descricao_grupo', $txt_descricao_grupo);
+            $st->bindValue(':flg_ativo_grupo', $flg_ativo_grupo, PDO::PARAM_BOOL);
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             return Operations::mapearExcecaoPDO($e, [
                 'funcao' => 'Grupo::inserir',
                 'locatario_id' => $locatario_id,
-                'txt_nome_grupo' => $nome,
+                'txt_nome_grupo' => $txt_nome_grupo,
             ]);
         }
     }

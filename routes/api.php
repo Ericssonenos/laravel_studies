@@ -21,7 +21,7 @@ Route::prefix('auth')->group(function () {
     Route::get('usuarios/{id}/permissoes', [UsuarioController::class, 'ListarPermissoes']);
 
     // Grupos
-    Route::get('grupos', [GrupoController::class, 'index']);
+    Route::get('grupos', [GrupoController::class, 'Lista']);
     Route::post('grupos', [GrupoController::class, 'store']);
     Route::put('grupos/{id}', [GrupoController::class, 'update']);
     Route::delete('grupos/{id}', [GrupoController::class, 'destroy']);

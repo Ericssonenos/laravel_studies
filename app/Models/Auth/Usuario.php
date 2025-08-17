@@ -12,7 +12,7 @@ class Usuario
        CRUD PRINCIPAL DE USUÁRIO
        ============================== */
 
-    function Procurar(PDO $pdo, array $filtros = []): array
+    function Lista(PDO $pdo, array $filtros = []): array
     {
         $Parametrizacao = Operations::Parametrizar($filtros);
         $where = $Parametrizacao['where_parts'];
@@ -35,6 +35,7 @@ class Usuario
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
+            // Devolve msg de erro, açao, e parametros rescebidos
             return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::procurar'], $filtros));
         }
     }
@@ -54,20 +55,20 @@ class Usuario
         }
     }
 
-    function inserir(PDO $pdo, int $locatario_id, string $nome, string $email, string $senha_hash, bool $ativo = true): array
+    function Criar(PDO $pdo, int $locatario_id, string $txt_nome_usuario, string $txt_email_usuario, string $txt_senha_usuario, bool $flg_ativo_usuario = true): array
     {
-        $contexto = ['locatario_id' => $locatario_id, 'email' => $email];
+        $contexto = ['locatario_id' => $locatario_id, 'email' => $txt_email_usuario];
         $sql = "INSERT INTO auth.usuarios (
                     locatario_id, txt_nome_usuario, txt_email_usuario, txt_senha_usuario, flg_ativo_usuario
                 ) VALUES (
-                    :loc, :nome, :email, :senha, :ativo
+                    :locatario_id, :txt_nome_usuario, :txt_email_usuario, :txt_senha_usuario, :flg_ativo_usuario
                 ) RETURNING *";
         $st = $pdo->prepare($sql);
-        $st->bindValue(':loc',   $locatario_id, PDO::PARAM_INT);
-        $st->bindValue(':nome',  $nome);
-        $st->bindValue(':email', $email);
-        $st->bindValue(':senha', $senha_hash);
-        $st->bindValue(':ativo', $ativo, PDO::PARAM_BOOL);
+        $st->bindValue(':locatario_id',   $locatario_id, PDO::PARAM_INT);
+        $st->bindValue(':txt_nome_usuario',  $txt_nome_usuario);
+        $st->bindValue(':txt_email_usuario', $txt_email_usuario);
+        $st->bindValue(':txt_senha_usuario', $txt_senha_usuario);
+        $st->bindValue(':flg_ativo_usuario', $flg_ativo_usuario, PDO::PARAM_BOOL);
 
         try {
             $st->execute();

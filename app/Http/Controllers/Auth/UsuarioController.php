@@ -19,19 +19,19 @@ class UsuarioController extends Controller
         $usuarioModel = new Usuario();
 
         // Obter lista de Usuários, passando conexão e parametros
-        $ResultadoUsuarios = $usuarioModel->Procurar(
+        $resultadoUsuarios = $usuarioModel->Lista(
             pdo: $pdo,
             filtros: $request->all()
         );
 
         //Verifica se houve erro na busca
-        if (is_array($ResultadoUsuarios) && isset($ResultadoUsuarios['http_status'])) {
-            return response()->json($ResultadoUsuarios, (int)$ResultadoUsuarios['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoUsuarios) && isset($resultadoUsuarios['http_status'])) {
+            return response()->json($resultadoUsuarios, (int)$resultadoUsuarios['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         // Se retorno com sucesso, padronizar retorno
         $respostaSucesso = Operations::padronizarRespostaSucesso(
-            $ResultadoUsuarios,
+            $resultadoUsuarios,
             200,
             'Registros retornados com sucesso.',
             $request->all()
@@ -47,16 +47,26 @@ class UsuarioController extends Controller
     /** Cria novo usuário */
     public function Criar(Request $request)
     {
-        $regras = [
+
+        /**A criação do usuário
+         * será basica com
+         * e-mail e senha
+         * as demais informações serão adicionadas
+         * nas configurações do usuário
+         * conforme permissões
+         */
+
+        // Regras de validação
+        $regrasValidacao = [
             'locatario_id' => ['required', 'integer'],
-            'nome'         => ['required', 'string', 'max:120'],
-            'email'        => ['required', 'email', 'max:160'],
-            'senha'        => ['required', 'password', 'min:8', 'max:14'],
-            'ativo'        => ['sometimes', 'boolean'],
+            'txt_email_usuario'        => ['required', 'email', 'max:160'],
+            'txt_senha_usuario'        => ['required', 'password', 'min:8', 'max:14'],
         ];
 
-        // variável mais descritiva para o resultado da validação
-        $resultadoDaValidacao = Operations::validarRegras($request->all(), $regras);
+        // Validação dos dados de entrada
+        $resultadoDaValidacao = Operations::validarRegras(
+             $request->all()
+            , $regrasValidacao);
 
         if ($resultadoDaValidacao['http_status'] !== 200) {
             return response()->json($resultadoDaValidacao, $resultadoDaValidacao['http_status'], [], JSON_UNESCAPED_UNICODE);
