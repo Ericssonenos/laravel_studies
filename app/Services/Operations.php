@@ -175,122 +175,186 @@ class Operations
         ];
     }
 
-    public static function validarRegras(array $data, array $rules, array $messages = [], array $contexto = []): array
+    public static function validarRegras(array $filtros, array $regrasValidacao, array $msg = []): array
     {
         $errors = [];
 
-        foreach ($rules as $field => $ruleSet) {
-            $ruleList = is_array($ruleSet) ? $ruleSet : explode('|', $ruleSet);
-            $hasSometimes = in_array('sometimes', $ruleList, true);
-            $present = array_key_exists($field, $data);
-            $value = $present ? $data[$field] : null;
+        // percorrer as chaves com os conjuntos de regras
+        foreach ($regrasValidacao as $chave => $conjuntoRegras) {
 
-            // se é "sometimes" e não veio, pula validação
-            if ($hasSometimes && !$present) {
+            //Transformar as regras de cada chave em uma lista
+            $listaRegras = is_array($conjuntoRegras) ? $conjuntoRegras : explode('|', $conjuntoRegras);
+
+            // Verificar se há regra opcional
+            $possuiRegraOpcional   = in_array('quandoPresente ', $listaRegras, true);
+
+            // Verificar qual o tipo da chave verificando se contem na listaRegras string, integer ou date
+            $tipoChave = null;
+            if (in_array('string', $listaRegras, true)) {
+                $tipoChave = 'string';
+            } elseif (in_array('integer', $listaRegras, true)) {
+                $tipoChave = 'integer';
+            } elseif (in_array('date', $listaRegras, true)) {
+                $tipoChave = 'date';
+            }
+
+            // Verificar se a chave de validação está presente nos filtros
+            $chavePresente = array_key_exists($chave, $filtros);
+            $valor = $chavePresente ? $filtros[$chave] : null;
+
+            // se é "quandoPresente " e não veio, pula validação
+            if ($possuiRegraOpcional && !$chavePresente) {
                 continue;
             }
 
             // aplicar regras em ordem
-            foreach ($ruleList as $rule) {
-                if ($rule === 'sometimes') continue;
+            foreach ($listaRegras as $regra) {
 
-                // regra e possíveis parâmetros (ex: min:8)
-                [$rName, $rParam] = array_pad(explode(':', $rule, 2), 2, null);
+                // Ignorar regra "quandoPresente"
+                if ($regra === 'quandoPresente') continue;
+
+                /**regra e possíveis parâmetros (ex: min:8)
+                 * Garante que o array resultante sempre tenha 2 posições.
+                 * Se não tiver, ele preenche com null.
+                 * Exemplo:
+                 * ["min", "5"] → continua ["min", "5"]
+                 * ["required"] → vira ["required", null]
+                 */
+
+                [$chaveRegra, $valorRegra] = array_pad(explode(':', $regra, 2), 2, null);
+
 
                 // required
-                if ($rName === 'required') {
-                    if (!$present || $value === null || $value === '') {
-                        $errors[$field][] = $messages["{$field}.required"] ?? "O campo {$field} é obrigatório.";
-                        break; // não validar outras regras se faltar o required
+                if ($chaveRegra === 'required') {
+                    if (!$chavePresente || $valor === null || $valor === '') {
+                        $errors[$chave][] = $msg["{$chave}.required"] ?? "O campo {$chave} é obrigatório.";
+                        break;
                     }
+                    // não validar outras regras se faltar o required
                     continue;
                 }
 
                 // se não é required e não está presente, ignora outras validações
-                if (!$present) {
+                if (!$chavePresente) {
                     break;
                 }
 
                 // integer
-                if ($rName === 'integer') {
-                    if (filter_var($value, FILTER_VALIDATE_INT) === false) {
-                        $errors[$field][] = $messages["{$field}.integer"] ?? "O campo {$field} deve ser um número inteiro.";
+                if ($chaveRegra === 'integer') {
+                    if (filter_var($valor, FILTER_VALIDATE_INT) === false) {
+                        $errors[$chave][] = $msg["{$chave}.integer"] ?? "O campo {$chave} deve ser um número inteiro.";
                     }
+
                     continue;
                 }
 
                 // string
-                if ($rName === 'string') {
-                    if (!is_string($value)) {
+                if ($chaveRegra === 'string') {
+                    if (!is_string($valor)) {
                         // permitir castable scalars
-                        if (!is_scalar($value)) {
-                            $errors[$field][] = $messages["{$field}.string"] ?? "O campo {$field} deve ser texto.";
+                        if (!is_scalar($valor)) {
+                            $errors[$chave][] = $msg["{$chave}.string"] ?? "O campo {$chave} deve ser texto.";
                         }
                     }
                     continue;
                 }
 
                 // email
-                if ($rName === 'email') {
-                    if (!filter_var((string)$value, FILTER_VALIDATE_EMAIL)) {
-                        $errors[$field][] = $messages["{$field}.email"] ?? "Informe um e‑mail válido para {$field}.";
+                if ($chaveRegra === 'email') {
+                    if (!filter_var((string)$valor, FILTER_VALIDATE_EMAIL)) {
+                        $errors[$chave][] = $msg["{$chave}.email"] ?? "Informe um e‑mail válido para {$chave}.";
                     }
                     continue;
                 }
 
                 // password: requer pelo menos uma letra, um número e uma letra maiúscula
-                if ($rName === 'password') {
-                    $valStr = (string)$value;
+                if ($chaveRegra === 'password') {
+                    $valStr = (string)$valor;
                     $hasLetter = preg_match('/[a-z]/', $valStr);
                     $hasNumber = preg_match('/\d/', $valStr);
                     $hasUpper  = preg_match('/[A-Z]/', $valStr);
 
                     if (!$hasLetter || !$hasNumber || !$hasUpper) {
-                        $errors[$field][] = $messages["{$field}.password"] ?? "O campo {$field} deve conter pelo menos uma letra minuscula, um número e uma letra maiúscula.";
+                        $errors[$chave][] = $msg["{$chave}.password"] ?? "O campo {$chave} deve conter pelo menos uma letra minuscula, um número e uma letra maiúscula.";
                     }
                     continue;
                 }
 
                 // boolean
-                if ($rName === 'boolean') {
-                    $validBool = is_bool($value) || in_array($value, [0,1,'0','1','true','false'], true);
+                if ($chaveRegra === 'boolean') {
+                    $validBool = is_bool($valor) || in_array($valor, [0, 1, '0', '1', 'true', 'false'], true);
                     if (!$validBool) {
-                        $errors[$field][] = $messages["{$field}.boolean"] ?? "O campo {$field} deve ser verdadeiro ou falso.";
+                        $errors[$chave][] = $msg["{$chave}.boolean"] ?? "O campo {$chave} deve ser verdadeiro ou falso.";
                     }
                     continue;
                 }
 
                 // min
-                if ($rName === 'min' && $rParam !== null) {
-                    $min = (int)$rParam;
-                    if (is_numeric($value)) {
-                        if ($value < $min) {
-                            $errors[$field][] = $messages["{$field}.min"] ?? "O valor de {$field} deve ser no mínimo {$min}.";
+                if ($chaveRegra === 'min' && $valorRegra !== null) {
+                    $min = (int)$valorRegra;
+                    // com base no tipoChave verificar se é o minimo
+                    if ($tipoChave === 'integer' && is_numeric($valor)) {
+                        if ($valor < $min) {
+                            $errors[$chave][] = $msg["{$chave}.min"] ?? "O valor de {$chave} deve ser no mínimo {$min}.";
                         }
-                    } else {
-                        if (mb_strlen((string)$value) < $min) {
-                            $errors[$field][] = $messages["{$field}.min"] ?? "O campo {$field} deve ter pelo menos {$min} caracteres.";
+                    } elseif ($tipoChave === 'string') {
+                        if (mb_strlen((string)$valor) < $min) {
+                            $errors[$chave][] = $msg["{$chave}.min"] ?? "O campo {$chave} deve ter pelo menos {$min} caracteres.";
+                        }
+                    } elseif ($tipoChave === 'date') {
+                        // $valorRegra pode ser um inteiro (dias) ou uma datetime/ISO string.
+                        try {
+                            if (is_numeric($valorRegra)) {
+                                $limiteDate = (new \DateTime())->modify("-{$valorRegra} days");
+                            } else {
+                                $limiteDate = new \DateTime($valorRegra);
+                            }
+
+                            $valorDate = new \DateTime($valor);
+
+                            if ($valorDate < $limiteDate) {
+                                $errors[$chave][] = $msg["{$chave}.min"] ?? "O campo {$chave} não pode ser anterior a " . $limiteDate->format('Y-m-d H:i:s') . ".";
+                            }
+                        } catch (\Exception $e) {
+                            // se não for possível interpretar como data, adicionar erro de formato
+                            $errors[$chave][] = $msg["{$chave}.date"] ?? "O campo {$chave} deve ser uma data/hora válida.";
                         }
                     }
                     continue;
                 }
 
                 // max
-                if ($rName === 'max' && $rParam !== null) {
-                    $max = (int)$rParam;
-                    if (is_numeric($value)) {
-                        if ($value > $max) {
-                            $errors[$field][] = $messages["{$field}.max"] ?? "O valor de {$field} não pode ser maior que {$max}.";
+                if ($chaveRegra === 'max' && $valorRegra !== null) {
+                    $max = (int)$valorRegra;
+
+                    if ($tipoChave === 'integer' && is_numeric($valor)) {
+                        if ($valor > $max) {
+                            $errors[$chave][] = $msg["{$chave}.max"] ?? "O valor de {$chave} não pode ser maior que {$max}.";
                         }
-                    } else {
-                        if (mb_strlen((string)$value) > $max) {
-                            $errors[$field][] = $messages["{$field}.max"] ?? "O campo {$field} não pode exceder {$max} caracteres.";
+                    } elseif ($tipoChave === 'string') {
+                        if (mb_strlen((string)$valor) > $max) {
+                            $errors[$chave][] = $msg["{$chave}.max"] ?? "O campo {$chave} não pode exceder {$max} caracteres.";
+                        }
+                    } elseif ($tipoChave === 'date') {
+                        try {
+                            if (is_numeric($valorRegra)) {
+                                $limiteDate = (new \DateTime())->modify("+{$valorRegra} days");
+                            } else {
+                                $limiteDate = new \DateTime($valorRegra);
+                            }
+
+                            $valorDate = new \DateTime($valor);
+
+                            if ($valorDate > $limiteDate) {
+                                $errors[$chave][] = $msg["{$chave}.max"] ?? "O campo {$chave} não pode ser posterior a " . $limiteDate->format('Y-m-d H:i:s') . ".";
+                            }
+                        } catch (\Exception $e) {
+                            $errors[$chave][] = $msg["{$chave}.date"] ?? "O campo {$chave} deve ser uma data/hora válida.";
                         }
                     }
+
                     continue;
                 }
-
-                // regras não suportadas aqui (exists, unique, etc.) são ignoradas — devem ser tratadas via DB
             }
         }
 
@@ -303,7 +367,7 @@ class Operations
                 'sqlstate'    => null,
                 'message'     => $firstMessage,
                 'detail'      => $errors,
-                'contexto'    => $contexto,
+                'contexto'    => $filtros,
             ];
         }
 
@@ -314,7 +378,7 @@ class Operations
             'sqlstate'    => null,
             'message'     => 'Validação bem-sucedida.',
             'detail'      => [],
-            'contexto'    => $contexto,
+            'contexto'    => $filtros,
         ];
     }
 
@@ -368,7 +432,7 @@ class Operations
             }
 
             // colunas de texto -> busca parcial
-            if (str_starts_with($key, 'txt_') === true ) {
+            if (str_starts_with($key, 'txt_') === true) {
                 $where[] = " AND $key ILIKE :$key";
                 $params[':' . $key] = '%' . $val . '%';
                 continue;
@@ -390,9 +454,9 @@ class Operations
                     // verificar se val não é um sql injection
                     // se contem select, delete ou drop ou comandos perigosos
                     if (preg_match('/\b(SELECT|DELETE|DROP|INSERT|UPDATE|TRUNCATE|MERGE|EXEC)\b/i', $val)) {
-                       $opts[$key] = null;
-                       //TODO: Log warning about potential SQL injection
-                    }else{
+                        $opts[$key] = null;
+                        //TODO: Log warning about potential SQL injection
+                    } else {
                         // A chave vem como order_by , mas quando utilizada na query, deve ser substituída por "order by"
                         $sql_key = str_replace('_', ' ', $key);
                         $opts[$key] = " $sql_key  $val";
