@@ -44,8 +44,8 @@ class PapelController extends Controller
         $regras = [
             'locatario_id' => ['required', 'integer'],
             'nome' => ['required', 'string', 'max:120'],
-            'nivel' => ['sometimes', 'integer'],
-            'ativo' => ['sometimes', 'boolean'],
+            'nivel' => ['quandoPresente ', 'integer'],
+            'ativo' => ['quandoPresente ', 'boolean'],
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
@@ -75,9 +75,9 @@ class PapelController extends Controller
     public function update(Request $request, int $id)
     {
         $regras = [
-            'txt_nome_papel' => ['sometimes', 'string', 'max:120'],
-            'num_nivel_papel' => ['sometimes', 'integer'],
-            'flg_ativo_papel' => ['sometimes', 'boolean'],
+            'txt_nome_papel' => ['quandoPresente ', 'string', 'max:120'],
+            'num_nivel_papel' => ['quandoPresente ', 'integer'],
+            'flg_ativo_papel' => ['quandoPresente ', 'boolean'],
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);

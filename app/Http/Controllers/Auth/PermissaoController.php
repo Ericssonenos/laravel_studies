@@ -43,8 +43,8 @@ class PermissaoController extends Controller
     {
         $regras = [
             'codigo' => ['required', 'string', 'max:80'],
-            'descricao' => ['sometimes', 'string', 'max:400'],
-            'ativo' => ['sometimes', 'boolean']
+            'descricao' => ['quandoPresente ', 'string', 'max:400'],
+            'ativo' => ['quandoPresente ', 'boolean']
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
@@ -73,9 +73,9 @@ class PermissaoController extends Controller
     public function update(Request $request, int $id)
     {
         $regras = [
-            'cod_permissao' => ['sometimes', 'string', 'max:80'],
-            'txt_descricao_permissao' => ['sometimes', 'string', 'max:400'],
-            'flg_ativo_permissao' => ['sometimes', 'boolean'],
+            'cod_permissao' => ['quandoPresente ', 'string', 'max:80'],
+            'txt_descricao_permissao' => ['quandoPresente ', 'string', 'max:400'],
+            'flg_ativo_permissao' => ['quandoPresente ', 'boolean'],
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);

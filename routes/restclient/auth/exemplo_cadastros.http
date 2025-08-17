@@ -1,0 +1,692 @@
+### Configuração de Variáveis
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+@timestamp = {{$timestamp}}
+@guid = {{$guid}}
+
+### ========================================
+### CENÁRIO 1: PADARIA DO JOÃO (Empresa Pequena)
+### ========================================
+
+#TODO FALTA CRIAR O CRUD DO LOCATÁRIO
+### 1.1. Cadastrar Locatário: Padaria do João
+# @name criarLocatarioPadaria
+POST {{baseUrl}}/locatarios HTTP/1.1
+Content-Type: {{contentType}}
+{
+    "txt_nome_locatario": "Padaria do João",
+    "txt_descricao_locatario": "Padaria familiar tradicional",
+    "flg_ativo_locatario": true
+}
+
+### 1.2. Criar Grupos da Padaria
+# Grupo: Administradores
+# @name grupoAdminPadaria
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Administradores",
+    "descricao": "Proprietários e sócios da padaria"
+}
+
+### Grupo: Funcionários
+# @name grupoFuncionariosPadaria
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Funcionários",
+    "descricao": "Funcionários operacionais da padaria"
+}
+
+### 1.3. Criar Papéis da Padaria
+# Papel: Proprietário
+# @name papelProprietario
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Proprietário",
+    "descricao": "Dono da padaria com acesso total",
+    "nivel_hierarquia": 10
+}
+
+### Papel: Funcionário
+# @name papelFuncionario
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Funcionário",
+    "descricao": "Funcionário operacional básico",
+    "nivel_hierarquia": 1
+}
+
+### 1.4. Criar Permissões da Padaria
+# Permissão: Ver Vendas
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "ver_vendas",
+    "descricao": "Visualizar relatórios de vendas",
+    "modulo": "vendas"
+}
+
+### Permissão: Criar Produto
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "criar_produto",
+    "descricao": "Cadastrar novos produtos",
+    "modulo": "produtos"
+}
+
+### Permissão: Registrar Venda
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "registrar_venda",
+    "descricao": "Registrar vendas no sistema",
+    "modulo": "vendas"
+}
+
+### 1.5. Cadastrar Usuários da Padaria
+# João (Dono)
+# @name joaoDono
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "João Santos",
+    "email": "joao.dono@padaria.com",
+    "senha": "MinhaSenh@123",
+    "ativo": true
+}
+
+### Maria (Caixa)
+# @name mariaCaixa
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Maria Silva",
+    "email": "maria.caixa@padaria.com",
+    "senha": "SenhaForte456!",
+    "ativo": true
+}
+
+### Pedro (Padeiro)
+# @name pedroPadeiro
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "Pedro Oliveira",
+    "email": "pedro.padeiro@padaria.com",
+    "senha": "PedroPão2024@",
+    "ativo": true
+}
+
+### 1.6. Atribuir Grupos aos Usuários
+# João ao grupo Administradores
+POST {{baseUrl}}/usuarios/1/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 1
+}
+
+### Maria ao grupo Funcionários
+POST {{baseUrl}}/usuarios/2/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 2
+}
+
+### Pedro ao grupo Funcionários
+POST {{baseUrl}}/usuarios/3/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 2
+}
+
+### 1.7. Atribuir Papéis aos Usuários
+# João como Proprietário
+POST {{baseUrl}}/usuarios/1/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1
+}
+
+### Maria como Funcionário
+POST {{baseUrl}}/usuarios/2/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2
+}
+
+### Pedro como Funcionário
+POST {{baseUrl}}/usuarios/3/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2
+}
+
+### ========================================
+### CENÁRIO 2: TECHCORP SOLUTIONS (Empresa Média)
+### ========================================
+
+### 2.1. Cadastrar Locatário: TechCorp
+# @name criarLocatarioTech
+POST {{baseUrl}}/locatarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "TechCorp Solutions",
+    "descricao": "Empresa de tecnologia e desenvolvimento de software",
+    "ativo": true
+}
+
+### 2.2. Criar Grupos por Departamento
+# Grupo: TI
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "TI",
+    "descricao": "Departamento de Tecnologia da Informação"
+}
+
+### Grupo: RH
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "RH",
+    "descricao": "Departamento de Recursos Humanos"
+}
+
+### Grupo: Vendas
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Vendas",
+    "descricao": "Departamento Comercial e Vendas"
+}
+
+### Grupo: Financeiro
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Financeiro",
+    "descricao": "Departamento Financeiro e Contábil"
+}
+
+### 2.3. Criar Papéis Hierárquicos
+# Papel: CEO
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "CEO",
+    "descricao": "Chief Executive Officer",
+    "nivel_hierarquia": 100
+}
+
+### Papel: Diretor
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Diretor",
+    "descricao": "Diretor de departamento",
+    "nivel_hierarquia": 50
+}
+
+### Papel: Gerente
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Gerente",
+    "descricao": "Gerente de equipe",
+    "nivel_hierarquia": 25
+}
+
+### Papel: Analista
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Analista",
+    "descricao": "Analista especialista",
+    "nivel_hierarquia": 10
+}
+
+### 2.4. Criar Permissões por Módulo
+# Módulo Financeiro
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "ver_relatorios",
+    "descricao": "Visualizar relatórios financeiros",
+    "modulo": "financeiro"
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "aprovar_despesas",
+    "descricao": "Aprovar despesas e investimentos",
+    "modulo": "financeiro"
+}
+
+### Módulo RH
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "contratar",
+    "descricao": "Contratar novos funcionários",
+    "modulo": "rh"
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "demitir",
+    "descricao": "Demitir funcionários",
+    "modulo": "rh"
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "avaliar",
+    "descricao": "Avaliar desempenho de funcionários",
+    "modulo": "rh"
+}
+
+### Módulo TI
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "deploy",
+    "descricao": "Fazer deploy de aplicações",
+    "modulo": "ti"
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "backup",
+    "descricao": "Gerenciar backups do sistema",
+    "modulo": "ti"
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "configurar",
+    "descricao": "Configurar sistemas e serviços",
+    "modulo": "ti"
+}
+
+### 2.5. Cadastrar Usuários TechCorp
+# Carlos (CEO)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Carlos Alberto",
+    "email": "carlos.ceo@techcorp.com",
+    "senha": "CEOSeguro2024!",
+    "ativo": true
+}
+
+### Ana (Diretora de RH)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Ana Santos",
+    "email": "ana.rh@techcorp.com",
+    "senha": "AnaDiretora123@",
+    "ativo": true
+}
+
+### Ricardo (Gerente de TI)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Ricardo Silva",
+    "email": "ricardo.ti@techcorp.com",
+    "senha": "RicardoTI456!",
+    "ativo": true
+}
+
+### Juliana (Analista Financeiro)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Juliana Costa",
+    "email": "juliana.financeiro@techcorp.com",
+    "senha": "JuFinancas789@",
+    "ativo": true
+}
+
+### 2.6. Configurar Relacionamentos TechCorp
+# Carlos: CEO no grupo Financeiro (para ter visão geral)
+POST {{baseUrl}}/usuarios/4/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 6
+}
+
+POST {{baseUrl}}/usuarios/4/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 5
+}
+
+### Ana: Diretora no grupo RH
+POST {{baseUrl}}/usuarios/5/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 4
+}
+
+POST {{baseUrl}}/usuarios/5/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 6
+}
+
+### Ricardo: Gerente no grupo TI
+POST {{baseUrl}}/usuarios/6/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 3
+}
+
+POST {{baseUrl}}/usuarios/6/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 7
+}
+
+### Juliana: Analista no grupo Financeiro
+POST {{baseUrl}}/usuarios/7/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 6
+}
+
+POST {{baseUrl}>/usuarios/7/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 8
+}
+
+### ========================================
+### CENÁRIO 3: ONBOARDING DE NOVO FUNCIONÁRIO
+### ========================================
+
+### 3.1. Cadastrar Novo Funcionário TechCorp
+# Lucas (Desenvolvedor Junior)
+# @name lucasDesenvolvedor
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Lucas Pereira",
+    "email": "lucas.dev@techcorp.com",
+    "senha": "LucasDev2024!",
+    "ativo": true
+}
+
+### 3.2. Adicionar aos Grupos Apropriados
+# Grupo TI
+POST {{baseUrl}}/usuarios/8/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 3
+}
+
+### Grupo Novatos (criar primeiro)
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "nome": "Novatos",
+    "descricao": "Funcionários em período de experiência"
+}
+
+### Adicionar Lucas ao grupo Novatos
+POST {{baseUrl}}/usuarios/8/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 7
+}
+
+### 3.3. Atribuir Papel Baseado na Função
+POST {{baseUrl}}/usuarios/8/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 8
+}
+
+### 3.4. Verificar Permissões Herdadas
+# Listar grupos do Lucas
+GET {{baseUrl}}/usuarios/8/grupos HTTP/1.1
+
+### Listar papéis do Lucas
+GET {{baseUrl}}/usuarios/8/papeis HTTP/1.1
+
+### Listar permissões do Lucas
+GET {{baseUrl}}/usuarios/8/permissoes HTTP/1.1
+
+### ========================================
+### CENÁRIO 4: E-COMMERCE DEMO
+### ========================================
+
+### 4.1. Cadastrar Locatário E-commerce
+POST {{baseUrl}}/locatarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "nome": "MegaStore Online",
+    "descricao": "Plataforma de e-commerce completa",
+    "ativo": true
+}
+
+### 4.2. Grupos por Função
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "nome": "Marketing",
+    "descricao": "Equipe de marketing digital"
+}
+
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "nome": "Logística",
+    "descricao": "Equipe de estoque e entregas"
+}
+
+### 4.3. Papéis Operacionais
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "nome": "Operador",
+    "descricao": "Operador de sistema básico",
+    "nivel_hierarquia": 5
+}
+
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "nome": "Coordenador",
+    "descricao": "Coordenador de equipe",
+    "nivel_hierarquia": 15
+}
+
+### 4.4. Usuários E-commerce
+# Fernanda (Marketing)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "nome": "Fernanda Lima",
+    "email": "fernanda.marketing@megastore.com",
+    "senha": "FernandaMarketing2024!",
+    "ativo": true
+}
+
+### Roberto (Logística)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "nome": "Roberto Santos",
+    "email": "roberto.logistica@megastore.com",
+    "senha": "RobertoLog456@",
+    "ativo": true
+}
+
+### ========================================
+### TESTES DE VALIDAÇÃO
+### ========================================
+
+### 5.1. Teste: Email Duplicado
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "nome": "João Duplicado",
+    "email": "joao.dono@padaria.com",
+    "senha": "SenhaDuplicada123!"
+}
+
+### 5.2. Teste: Usuário em Locatário Errado
+POST {{baseUrl}}/usuarios/1/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 3
+}
+
+### 5.3. Teste: Consulta Cross-Tenant
+# Tentar ver usuários de outro locatário
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "João"
+}
+
+### ========================================
+### CONSULTAS DE VERIFICAÇÃO
+### ========================================
+
+### 6.1. Verificar Estrutura Padaria
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "order_by": "txt_nome_usuario ASC"
+}
+
+### 6.2. Verificar Estrutura TechCorp
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "order_by": "dat_criado_em DESC",
+    "limit": 10
+}
+
+### 6.3. Buscar por Departamento
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "TI"
+}
+
+### 6.4. Verificar Usuários Ativos
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "flg_ativo_usuario": true,
+    "order_by": "locatario_id ASC, txt_nome_usuario ASC"
+}
