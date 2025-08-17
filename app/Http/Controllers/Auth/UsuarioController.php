@@ -68,15 +68,18 @@ class UsuarioController extends Controller
         $requestId = $request->header('X-Request-Id', uniqid('usr-create-', true));
 
         // Validação dos dados de entrada
-        $regras = [
+        $regrasValidacao = [
             'locatario_id' => ['required', 'integer'],
-            'txt_nome_usuario' => ['required', 'string', 'max:120'],
+            'txt_nome_usuario' => ['quandoPresente', 'string', 'max:120'],
             'txt_email_usuario' => ['required', 'string', 'max:160'],
             'txt_senha_usuario' => ['required', 'string', 'min:6'],
             'flg_ativo_usuario' => ['quandoPresente', 'boolean']
         ];
 
-        $resultadoDaValidacao = Operations::validarRegras($request->all(), $regras);
+        $resultadoDaValidacao = Operations::validarRegras(
+            params: $request->all(),
+            regrasValidacao: $regrasValidacao
+        );
 
         // Verifica se houve erro na validação
         if ($resultadoDaValidacao['http_status'] !== 200) {
@@ -96,7 +99,6 @@ class UsuarioController extends Controller
 
         // gerar hash e chamar model
         $senhaHash = password_hash($request->input('txt_senha_usuario'), PASSWORD_DEFAULT);
-
         $params = $request->all();
         $params['txt_senha_usuario'] = $senhaHash;
 
@@ -122,10 +124,9 @@ class UsuarioController extends Controller
         $headers = Operations::gerarHeadersSeguranca($requestId);
 
         $respostaSucesso = Operations::padronizarRespostaSucesso(
-            $resultadoInsercao,
-            201,
-            'Usuário criado com sucesso.',
-            $contextoResposta
+            data: $resultadoInsercao,
+            msg: 'Usuário criado com sucesso.',
+            contexto: $contextoResposta
         );
 
         return response()->json(
@@ -169,10 +170,9 @@ class UsuarioController extends Controller
 
         return response()->json(
             Operations::padronizarRespostaSucesso(
-                ['sucesso' => true],
-                200,
-                'Grupo atribuído ao usuário com sucesso.',
-                ['id_usuario' => $id_usuario, 'grupo_id' => (int)$request->input('grupo_id')]
+                data: ['sucesso' => true],
+                msg: 'Grupo atribuído ao usuário com sucesso.',
+                contexto: ['id_usuario' => $id_usuario, 'grupo_id' => (int)$request->input('grupo_id')]
             ),
             200,
             $headers,

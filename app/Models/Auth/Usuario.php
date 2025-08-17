@@ -64,25 +64,59 @@ class Usuario
     function Criar($params): array
     {
 
-        $sql = "INSERT INTO auth.usuarios (
-                    locatario_id, txt_nome_usuario, txt_email_usuario, txt_senha_usuario, flg_ativo_usuario
-                ) VALUES (
-                    :locatario_id, :txt_nome_usuario, :txt_email_usuario, :txt_senha_usuario, :flg_ativo_usuario
-                ) RETURNING *";
 
-        $st = $this->pdo->prepare($sql);
-        $st->bindValue(':locatario_id',      $params["locatario_id"], PDO::PARAM_INT);
-        $st->bindValue(':txt_nome_usuario',  $params["txt_nome_usuario"]);
-        $st->bindValue(':txt_email_usuario', $params["txt_email_usuario"]);
-        $st->bindValue(':txt_senha_usuario', $params["txt_senha_usuario"]);
-        $st->bindValue(':flg_ativo_usuario', $params["flg_ativo_usuario"], PDO::PARAM_BOOL);
+        if (!is_array($params) || empty($params)) {
+            $errors = ['params' => ['Parâmetros inválidos para criação. Deve ser array não vazio.']];
+            // pega a primeira mensagem amigável
+            $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
+            $contextoFiltrado = is_array($params) ? $params : [];
+            return [
+                'http_status' => 422,
+                'error_code'  => 'validation_error',
+                'sqlstate'    => null,
+                'msg'     => $firstMessage,
+                'detail'      => $errors,
+                'contexto'    => $contextoFiltrado,
+            ];
+        }
+
+        // remover campos imutáveis se enviados por engano
+        unset($params['id_usuario'], $params['dat_criado_em'], $params['dat_atualizado_em'], $params['dat_cancelamento_em']);
+
+        if (empty($params)) {
+            $errors = ['params' => ['Nenhum campo restante para inserção.']];
+            // pega a primeira mensagem amigável
+            $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
+            $contextoFiltrado = $params;
+            return [
+                'http_status' => 422,
+                'error_code'  => 'validation_error',
+                'sqlstate'    => null,
+                'msg'     => $firstMessage,
+                'detail'      => $errors,
+                'contexto'    => $contextoFiltrado,
+            ];
+        }
+
+        // montar colunas e placeholders dinamicamente
+        $colunas = array_keys($params);
+        $placeholders = array_map(fn($c) => ':' . $c, $colunas);
+
+        $sql = "INSERT INTO auth.usuarios (" . implode(', ', $colunas) . ")\n                VALUES (" . implode(', ', $placeholders) . ") RETURNING *";
+
+        // preparar bindings com inferência de tipo pelo nome
+        $bindings = [];
+        foreach ($params as $col => $valor) {
+            $tipo = Operations::inferirTipoPorNome($col);
+            $bindings[':' . $col] = ['value' => $valor, 'type' => $tipo];
+        }
 
         try {
-            $st->execute();
+            $st = Operations::prepararEExecutarComando($this->pdo, $sql, $bindings, $params);
             $dados = $st->fetch(PDO::FETCH_ASSOC);
-            return $dados;
+            return $dados ?: [];
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::Criar'], $params));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => 'Usuario::Criar'], $params));
         }
     }
 

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use PDOException;
+use PDO;
+use PDOStatement;
 
 
 class Operations
@@ -202,7 +204,7 @@ class Operations
         ];
     }
 
-    public static function validarRegras(array $filtros, array $regrasValidacao, array $msg = []): array
+    public static function validarRegras(array $params, array $regrasValidacao, array $msg = []): array
     {
         $errors = [];
 
@@ -225,9 +227,9 @@ class Operations
                 $tipoChave = 'date';
             }
 
-            // Verificar se a chave de validação está presente nos filtros
-            $chavePresente = array_key_exists($chave, $filtros);
-            $valor = $chavePresente ? $filtros[$chave] : null;
+            // Verificar se a chave de validação está presente nos params
+            $chavePresente = array_key_exists($chave, $params);
+            $valor = $chavePresente ? $params[$chave] : null;
 
             // se é "quandoPresente " e não veio, pula validação
             if ($possuiRegraOpcional && !$chavePresente) {
@@ -386,7 +388,7 @@ class Operations
         }
 
         // filtrar apenas chaves que existem nas regras de validação
-        $contextoFiltrado = array_intersect_key($filtros, $regrasValidacao);
+        $contextoFiltrado = array_intersect_key($params, $regrasValidacao);
 
         if (!empty($errors)) {
             // pega a primeira mensagem amigável
@@ -646,5 +648,72 @@ class Operations
         }
 
         return $headers;
+    }
+
+    /**
+     * Prepara, faz bind dos parâmetros (com tipo quando informado) e executa um comando PDO.
+     * $bindings aceita:
+     *  - valor simples: ':chave' => $valor
+     *  - array com 'value' e opcional 'type': ':chave' => ['value' => $valor, 'type' => PDO::PARAM_INT]
+     * Retorna o PDOStatement executado ou lança PDOException.
+     *
+     * @param PDO $pdo
+     * @param string $consultaSql
+     * @param array $bindings
+     * @param array $contexto
+     * @return PDOStatement
+     * @throws PDOException
+     */
+    public static function prepararEExecutarComando(PDO $pdo, string $consultaSql, array $bindings = [], array $contexto = []): PDOStatement
+    {
+        $comando = $pdo->prepare($consultaSql);
+
+        // Normalizar placeholders sem ':' para garantir consistência
+        $normalizedBindings = [];
+        foreach ($bindings as $chave => $valor) {
+            $placeholder = strpos($chave, ':') === 0 ? $chave : ':' . $chave;
+            $normalizedBindings[$placeholder] = $valor;
+        }
+
+        foreach ($normalizedBindings as $placeholder => $info) {
+            if (is_array($info) && array_key_exists('value', $info)) {
+                $tipo = $info['type'] ?? null;
+                if ($tipo !== null) {
+                    $comando->bindValue($placeholder, $info['value'], $tipo);
+                } else {
+                    $comando->bindValue($placeholder, $info['value']);
+                }
+            } else {
+                // binding simples, usa bindValue sem tipo
+                $comando->bindValue($placeholder, $info);
+            }
+        }
+
+        // Executa sem parâmetros adicionais porque já bindamos tudo
+        $comando->execute();
+
+        return $comando;
+    }
+
+    /**
+     * Inferir tipo PDO a partir do nome do campo.
+     * Regras simples usadas em todo o projeto:
+     *  - sufixo "_id" ou prefixo "id_" => PDO::PARAM_INT
+     *  - prefixo "flg_" => PDO::PARAM_BOOL
+     *  - default => PDO::PARAM_STR
+     *
+     * @param string $nomeCampo
+     * @return int
+     */
+    public static function inferirTipoPorNome(string $nomeCampo): int
+    {
+        $nome = strtolower($nomeCampo);
+        if (str_ends_with($nome, '_id') || str_starts_with($nome, 'id_')) {
+            return PDO::PARAM_INT;
+        }
+        if (str_starts_with($nome, 'flg_')) {
+            return PDO::PARAM_BOOL;
+        }
+        return PDO::PARAM_STR;
     }
 }

@@ -12,7 +12,6 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "txt_nome_usuario": "Carlos Desenvolvedor",
     "txt_email_usuario": "carlos.dev@empresa.com",
     "txt_senha_usuario": "SenhaSegura123!",
     "flg_ativo_usuario": true
@@ -25,7 +24,6 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "txt_nome_usuario": "Ana Testadora",
     "txt_email_usuario": "ana.teste@empresa.com",
     "txt_senha_usuario": "MinhaSenh@456"
 }
