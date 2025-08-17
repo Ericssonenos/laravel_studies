@@ -78,7 +78,7 @@ class PapelController extends Controller
         $pdo = DB::connection()->getPdo();
         $papelModel = new Papel($pdo);
 
-        $resultadoNovoPapel = $papelModel->inserir(
+        $resultadoNovoPapel = $papelModel->Criar(
             (int)$request->input('locatario_id'),
             (string)$request->input('txt_nome_papel'),
             (int)$request->input('num_nivel_papel'),

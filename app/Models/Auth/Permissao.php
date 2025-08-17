@@ -62,12 +62,12 @@ class Permissao
             $row = $st->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Permissao::procurar_por_id'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
     /** Cria permissão */
-    function inserir(string $cod_permissao, ?string $txt_descricao_permissao = null, bool $flg_ativo_permissao = true): array
+    function Criar(string $cod_permissao, ?string $txt_descricao_permissao = null, bool $flg_ativo_permissao = true): array
     {
         $contexto = ['cod_permissao' => $cod_permissao];
         $sql = "INSERT INTO auth.permissoes (
@@ -83,7 +83,7 @@ class Permissao
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Permissao::inserir'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => 'Permissao::Criar'], $contexto));
         }
     }
 
@@ -108,7 +108,7 @@ class Permissao
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Permissao::atualizar'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
@@ -124,7 +124,7 @@ class Permissao
             $st->execute([':id' => $id_permissao]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Permissao::remover_logicamente'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }

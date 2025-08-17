@@ -61,11 +61,11 @@ class Papel
             $row = $st->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::procurar_por_id'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
-    function inserir(int $locatario_id, string $txt_nome_papel, int $num_nivel_papel, bool $flg_ativo_papel = true): array
+    function Criar(int $locatario_id, string $txt_nome_papel, int $num_nivel_papel, bool $flg_ativo_papel = true): array
     {
         $contexto = ['locatario_id' => $locatario_id, 'txt_nome_papel' => $txt_nome_papel, 'num_nivel_papel' => $num_nivel_papel];
         $sql = "INSERT INTO auth.papeis (
@@ -82,7 +82,7 @@ class Papel
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::inserir'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => 'Papel::Criar'], $contexto));
         }
     }
 
@@ -106,7 +106,7 @@ class Papel
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::atualizar'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
@@ -121,7 +121,7 @@ class Papel
             $st->execute([':id' => $id_papel]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::remover_logicamente'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -141,7 +141,7 @@ class Papel
             $st = $this->pdo->prepare($sql);
             return $st->execute([':papel' => $id_papel, ':permissao' => $id_permissao]);
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::atribuir_permissao'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -157,7 +157,7 @@ class Papel
             $st->execute([':papel' => $id_papel, ':permissao' => $id_permissao]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::remover_permissao'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -176,7 +176,7 @@ class Papel
             $st->execute([':papel' => $id_papel]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::listar_permissoes'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 }

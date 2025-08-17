@@ -41,7 +41,7 @@ class Usuario
             // Devolve mensagem de erro, ação e parâmetros recebidos
             return Operations::mapearExcecaoPDO(
                 $excecaoPDO,
-                array_merge(['funcao' => __METHOD__], $params)
+                array_merge(['função' => __METHOD__], $params)
             );
         }
     }
@@ -57,7 +57,7 @@ class Usuario
             $row = $st->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::procurar_por_id'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
@@ -118,7 +118,7 @@ class Usuario
             $dados = $st->fetch(PDO::FETCH_ASSOC);
             return $dados ?: [];
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['função' => 'Usuario::Criar'], $params));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
         }
     }
 
@@ -143,7 +143,7 @@ class Usuario
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::atualizar'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
@@ -158,7 +158,7 @@ class Usuario
             $st->execute([':id' => $id_usuario]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::remover_logicamente'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -178,7 +178,7 @@ class Usuario
         try {
             return $st->execute([':usuario' => $id_usuario, ':grupo' => $id_grupo]);
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::atribuir_grupo'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -194,7 +194,7 @@ class Usuario
             $st->execute([':usuario' => $id_usuario, ':grupo' => $id_grupo]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::remover_grupo'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -213,7 +213,7 @@ class Usuario
             $st->execute([':usuario' => $id_usuario]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::listar_grupos'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
@@ -228,7 +228,7 @@ class Usuario
         try {
             return $st->execute([':usuario' => $id_usuario, ':papel' => $id_papel]);
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::atribuir_papel'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -244,7 +244,7 @@ class Usuario
             $st->execute([':usuario' => $id_usuario, ':papel' => $id_papel]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::remover_papel'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -263,7 +263,7 @@ class Usuario
             $st->execute([':usuario' => $id_usuario]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::listar_papeis'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
@@ -278,7 +278,7 @@ class Usuario
         try {
             return $st->execute([':usuario' => $id_usuario, ':permissao' => $id_permissao]);
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::atribuir_permissao'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -294,7 +294,7 @@ class Usuario
             $st->execute([':usuario' => $id_usuario, ':permissao' => $id_permissao]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::remover_permissao'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -313,7 +313,7 @@ class Usuario
             $st->execute([':usuario' => $id_usuario]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Usuario::listar_permissoes'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 }

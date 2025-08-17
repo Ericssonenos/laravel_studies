@@ -61,32 +61,64 @@ class Grupo
             $row = $st->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Grupo::procurar_por_id'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
-    function Criar(array $params): array
-    {
-        $sql = "INSERT INTO auth.grupos (
-                    locatario_id, txt_nome_grupo, txt_descricao_grupo, flg_ativo_grupo
-                ) VALUES (
-                    :locatario_id, :txt_nome_grupo, :txt_descricao_grupo, :flg_ativo_grupo
-                ) RETURNING *";
+        function Criar(array $params): array
+        {
+            if (!is_array($params) || empty($params)) {
+                $errors = ['params' => ['Parâmetros inválidos para criação. Deve ser array não vazio.']];
+                $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
+                $contextoFiltrado = is_array($params) ? $params : [];
+                return [
+                    'http_status' => 422,
+                    'error_code'  => 'validation_error',
+                    'sqlstate'    => null,
+                    'msg'     => $firstMessage,
+                    'detail'      => $errors,
+                    'contexto'    => $contextoFiltrado,
+                ];
+            }
 
-        $st = $this->pdo->prepare($sql);
-        $st->bindValue(':locatario_id',         $params["locatario_id"], PDO::PARAM_INT);
-        $st->bindValue(':txt_nome_grupo',       $params["txt_nome_grupo"]);
-        $st->bindValue(':txt_descricao_grupo',  $params["txt_descricao_grupo"]);
-        $st->bindValue(':flg_ativo_grupo',      $params["flg_ativo_grupo"], PDO::PARAM_BOOL);
+            // remover campos imutáveis se enviados por engano
+            unset($params['id_grupo'], $params['dat_criado_em'], $params['dat_atualizado_em'], $params['dat_cancelamento_em']);
 
-        try {
-            $st->execute();
-            $dados = $st->fetch(PDO::FETCH_ASSOC);
-            return $dados;
-        } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Grupo::Criar'], $params));
+            if (empty($params)) {
+                $errors = ['params' => ['Nenhum campo restante para inserção.']];
+                $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
+                $contextoFiltrado = $params;
+                return [
+                    'http_status' => 422,
+                    'error_code'  => 'validation_error',
+                    'sqlstate'    => null,
+                    'msg'     => $firstMessage,
+                    'detail'      => $errors,
+                    'contexto'    => $contextoFiltrado,
+                ];
+            }
+
+            // montar colunas e placeholders dinamicamente
+            $colunas = array_keys($params);
+            $placeholders = array_map(fn($c) => ':' . $c, $colunas);
+
+            $sql = "INSERT INTO auth.grupos (" . implode(', ', $colunas) . ")\n                VALUES (" . implode(', ', $placeholders) . ") RETURNING *";
+
+            // preparar bindings com inferência de tipo pelo nome
+            $bindings = [];
+            foreach ($params as $col => $valor) {
+                $tipo = Operations::inferirTipoPorNome($col);
+                $bindings[':' . $col] = ['value' => $valor, 'type' => $tipo];
+            }
+
+            try {
+                $st = Operations::prepararEExecutarComando($this->pdo, $sql, $bindings, $params);
+                $dados = $st->fetch(PDO::FETCH_ASSOC);
+                return $dados ?: [];
+            } catch (\PDOException $e) {
+                return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
+            }
         }
-    }
 
     function atualizar(int $id_grupo, array $data): array
     {
@@ -109,7 +141,7 @@ class Grupo
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Grupo::atualizar'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 
@@ -124,7 +156,7 @@ class Grupo
             $st->execute([':id' => $id_grupo]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Grupo::remover_logicamente'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -144,7 +176,7 @@ class Grupo
         try {
             return $st->execute([':grupo' => $id_grupo, ':papel' => $id_papel]);
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Grupo::atribuir_papel'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -160,7 +192,7 @@ class Grupo
             $st->execute([':grupo' => $id_grupo, ':papel' => $id_papel]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Grupo::remover_papel'], $contexto));
+            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
             return false;
         }
     }
@@ -179,7 +211,7 @@ class Grupo
             $st->execute([':grupo' => $id_grupo]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Grupo::listar_papeis'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
         }
     }
 }

@@ -77,7 +77,7 @@ class PermissaoController extends Controller
         $pdo = DB::connection()->getPdo();
         $permissaoModel = new Permissao($pdo);
 
-        $resultadoNovaPermissao = $permissaoModel->inserir(
+        $resultadoNovaPermissao = $permissaoModel->Criar(
             (string)$request->input('cod_permissao'),
             $request->input('txt_descricao_permissao'),
             $request->boolean('flg_ativo_permissao', true)
