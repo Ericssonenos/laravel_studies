@@ -2,7 +2,7 @@ exemplo de commit {
 git commit -m "Validação e padronização de erros/respostas para usuários
 
 - Adiciona App\Services\Operations:
-  - mapearExcecaoPDO(): normaliza PDOException para payload padronizado (http_status, error_code, sqlstate, message, detail, contexto).
+  - mapearExcecaoPDO(): normaliza PDOException para payload padronizado (http_status, error_code, sqlstate, msg, detail, contexto).
   - validarRegras(): validador desacoplado (sem dependência do Illuminate) com mensagens dinâmicas e retorno padronizado.
   - padronizarRespostaSucesso()/formatarRespostaSucesso(): (opcional) helper para resposta uniforme de sucesso.
 

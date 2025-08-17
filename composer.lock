@@ -671,7 +671,7 @@
                 "bamarni/composer-bin-plugin": "^1.8.2",
                 "ext-curl": "*",
                 "guzzle/client-integration-tests": "3.0.2",
-                "php-http/message-factory": "^1.1",
+                "php-http/msg-factory": "^1.1",
                 "phpunit/phpunit": "^8.5.39 || ^9.6.20",
                 "psr/log": "^1.1 || ^2.0 || ^3.0"
             },
@@ -868,12 +868,12 @@
             "require": {
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-factory": "^1.0",
-                "psr/http-message": "^1.1 || ^2.0",
+                "psr/http-msg": "^1.1 || ^2.0",
                 "ralouphie/getallheaders": "^3.0"
             },
             "provide": {
                 "psr/http-factory-implementation": "1.0",
-                "psr/http-message-implementation": "1.0"
+                "psr/http-msg-implementation": "1.0"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8.2",
@@ -936,10 +936,10 @@
                     "homepage": "https://sagikazarmark.hu"
                 }
             ],
-            "description": "PSR-7 message implementation that also provides common utility methods",
+            "description": "PSR-7 msg implementation that also provides common utility methods",
             "keywords": [
                 "http",
-                "message",
+                "msg",
                 "psr-7",
                 "request",
                 "response",
@@ -1181,7 +1181,7 @@
                 "resend/resend-php": "^0.10.0",
                 "symfony/cache": "^7.0.3",
                 "symfony/http-client": "^7.0.3",
-                "symfony/psr-http-message-bridge": "^7.0.3",
+                "symfony/psr-http-msg-bridge": "^7.0.3",
                 "symfony/translation": "^7.0.3"
             },
             "suggest": {
@@ -1210,7 +1210,7 @@
                 "php-http/discovery": "Required to use PSR-7 bridging features (^1.15).",
                 "phpunit/phpunit": "Required to use assertions and run tests (^10.5.35|^11.3.6|^12.0.1).",
                 "predis/predis": "Required to use the predis connector (^2.3).",
-                "psr/http-message": "Required to allow Storage::put to accept a StreamInterface (^1.0).",
+                "psr/http-msg": "Required to allow Storage::put to accept a StreamInterface (^1.0).",
                 "pusher/pusher-php-server": "Required to use the Pusher broadcast driver (^6.0|^7.0).",
                 "resend/resend-php": "Required to enable support for the Resend mail transport (^0.10.0).",
                 "symfony/cache": "Required to PSR-6 cache bridge (^7.0).",
@@ -1218,7 +1218,7 @@
                 "symfony/http-client": "Required to enable support for the Symfony API mail transports (^7.0).",
                 "symfony/mailgun-mailer": "Required to enable support for the Mailgun mail transport (^7.0).",
                 "symfony/postmark-mailer": "Required to enable support for the Postmark mail transport (^7.0).",
-                "symfony/psr-http-message-bridge": "Required to use PSR-7 bridging features (^7.0)."
+                "symfony/psr-http-msg-bridge": "Required to use PSR-7 bridging features (^7.0)."
             },
             "type": "library",
             "extra": {
@@ -1939,7 +1939,7 @@
                 "ext-filter": "*",
                 "php": "^8.1",
                 "psr/http-factory": "^1",
-                "psr/http-message": "^1.1 || ^2.0"
+                "psr/http-msg": "^1.1 || ^2.0"
             },
             "suggest": {
                 "ext-bcmath": "to improve IPV4 host parsing",
@@ -2751,7 +2751,7 @@
             },
             "require": {
                 "php": "^7.0 || ^8.0",
-                "psr/http-message": "^1.0 || ^2.0"
+                "psr/http-msg": "^1.0 || ^2.0"
             },
             "type": "library",
             "extra": {
@@ -2803,7 +2803,7 @@
             },
             "require": {
                 "php": ">=7.1",
-                "psr/http-message": "^1.0 || ^2.0"
+                "psr/http-msg": "^1.0 || ^2.0"
             },
             "type": "library",
             "extra": {
@@ -2826,11 +2826,11 @@
                     "homepage": "https://www.php-fig.org/"
                 }
             ],
-            "description": "PSR-17: Common interfaces for PSR-7 HTTP message factories",
+            "description": "PSR-17: Common interfaces for PSR-7 HTTP msg factories",
             "keywords": [
                 "factory",
                 "http",
-                "message",
+                "msg",
                 "psr",
                 "psr-17",
                 "psr-7",
@@ -2843,16 +2843,16 @@
             "time": "2024-04-15T12:06:14+00:00"
         },
         {
-            "name": "psr/http-message",
+            "name": "psr/http-msg",
             "version": "2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-fig/http-message.git",
+                "url": "https://github.com/php-fig/http-msg.git",
                 "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "url": "https://api.github.com/repos/php-fig/http-msg/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
                 "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71",
                 "shasum": ""
             },
@@ -2881,17 +2881,17 @@
                 }
             ],
             "description": "Common interface for HTTP messages",
-            "homepage": "https://github.com/php-fig/http-message",
+            "homepage": "https://github.com/php-fig/http-msg",
             "keywords": [
                 "http",
-                "http-message",
+                "http-msg",
                 "psr",
                 "psr-7",
                 "request",
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-message/tree/2.0"
+                "source": "https://github.com/php-fig/http-msg/tree/2.0"
             },
             "time": "2023-04-04T09:54:51+00:00"
         },

@@ -8,115 +8,87 @@ use App\Services\Operations;
 
 class Papel
 {
+    private PDO $pdo;
+
+    public function __construct(PDO $pdo)
+    {
+        $this->pdo = $pdo;
+    }
+
     /* ==============================
        CRUD PRINCIPAL DE PAPEL
        ============================== */
 
-    function procurar(PDO $pdo, array $filtros = [], array $opts = []): array
+    public function Lista(array $params = []): array
     {
-        $where = ['dat_cancelamento_em IS NULL'];
-        $params = [];
+        // Parametriza os filtros de busca, ordenação e paginação
+        $parametrizacao = Operations::Parametrizar($params);
+        $whereParams = $parametrizacao['whereParams'];
+        $optsParams  = $parametrizacao['optsParams'];
+        $execParams  = $parametrizacao['execParams'];
 
-        if (isset($filtros['locatario_id'])) {
-            $where[] = 'locatario_id = :locatario_id';
-            $params[':locatario_id'] = (int)$filtros['locatario_id'];
-        }
-        if (!empty($filtros['nome'])) {
-            $where[] = 'txt_nome_papel ILIKE :nome';
-            $params[':nome'] = '%' . $filtros['nome'] . '%';
-        }
-        if (isset($filtros['ativo'])) {
-            $where[] = 'flg_ativo_papel = :ativo';
-            $params[':ativo'] = (bool)$filtros['ativo'];
-        }
-        if (!empty($filtros['ids'])) {
-            $ids = array_values(array_map('intval', $filtros['ids']));
-            $in = implode(',', array_fill(0, count($ids), '?'));
-            $where[] = "id_papel IN ($in)";
-        }
+        // Monta a consulta SQL
+        $consultaSql = "SELECT *
+                    FROM auth.papeis
+                    WHERE dat_cancelamento_em IS NULL"
+            . implode(' ', $whereParams)
+            . ($optsParams['order_by'] ?? ' ')
+            . ($optsParams['limit']    ?? ' ')
+            . ($optsParams['offset']   ?? ' ');
 
-        $orderBy = $opts['order_by'] ?? 'id_papel DESC';
-        $limit   = isset($opts['limit'])  ? (int)$opts['limit']  : 50;
-        $offset  = isset($opts['offset']) ? (int)$opts['offset'] : 0;
-
-        $sql = "SELECT *
-                FROM auth.papeis
-                WHERE " . implode(' AND ', $where) . "
-                ORDER BY $orderBy
-                LIMIT :_limit OFFSET :_offset";
+        $comando = $this->pdo->prepare($consultaSql);
 
         try {
-            $stmt = $pdo->prepare($sql);
-
-            foreach ($params as $chave => $valor) {
-                if ($chave !== ':ativo') {
-                    $stmt->bindValue($chave, $valor);
-                } else {
-                    $stmt->bindValue($chave, $valor, PDO::PARAM_BOOL);
-                }
-            }
-
-            if (!empty($filtros['ids'])) {
-                $stmt = $pdo->prepare(str_replace("IN ($in)", "IN (" . implode(',', $ids) . ")", $sql));
-                foreach ($params as $chave => $valor) $stmt->bindValue($chave, $valor);
-            }
-
-            $stmt->bindValue(':_limit',  $limit,  PDO::PARAM_INT);
-            $stmt->bindValue(':_offset', $offset, PDO::PARAM_INT);
-
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, [
-                'funcao' => 'Papel::procurar',
-                'filtros' => $filtros,
-            ]);
+            $comando->execute($execParams);
+            return $comando->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\PDOException $excecaoPDO) {
+            // Devolve mensagem de erro, ação e parâmetros recebidos
+            return Operations::mapearExcecaoPDO(
+                $excecaoPDO,
+                array_merge(['funcao' => __METHOD__], $params)
+            );
         }
     }
 
-    function procurar_por_id(PDO $pdo, int $id_papel): ?array
+    function procurar_por_id(int $id_papel): ?array
     {
+        $contexto = ['id_papel' => $id_papel];
         $sql = "SELECT * FROM auth.papeis
                 WHERE id_papel = :id AND dat_cancelamento_em IS NULL";
+        $st = $this->pdo->prepare($sql);
         try {
-            $st = $pdo->prepare($sql);
             $st->execute([':id' => $id_papel]);
             $row = $st->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, [
-                'funcao' => 'Papel::procurar_por_id',
-                'id_papel' => $id_papel,
-            ]);
+            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::procurar_por_id'], $contexto));
         }
     }
 
-    function inserir(PDO $pdo, int $locatario_id, string $nome, int $nivel, bool $ativo = true): array
+    function inserir(int $locatario_id, string $txt_nome_papel, int $num_nivel_papel, bool $flg_ativo_papel = true): array
     {
+        $contexto = ['locatario_id' => $locatario_id, 'txt_nome_papel' => $txt_nome_papel, 'num_nivel_papel' => $num_nivel_papel];
         $sql = "INSERT INTO auth.papeis (
                     locatario_id, txt_nome_papel, num_nivel_papel, flg_ativo_papel
                 ) VALUES (
-                    :loc, :nome, :nivel, :ativo
+                    :locatario_id, :txt_nome_papel, :num_nivel_papel, :flg_ativo_papel
                 ) RETURNING *";
         try {
-            $st = $pdo->prepare($sql);
-            $st->bindValue(':loc',   $locatario_id, PDO::PARAM_INT);
-            $st->bindValue(':nome',  $nome);
-            $st->bindValue(':nivel', $nivel, PDO::PARAM_INT);
-            $st->bindValue(':ativo', $ativo, PDO::PARAM_BOOL);
+            $st = $this->pdo->prepare($sql);
+            $st->bindValue(':locatario_id',    $locatario_id, PDO::PARAM_INT);
+            $st->bindValue(':txt_nome_papel',  $txt_nome_papel);
+            $st->bindValue(':num_nivel_papel', $num_nivel_papel, PDO::PARAM_INT);
+            $st->bindValue(':flg_ativo_papel', $flg_ativo_papel, PDO::PARAM_BOOL);
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, [
-                'funcao' => 'Papel::inserir',
-                'locatario_id' => $locatario_id,
-                'txt_nome_papel' => $nome,
-            ]);
+            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::inserir'], $contexto));
         }
     }
 
-    function atualizar(PDO $pdo, int $id_papel, array $data): array
+    function atualizar(int $id_papel, array $data): array
     {
+        $contexto = ['id_papel' => $id_papel, 'data' => $data];
         unset($data['dat_criado_em'], $data['dat_atualizado_em'], $data['dat_cancelamento_em'], $data['id_papel']);
         if (!$data) throw new InvalidArgumentException('Nada para atualizar.');
 
@@ -128,34 +100,28 @@ class Papel
                 RETURNING *";
 
         try {
-            $st = $pdo->prepare($sql);
+            $st = $this->pdo->prepare($sql);
             foreach ($data as $col => $val) $st->bindValue(":$col", $val);
             $st->bindValue(':id', $id_papel, PDO::PARAM_INT);
             $st->execute();
             return $st->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, [
-                'funcao' => 'Papel::atualizar',
-                'id_papel' => $id_papel,
-                'data' => $data,
-            ]);
+            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::atualizar'], $contexto));
         }
     }
 
-    function remover_logicamente(PDO $pdo, int $id_papel): bool
+    function remover_logicamente(int $id_papel): bool
     {
+        $contexto = ['id_papel' => $id_papel];
         $sql = "UPDATE auth.papeis
                 SET dat_cancelamento_em = now()
                 WHERE id_papel = :id AND dat_cancelamento_em IS NULL";
         try {
-            $st = $pdo->prepare($sql);
+            $st = $this->pdo->prepare($sql);
             $st->execute([':id' => $id_papel]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, [
-                'funcao' => 'Papel::remover_logicamente',
-                'id_papel' => $id_papel,
-            ]);
+            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::remover_logicamente'], $contexto));
             return false;
         }
     }
@@ -165,60 +131,52 @@ class Papel
        ============================== */
 
     /** Atribui permissão a papel */
-    function atribuir_permissao(PDO $pdo, int $id_papel, int $id_permissao): bool
+    function atribuir_permissao(int $id_papel, int $id_permissao): bool
     {
+        $contexto = ['id_papel' => $id_papel, 'permissao_id' => $id_permissao];
         $sql = "INSERT INTO auth.papeis_permissoes (papel_id, permissao_id)
                 VALUES (:papel, :permissao)
                 ON CONFLICT (papel_id, permissao_id) DO NOTHING";
         try {
-            $st = $pdo->prepare($sql);
+            $st = $this->pdo->prepare($sql);
             return $st->execute([':papel' => $id_papel, ':permissao' => $id_permissao]);
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, [
-                'funcao' => 'Papel::atribuir_permissao',
-                'papel_id' => $id_papel,
-                'permissao_id' => $id_permissao,
-            ]);
+            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::atribuir_permissao'], $contexto));
             return false;
         }
     }
 
     /** Remove permissão de papel */
-    function remover_permissao(PDO $pdo, int $id_papel, int $id_permissao): bool
+    function remover_permissao(int $id_papel, int $id_permissao): bool
     {
+        $contexto = ['id_papel' => $id_papel, 'permissao_id' => $id_permissao];
         $sql = "DELETE FROM auth.papeis_permissoes
                 WHERE papel_id = :papel AND permissao_id = :permissao";
         try {
-            $st = $pdo->prepare($sql);
+            $st = $this->pdo->prepare($sql);
             $st->execute([':papel' => $id_papel, ':permissao' => $id_permissao]);
             return $st->rowCount() > 0;
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, [
-                'funcao' => 'Papel::remover_permissao',
-                'papel_id' => $id_papel,
-                'permissao_id' => $id_permissao,
-            ]);
+            Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::remover_permissao'], $contexto));
             return false;
         }
     }
 
     /** Lista permissões do papel */
-    function listar_permissoes(PDO $pdo, int $id_papel): array
+    function listar_permissoes(int $id_papel): array
     {
+        $contexto = ['id_papel' => $id_papel];
         $sql = "SELECT p.*
                 FROM auth.permissoes p
                 INNER JOIN auth.papeis_permissoes pp ON pp.permissao_id = p.id_permissao
                 WHERE pp.papel_id = :papel
                   AND p.dat_cancelamento_em IS NULL";
         try {
-            $st = $pdo->prepare($sql);
+            $st = $this->pdo->prepare($sql);
             $st->execute([':papel' => $id_papel]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, [
-                'funcao' => 'Papel::listar_permissoes',
-                'papel_id' => $id_papel,
-            ]);
+            return Operations::mapearExcecaoPDO($e, array_merge(['funcao' => 'Papel::listar_permissoes'], $contexto));
         }
     }
 }

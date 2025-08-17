@@ -446,7 +446,7 @@ Content-Type: {{contentType}}
 }
 
 Prompt Variables
-With prompt variables, user can input the variables to be used when sending a request. This gives a flexibility to change most dynamic variables without having to change the http file. User can specify more than one prompt variables. The definition syntax of prompt variables is like a single-line comment by adding the syntax before the desired request url with the following syntax // @prompt {var1} or # @prompt {var1}. A variable description is also assignable using // @prompt {var1} {description} or # @prompt {var1} {description} which will prompt an input popup with a desired description message.
+With prompt variables, user can input the variables to be used when sending a request. This gives a flexibility to change most dynamic variables without having to change the http file. User can specify more than one prompt variables. The definition syntax of prompt variables is like a single-line comment by adding the syntax before the desired request url with the following syntax // @prompt {var1} or # @prompt {var1}. A variable description is also assignable using // @prompt {var1} {description} or # @prompt {var1} {description} which will prompt an input popup with a desired description msg.
 
 The reference syntax is the same as others, follows {{var}}. The prompt variable will override any preceding assigned variable and will never be stored to be used in other requests.
 

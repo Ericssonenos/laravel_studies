@@ -22,7 +22,7 @@ Route::prefix('auth')->group(function () {
 
     // Grupos
     Route::get('grupos', [GrupoController::class, 'Lista']);
-    Route::post('grupos', [GrupoController::class, 'store']);
+    Route::post('grupos', [GrupoController::class, 'Criar']);
     Route::put('grupos/{id}', [GrupoController::class, 'update']);
     Route::delete('grupos/{id}', [GrupoController::class, 'destroy']);
     Route::post('grupos/{id}/papeis', [GrupoController::class, 'atribuirPapel']);
@@ -30,7 +30,7 @@ Route::prefix('auth')->group(function () {
     Route::get('grupos/{id}/papeis', [GrupoController::class, 'listarPapeis']);
 
     // Papeis
-    Route::get('papeis', [PapelController::class, 'index']);
+    Route::get('papeis', [PapelController::class, 'Lista']);
     Route::post('papeis', [PapelController::class, 'store']);
     Route::put('papeis/{id}', [PapelController::class, 'update']);
     Route::delete('papeis/{id}', [PapelController::class, 'destroy']);
@@ -39,7 +39,7 @@ Route::prefix('auth')->group(function () {
     Route::get('papeis/{id}/permissoes', [PapelController::class, 'listarPermissoes']);
 
     // Permissoes
-    Route::get('permissoes', [PermissaoController::class, 'index']);
+    Route::get('permissoes', [PermissaoController::class, 'Lista']);
     Route::post('permissoes', [PermissaoController::class, 'store']);
     Route::put('permissoes/{id}', [PermissaoController::class, 'update']);
     Route::delete('permissoes/{id}', [PermissaoController::class, 'destroy']);

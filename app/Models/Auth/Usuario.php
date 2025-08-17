@@ -32,11 +32,11 @@ class Usuario
             . ($optsParams['limit']    ?? ' ')
             . ($optsParams['offset']   ?? ' ');
 
-        $declaracao = $this->pdo->prepare($consultaSql);
+        $comando = $this->pdo->prepare($consultaSql);
 
         try {
-            $declaracao->execute($execParams);
-            return $declaracao->fetchAll(PDO::FETCH_ASSOC);
+            $comando->execute($execParams);
+            return $comando->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $excecaoPDO) {
             // Devolve mensagem de erro, ação e parâmetros recebidos
             return Operations::mapearExcecaoPDO(

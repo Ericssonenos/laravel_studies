@@ -16,13 +16,10 @@ class GrupoController extends Controller
         //Conexão
         $pdo = DB::connection()->getPdo();
         //Modulo Grupo
-        $grupoModel = new Grupo();
+        $grupoModel = new Grupo($pdo);
 
-        // Obter lista de grupos, passando conexão e parâmetros
-        $resultadosGrupos = $grupoModel->Lista(
-            pdo: $pdo,
-            filtros: $request->all()
-        );
+        // Obter lista de grupos, passando parâmetros
+        $resultadosGrupos = $grupoModel->Lista($request->all());
 
         //Verifica se houve erro na busca
         if (is_array($resultadosGrupos) && isset($resultadosGrupos['http_status'])) {
@@ -47,15 +44,14 @@ class GrupoController extends Controller
     public function Criar(Request $request)
     {
         // Validação dos dados de entrada
-        $parametrosValidados = Operations::validarRegras(
-            filtros: $request->all(),
-            regrasValidacao: [
-                'locatario_id' => ['required', 'integer'],
-                'txt_nome_grupo' => ['required', 'string', 'max:120'],
-                'txt_descricao_grupo' => ['quandoPresente ', 'string', 'max:400'],
-                'flg_ativo_grupo' => ['quandoPresente ', 'boolean'],
-            ]
-        );
+        $regras = [
+            'locatario_id' => ['required', 'integer'],
+            'txt_nome_grupo' => ['required', 'string', 'max:120'],
+            'txt_descricao_grupo' => ['quandoPresente ', 'string', 'max:255'],
+            'flg_ativo_grupo' => ['quandoPresente ', 'boolean']
+        ];
+
+        $parametrosValidados = Operations::validarRegras($request->all(), $regras);
 
         // Verifica se houve erro na validação
         if ($parametrosValidados['http_status'] !== 200) {
@@ -66,20 +62,16 @@ class GrupoController extends Controller
         $pdoConnection = DB::connection()->getPdo();
 
         // Instância do Grupo
-        $grupoModel = new Grupo();
+        $grupoModel = new Grupo($pdoConnection);
 
         // chamar o model para criar o grupo
-        // passando os parametros já validados
-        $novo = $grupoModel->Criar(
-            pdo: $pdoConnection,
-            params:$parametrosValidados
-        );
+        $novo = $grupoModel->Criar($request->all());
 
         if (is_array($novo) && isset($novo['http_status'])) {
             return response()->json($novo, (int)$novo['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
-        return response()->json(Operations::padronizarRespostaSucesso($novo, 201, 'Grupo criado com sucesso.', ['locatario_id' => (int)$request->input('locatario_id', 1), 'nome' => (string)$request->input('nome')]), 201, [], JSON_UNESCAPED_UNICODE);
+        return response()->json(Operations::padronizarRespostaSucesso($novo, 201, 'Grupo criado com sucesso.', ['locatario_id' => (int)$request->input('locatario_id', 1), 'txt_nome_grupo' => (string)$request->input('txt_nome_grupo')]), 201, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Atualiza grupo */
@@ -87,7 +79,7 @@ class GrupoController extends Controller
     {
         $regras = [
             'txt_nome_grupo' => ['quandoPresente ', 'string', 'max:120'],
-            'txt_descricao_grupo' => ['quandoPresente ', 'string', 'max:400'],
+            'txt_descricao_grupo' => ['quandoPresente ', 'string', 'max:255'],
             'flg_ativo_grupo' => ['quandoPresente ', 'boolean'],
         ];
 
@@ -97,10 +89,10 @@ class GrupoController extends Controller
         }
 
         $pdo = DB::connection()->getPdo();
-        $m = new Grupo();
+        $m = new Grupo($pdo);
 
         $dados = $request->only(['txt_nome_grupo', 'txt_descricao_grupo', 'flg_ativo_grupo']);
-        $atual = $m->atualizar($pdo, $id, $dados);
+        $atual = $m->atualizar($id, $dados);
 
         if (is_array($atual) && isset($atual['http_status'])) {
             return response()->json($atual, (int)$atual['http_status'], [], JSON_UNESCAPED_UNICODE);
@@ -113,9 +105,9 @@ class GrupoController extends Controller
     public function destroy(int $id)
     {
         $pdo = DB::connection()->getPdo();
-        $m = new Grupo();
+        $m = new Grupo($pdo);
 
-        $ok = $m->remover_logicamente($pdo, $id);
+        $ok = $m->remover_logicamente($id);
         if (is_array($ok) && isset($ok['http_status'])) {
             return response()->json($ok, (int)$ok['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
@@ -133,9 +125,9 @@ class GrupoController extends Controller
     public function atribuirPapel(Request $request, int $id_grupo)
     {
         $pdo = DB::connection()->getPdo();
-        $m = new Grupo();
+        $m = new Grupo($pdo);
 
-        $ok = $m->atribuir_papel($pdo, $id_grupo, (int)$request->input('papel_id'));
+        $ok = $m->atribuir_papel($id_grupo, (int)$request->input('papel_id'));
 
         if (is_array($ok) && isset($ok['http_status'])) {
             return response()->json($ok, (int)$ok['http_status'], [], JSON_UNESCAPED_UNICODE);
@@ -152,9 +144,9 @@ class GrupoController extends Controller
     public function removerPapel(Request $request, int $id_grupo)
     {
         $pdo = DB::connection()->getPdo();
-        $m = new Grupo();
+        $m = new Grupo($pdo);
 
-        $ok = $m->remover_papel($pdo, $id_grupo, (int)$request->input('papel_id'));
+        $ok = $m->remover_papel($id_grupo, (int)$request->input('papel_id'));
 
         if (is_array($ok) && isset($ok['http_status'])) {
             return response()->json($ok, (int)$ok['http_status'], [], JSON_UNESCAPED_UNICODE);
@@ -171,9 +163,9 @@ class GrupoController extends Controller
     public function listarPapeis(int $id_grupo)
     {
         $pdo = DB::connection()->getPdo();
-        $m = new Grupo();
+        $m = new Grupo($pdo);
 
-        $papeis = $m->listar_papeis($pdo, $id_grupo);
+        $papeis = $m->listar_papeis($id_grupo);
 
         if (is_array($papeis) && isset($papeis['http_status'])) {
             return response()->json($papeis, (int)$papeis['http_status'], [], JSON_UNESCAPED_UNICODE);

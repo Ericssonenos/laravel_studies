@@ -16,76 +16,71 @@ class UsuarioController extends Controller
         //Conexao
         $pdo = DB::connection()->getPdo();
         // Modulo Usuário
-        $usuarioModel = new Usuario();
+        $usuarioModel = new Usuario(pdo: $pdo);
 
-        // Obter lista de Usuários, passando conexão e parametros
-        $resultadoUsuarios = $usuarioModel->Lista(
-            pdo: $pdo,
-            filtros: $request->all()
-        );
+        // Obter lista de Usuários, passando parametros
+        $resultadoUsuarios = $usuarioModel->Lista(params: $request->all());
 
         //Verifica se houve erro na busca
         if (is_array($resultadoUsuarios) && isset($resultadoUsuarios['http_status'])) {
-            return response()->json($resultadoUsuarios, (int)$resultadoUsuarios['http_status'], [], JSON_UNESCAPED_UNICODE);
+            return response()->json(
+                data: $resultadoUsuarios,
+                status: (int)$resultadoUsuarios['http_status'],
+                options: JSON_UNESCAPED_UNICODE,
+                headers: []
+            );
         }
 
         // Se retorno com sucesso, padronizar retorno
         $respostaSucesso = Operations::padronizarRespostaSucesso(
-            $resultadoUsuarios,
-            200,
-            'Registros retornados com sucesso.',
-            $request->all()
+            data: $resultadoUsuarios,
+            httpStatus: 200,
+            msg: 'Lista de usuários retornada com sucesso.',
+            contexto: $request->all()
         );
 
         // Retornar com a Lista
         return response()->json(
-            $respostaSucesso,
-            200, [], JSON_UNESCAPED_UNICODE
+            data: $respostaSucesso,
+            status: $respostaSucesso['http_status'],
+            options: JSON_UNESCAPED_UNICODE,
+            headers: []
         );
     }
 
     /** Cria novo usuário */
     public function Criar(Request $request)
     {
-
-        /**A criação do usuário
-         * será basica com
-         * e-mail e senha
-         * as demais informações serão adicionadas
-         * nas configurações do usuário
-         * conforme permissões
-         */
-
-
         // Validação dos dados de entrada
-        $resultadoDaValidacao = Operations::validarRegras(
-                filtros:  $request->all()
-            ,   regrasValidacao: [
-                'locatario_id' => ['required', 'integer'],
-                'txt_email_usuario'        => ['required', 'email', 'max:160'],
-                'txt_senha_usuario'        => ['required', 'password', 'min:8', 'max:14'],
-            ]
-        );
+        $regras = [
+            'locatario_id' => ['required', 'integer'],
+            'txt_nome_usuario' => ['required', 'string', 'max:120'],
+            'txt_email_usuario' => ['required', 'string', 'max:160'],
+            'txt_senha_usuario' => ['required', 'string', 'min:6'],
+            'flg_ativo_usuario' => ['quandoPresente ', 'boolean']
+        ];
+
+        $resultadoDaValidacao = Operations::validarRegras($request->all(), $regras);
 
         // Verifica se houve erro na validação
         if ($resultadoDaValidacao['http_status'] !== 200) {
-            return response()->json($resultadoDaValidacao, $resultadoDaValidacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+            return response()->json($resultadoDaValidacao, (int)$resultadoDaValidacao['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         // Conexão com o banco de dados
         $pdoConnection = DB::connection()->getPdo();
 
         // Instância do Usuario
-        $usuarioModel = new Usuario();
+        $usuarioModel = new Usuario($pdoConnection);
 
-        // gerar hash e chamar model (ainda tratar PDOException depois)
-        $senhaHash = password_hash($request->input('senha'), PASSWORD_DEFAULT);
+        // gerar hash e chamar model
+        $senhaHash = password_hash($request->input('txt_senha_usuario'), PASSWORD_DEFAULT);
+
+        $params = $request->all();
+        $params['txt_senha_usuario'] = $senhaHash;
 
         // Chamar o model para criar o usuário
-        $resultadoInsercao = $usuarioModel->Criar(
-            pdo: $pdoConnection,
-
-        );
+        $resultadoInsercao = $usuarioModel->Criar($params);
 
         // repassa diretamente se for objeto padronizado (erro ou sucesso já padronizado pelo model)
         if (is_array($resultadoInsercao) && isset($resultadoInsercao['http_status'])) {
@@ -94,13 +89,13 @@ class UsuarioController extends Controller
 
         $contextoResposta = [
             'locatario_id' => (int)$request->input('locatario_id', 1),
-            'email' => $request->input('email')
+            'txt_email_usuario' => (string)$request->input('txt_email_usuario')
         ];
 
         $respostaSucesso = Operations::padronizarRespostaSucesso(
             $resultadoInsercao,
             201,
-            'Registro criado com sucesso.',
+            'Usuário criado com sucesso.',
             $contextoResposta
         );
 
@@ -111,11 +106,10 @@ class UsuarioController extends Controller
     public function AtribuirGrupo(Request $request, $id_usuario)
     {
         $pdo = DB::connection()->getPdo();
-        $usuarioModel = new Usuario();
+        $usuarioModel = new Usuario($pdo);
         $Retorno_Grupo_atribuido = $usuarioModel->atribuir_grupo(
-            $pdo,
-            id_usuario: $id_usuario,
-            id_grupo: $request->input('grupo_id')
+            $id_usuario,
+            (int)$request->input('grupo_id')
         );
 
         // se o model retornou payload padronizado, repassa
@@ -125,7 +119,6 @@ class UsuarioController extends Controller
 
         // falha genérica (model retorna false)
         if ($Retorno_Grupo_atribuido === false) {
-            // fallback mínimo: não criar payload no controller — o model deve fornecer o payload quando possível
             return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
         }
 
@@ -135,11 +128,9 @@ class UsuarioController extends Controller
                 ['sucesso' => true],
                 200,
                 'Grupo atribuído ao usuário com sucesso.',
-                ['id_usuario' => $id_usuario, 'grupo_id' => $request->input('grupo_id')]
+                ['id_usuario' => $id_usuario, 'grupo_id' => (int)$request->input('grupo_id')]
             ),
-            200,
-            [],
-            JSON_UNESCAPED_UNICODE
+            200, [], JSON_UNESCAPED_UNICODE
         );
     }
 
@@ -147,11 +138,10 @@ class UsuarioController extends Controller
     public function AtribuirPapel(Request $request, $id_usuario)
     {
         $pdo = DB::connection()->getPdo();
-        $usuarioModel = new Usuario();
+        $usuarioModel = new Usuario($pdo);
         $Retorno_Papel_atribuido = $usuarioModel->atribuir_papel(
-            $pdo,
-            id_usuario: $id_usuario,
-            id_papel: $request->input('papel_id')
+            $id_usuario,
+            (int)$request->input('papel_id')
         );
 
         if (is_array($Retorno_Papel_atribuido) && isset($Retorno_Papel_atribuido['http_status'])) {
@@ -167,11 +157,9 @@ class UsuarioController extends Controller
                 ['sucesso' => true],
                 200,
                 'Papel atribuído ao usuário com sucesso.',
-                ['id_usuario' => $id_usuario, 'papel_id' => $request->input('papel_id')]
+                ['id_usuario' => $id_usuario, 'papel_id' => (int)$request->input('papel_id')]
             ),
-            200,
-            [],
-            JSON_UNESCAPED_UNICODE
+            200, [], JSON_UNESCAPED_UNICODE
         );
     }
 
@@ -179,11 +167,10 @@ class UsuarioController extends Controller
     public function AtribuirPermissao(Request $request, $id_usuario)
     {
         $pdo = DB::connection()->getPdo();
-        $usuarioModel = new Usuario();
+        $usuarioModel = new Usuario($pdo);
         $Retorno_Permissao_atribuido = $usuarioModel->atribuir_permissao(
-            $pdo,
-            id_usuario: $id_usuario,
-            id_permissao: $request->input('permissao_id')
+            $id_usuario,
+            (int)$request->input('permissao_id')
         );
 
         if (is_array($Retorno_Permissao_atribuido) && isset($Retorno_Permissao_atribuido['http_status'])) {
@@ -199,11 +186,9 @@ class UsuarioController extends Controller
                 ['sucesso' => true],
                 200,
                 'Permissão atribuída ao usuário com sucesso.',
-                ['id_usuario' => $id_usuario, 'permissao_id' => $request->input('permissao_id')]
+                ['id_usuario' => $id_usuario, 'permissao_id' => (int)$request->input('permissao_id')]
             ),
-            200,
-            [],
-            JSON_UNESCAPED_UNICODE
+            200, [], JSON_UNESCAPED_UNICODE
         );
     }
 
@@ -211,8 +196,8 @@ class UsuarioController extends Controller
     public function ListarGrupos($id_usuario)
     {
         $pdo = DB::connection()->getPdo();
-        $usuarioModel = new Usuario();
-        $grupos = $usuarioModel->listar_grupos($pdo, $id_usuario);
+        $usuarioModel = new Usuario($pdo);
+        $grupos = $usuarioModel->listar_grupos($id_usuario);
         if (is_array($grupos) && isset($grupos['http_status'])) {
             return response()->json($grupos, (int)$grupos['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
@@ -224,8 +209,8 @@ class UsuarioController extends Controller
     public function ListarPapeis($id_usuario)
     {
         $pdo = DB::connection()->getPdo();
-        $usuarioModel = new Usuario();
-        $papeis = $usuarioModel->listar_papeis($pdo, $id_usuario);
+        $usuarioModel = new Usuario($pdo);
+        $papeis = $usuarioModel->listar_papeis($id_usuario);
         if (is_array($papeis) && isset($papeis['http_status'])) {
             return response()->json($papeis, (int)$papeis['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
@@ -237,8 +222,8 @@ class UsuarioController extends Controller
     public function ListarPermissoes($id_usuario)
     {
         $pdo = DB::connection()->getPdo();
-        $usuarioModel = new Usuario();
-        $permissoes = $usuarioModel->listar_permissoes($pdo, $id_usuario);
+        $usuarioModel = new Usuario($pdo);
+        $permissoes = $usuarioModel->listar_permissoes($id_usuario);
         if (is_array($permissoes) && isset($permissoes['http_status'])) {
             return response()->json($permissoes, (int)$permissoes['http_status'], [], JSON_UNESCAPED_UNICODE);
         }

@@ -11,25 +11,12 @@ use App\Services\Operations;
 class PermissaoController extends Controller
 {
     /** Lista permissões */
-    public function index(Request $request)
+    public function Lista(Request $request)
     {
         $pdo = DB::connection()->getPdo();
-        $m = new Permissao();
+        $m = new Permissao($pdo);
 
-        $permissoes = $m->procurar(
-            $pdo,
-            [
-                'codigo'    => $request->input('codigo'),
-                'descricao' => $request->input('descricao'),
-                'ativo'     => $request->has('ativo') ? $request->boolean('ativo') : null,
-                'ids'       => $request->input('ids') ? array_map('intval', (array)$request->input('ids')) : null,
-            ],
-            [
-                'order_by' => $request->input('order_by', 'cod_permissao ASC'),
-                'limit'    => (int)$request->input('limit', 50),
-                'offset'   => (int)$request->input('offset', 0),
-            ]
-        );
+        $permissoes = $m->Lista($request->all());
 
         if (is_array($permissoes) && isset($permissoes['http_status'])) {
             return response()->json($permissoes, (int)$permissoes['http_status'], [], JSON_UNESCAPED_UNICODE);
@@ -42,9 +29,9 @@ class PermissaoController extends Controller
     public function store(Request $request)
     {
         $regras = [
-            'codigo' => ['required', 'string', 'max:80'],
-            'descricao' => ['quandoPresente ', 'string', 'max:400'],
-            'ativo' => ['quandoPresente ', 'boolean']
+            'cod_permissao' => ['required', 'string', 'max:160'],
+            'txt_descricao_permissao' => ['quandoPresente ', 'string', 'max:255'],
+            'flg_ativo_permissao' => ['quandoPresente ', 'boolean']
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
@@ -53,28 +40,27 @@ class PermissaoController extends Controller
         }
 
         $pdo = DB::connection()->getPdo();
-        $m = new Permissao();
+        $m = new Permissao($pdo);
 
         $novo = $m->inserir(
-            $pdo,
-            codigo:     (string)$request->input('codigo'),
-            descricao:  $request->input('descricao'),
-            ativo:      $request->boolean('ativo', true)
+            (string)$request->input('cod_permissao'),
+            $request->input('txt_descricao_permissao'),
+            $request->boolean('flg_ativo_permissao', true)
         );
 
         if (is_array($novo) && isset($novo['http_status'])) {
             return response()->json($novo, (int)$novo['http_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
-        return response()->json(Operations::padronizarRespostaSucesso($novo, 201, 'Permissão criada com sucesso.', ['cod_permissao' => (string)$request->input('codigo'), 'codigo' => (string)$request->input('codigo')]), 201, [], JSON_UNESCAPED_UNICODE);
+        return response()->json(Operations::padronizarRespostaSucesso($novo, 201, 'Permissão criada com sucesso.', ['cod_permissao' => (string)$request->input('cod_permissao')]), 201, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Atualiza permissão */
     public function update(Request $request, int $id)
     {
         $regras = [
-            'cod_permissao' => ['quandoPresente ', 'string', 'max:80'],
-            'txt_descricao_permissao' => ['quandoPresente ', 'string', 'max:400'],
+            'cod_permissao' => ['quandoPresente ', 'string', 'max:160'],
+            'txt_descricao_permissao' => ['quandoPresente ', 'string', 'max:255'],
             'flg_ativo_permissao' => ['quandoPresente ', 'boolean'],
         ];
 
@@ -84,10 +70,10 @@ class PermissaoController extends Controller
         }
 
         $pdo = DB::connection()->getPdo();
-        $m = new Permissao();
+        $m = new Permissao($pdo);
 
         $dados = $request->only(['cod_permissao','txt_descricao_permissao','flg_ativo_permissao']);
-        $atual = $m->atualizar($pdo, $id, $dados);
+        $atual = $m->atualizar($id, $dados);
 
         if (is_array($atual) && isset($atual['http_status'])) {
             return response()->json($atual, (int)$atual['http_status'], [], JSON_UNESCAPED_UNICODE);
@@ -100,9 +86,9 @@ class PermissaoController extends Controller
     public function destroy(int $id)
     {
         $pdo = DB::connection()->getPdo();
-        $m = new Permissao();
+        $m = new Permissao($pdo);
 
-        $ok = $m->remover_logicamente($pdo, $id);
+        $ok = $m->remover_logicamente($id);
         if (is_array($ok) && isset($ok['http_status'])) {
             return response()->json($ok, (int)$ok['http_status'], [], JSON_UNESCAPED_UNICODE);
         }

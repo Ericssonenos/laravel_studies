@@ -170,7 +170,7 @@ Responsabilidades e contratos
    - Deve usar apenas recursos do framework estritamente necessários (rotas, request/response helpers). Não deve conter regras de negócio.
 
 2) Service de operações (ex.: `App\Services\Operations`)
-   - Validação desacoplada: `validarRegras(array $dados, array $regras, array $mensagens = [], array $contexto = []): array` — retorna objeto padronizado com `http_status`, `message`, `detail`, `contexto`.
+   - Validação desacoplada: `validarRegras(array $dados, array $regras, array $mensagens = [], array $contexto = []): array` — retorna objeto padronizado com `http_status`, `msg`, `detail`, `contexto`.
    - Mapeamento de erros: `mapearExcecaoPDO(PDOException $e, array $contexto = []): array` — converte erros do banco em mensagens e códigos apropriados.
    - Helpers de resposta: `padronizarRespostaSucesso(array $dados, int $httpStatus = 201, string $mensagem = '', array $contexto = []): array`.
 
@@ -180,7 +180,7 @@ Responsabilidades e contratos
        - validação desacoplada: `Operations::validarRegras(...)`
        - mapeamento de exceções de banco: `Operations::mapearExcecaoPDO(...)`
        - padronização de respostas de sucesso: `Operations::padronizarRespostaSucesso(...)`
-    - Regra de propagação de erros: sempre que um model retornar um array que contenha `http_status`, o controller deve repassar esse payload diretamente para o cliente, preservando `http_status`, `message`, `detail` e `contexto`. Exemplo:
+    - Regra de propagação de erros: sempre que um model retornar um array que contenha `http_status`, o controller deve repassar esse payload diretamente para o cliente, preservando `http_status`, `msg`, `detail` e `contexto`. Exemplo:
 
 
 Padronização de mensagens e contexto
@@ -219,7 +219,7 @@ Exemplo:
 commit -m "Validação e padronização de erros/respostas para usuários
 
 - Adiciona App\Services\Operations:
-   - mapearExcecaoPDO(): normaliza PDOException para payload padronizado (http_status, error_code, sqlstate, message, detail, contexto).
+   - mapearExcecaoPDO(): normaliza PDOException para payload padronizado (http_status, error_code, sqlstate, msg, detail, contexto).
    - validarRegras(): validador desacoplado (sem dependência do Illuminate) com mensagens dinâmicas e retorno padronizado.
    - padronizarRespostaSucesso(): helper para resposta uniforme de sucesso.
 

@@ -168,7 +168,7 @@ class Operations
             'http_status' => $httpStatusCode,
             'error_code'  => $errorCode,
             'sqlstate'    => (string)$sqlStateCode,
-            'message'     => $userFriendlyMessage,
+            'msg'     => $userFriendlyMessage,
             // manter detalhe técnico para logs/telemetria
             'detail'      => $detailedMessage,
             'contexto'    => $contexto,
@@ -368,7 +368,7 @@ class Operations
                 'http_status' => 422,
                 'error_code'  => 'validation_error',
                 'sqlstate'    => null,
-                'message'     => $firstMessage,
+                'msg'     => $firstMessage,
                 'detail'      => $errors,
                 'contexto'    => $contextoFiltrado,
             ];
@@ -379,7 +379,7 @@ class Operations
             'http_status' => 200,
             'error_code'  => null,
             'sqlstate'    => null,
-            'message'     => 'Validação bem-sucedida.',
+            'msg'     => 'Validação bem-sucedida.',
             'detail'      => [],
             'contexto'    => $contextoFiltrado,
         ];
@@ -390,17 +390,17 @@ class Operations
      *
      * @param array $data  Registro(s) ou payload a colocar em 'detail'
      * @param int $httpStatus
-     * @param string $message
+     * @param string $msg
      * @param array $contexto
      * @return array
      */
-    public static function padronizarRespostaSucesso(array $data, int $httpStatus = 201, string $message = 'Operação realizada com sucesso.', array $contexto = []): array
+    public static function padronizarRespostaSucesso(array $data, int $httpStatus = 201, string $msg = 'Operação realizada com sucesso.', array $contexto = []): array
     {
         return [
             'http_status' => $httpStatus,
             'error_code'  => null,
             'sqlstate'    => null,
-            'message'     => $message,
+            'msg'     => $msg,
             'detail'      => $data,
             'contexto'    => $contexto,
         ];
