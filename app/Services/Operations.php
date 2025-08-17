@@ -186,6 +186,40 @@ class Operations
                 $errorCode = 'undefined_column';
                 break;
 
+            case '22P02': // invalid_text_representation (ex: invalid input syntax for type bigint)
+                $type = null;
+                $offending = null;
+                if (preg_match('/invalid input syntax for type\s+(\w+):\s*"([^"]+)"/i', $detailedMessage, $m)) {
+                    $type = $m[1];
+                    $offending = $m[2];
+                } elseif (preg_match("/invalid input syntax for type\s+(\\w+):\s*'([^']+)'/i", $detailedMessage, $m2)) {
+                    $type = $m2[1];
+                    $offending = $m2[2];
+                }
+
+                // tentar inferir o nome do campo a partir do contexto (quando o valor coincide)
+                $field = null;
+                if ($offending !== null) {
+                    foreach ($contexto as $k => $v) {
+                        if ((string)$v === (string)$offending) {
+                            $field = $k;
+                            break;
+                        }
+                    }
+                }
+
+                if ($field !== null) {
+                    $userFriendlyMessage = "Valor inválido para {$field}: '{$offending}' não é compatível com o tipo {$type}. Verifique e tente novamente.";
+                } elseif ($offending !== null) {
+                    $userFriendlyMessage = "Valor inválido: '{$offending}' não é compatível com o tipo {$type}. Verifique os campos e tente novamente.";
+                } else {
+                    $userFriendlyMessage = "Valor inválido: um dos campos possui formato incompatível com o tipo esperado (ex.: inteiro). Verifique os dados e tente novamente.";
+                }
+
+                $httpStatusCode = 422;
+                $errorCode = 'invalid_text_representation';
+                break;
+
             default:
                 $userFriendlyMessage = "Erro no banco de dados.";
                 $httpStatusCode = 500;

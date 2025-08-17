@@ -28,7 +28,7 @@ GET {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "txt_email_usuario": "joao.dono@padaria.com"
+    "txt_email_usuario": "@empresa.com"
 }
 
 ### 4. TESTE FALHA - Filtro com tipo inválido
