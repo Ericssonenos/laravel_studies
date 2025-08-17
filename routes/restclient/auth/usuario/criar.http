@@ -5,14 +5,15 @@
 @baseUrl = http://localhost:8080/api/auth
 @contentType = application/json
 
-### 1. Criar usuário válido (sucesso)
+### 1. Criar usuário válido com todos os campos (sucesso)
 # @name criarUsuarioSucesso
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "txt_email_usuario": "carlos.dev@empresa.com",
+    "txt_nome_usuario": "José Acentos",
+    "txt_email_usuario": "jose.acentos{{$randomInt 1000 9999}}@exemplo.com",
     "txt_senha_usuario": "SenhaSegura123!",
     "flg_ativo_usuario": true
 }
@@ -24,7 +25,7 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": 1,
-    "txt_email_usuario": "ana.teste@empresa.com",
+    "txt_email_usuario": "Perdro.acentos{{$randomInt 1000 9999}}@exemplo.com",
     "txt_senha_usuario": "MinhaSenh@456"
 }
 

@@ -279,10 +279,22 @@ class Operations
 
                 // string
                 if ($chaveRegra === 'string') {
-                    if (!is_string($valor)) {
-                        // permitir castable scalars
-                        if (!is_scalar($valor)) {
-                            $errors[$chave][] = $msg["{$chave}.string"] ?? "O campo {$chave} deve ser texto.";
+                    if (!is_scalar($valor)) {
+                        $errors[$chave][] = $msg["{$chave}.string"] ?? "O campo {$chave} deve ser texto.";
+                    } else {
+                        $valStr = (string)$valor;
+
+                        // deve conter ao menos uma letra (Unicode-aware)
+                        $temLetra = preg_match('/\p{L}/u', $valStr);
+
+                        // rejeitar caracteres de controle e sequências que possam indicar/injetar SQL
+                        // (NULL, caracteres ASCII de controle, ponto-e-vírgula, comentários SQL --, /* */)
+                        $padraoPerigoso = '/[\x00-\x1F;]|--|\/\*|\*\//';
+
+                        if (!$temLetra) {
+                            $errors[$chave][] = $msg["{$chave}.string"] ?? "O campo {$chave} deve conter ao menos uma letra.";
+                        } elseif (preg_match($padraoPerigoso, $valStr)) {
+                            $errors[$chave][] = $msg["{$chave}.string"] ?? "O campo {$chave} contém caracteres inválidos que podem causar erro no banco de dados.";
                         }
                     }
                     continue;

@@ -70,9 +70,9 @@ class UsuarioController extends Controller
         // Validação dos dados de entrada
         $regrasValidacao = [
             'locatario_id' => ['required', 'integer'],
-            'txt_nome_usuario' => ['quandoPresente', 'string', 'max:120'],
-            'txt_email_usuario' => ['required', 'string', 'max:160'],
-            'txt_senha_usuario' => ['required', 'string', 'min:6'],
+            'txt_nome_usuario' => ['quandoPresente', 'string', 'max:60'],
+            'txt_email_usuario' => ['required', 'email', 'max:120'],
+            'txt_senha_usuario' => ['required', 'password', 'min:6'],
             'flg_ativo_usuario' => ['quandoPresente', 'boolean']
         ];
 
