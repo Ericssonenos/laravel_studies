@@ -64,6 +64,8 @@ class Usuario
     function Criar($params): array
     {
 
+        // Aqui os parâmetros são dinâmicos porque a validação de regras como
+        // "required", "min", "max", etc., ocorre no Controller antes de chamar este método.
 
         if (!is_array($params) || empty($params)) {
             $errors = ['params' => ['Parâmetros inválidos para criação. Deve ser array não vazio.']];
