@@ -5,6 +5,7 @@ namespace App\Services;
 use PDOException;
 use PDO;
 use PDOStatement;
+use Illuminate\Http\Request;
 
 
 class Operations
@@ -12,10 +13,10 @@ class Operations
     // Implementação dos métodos de operação
 
     /**
-     * Mapeia \PDOException para um array padronizado com http_status, código e mensagem amigável.
+     * Mapeia \PDOException para um array padronizado com pdo_status, código e mensagem amigável.
      * $contexto pode conter chaves como 'locatario_id', 'email', 'grupo_id' para mensagens mais claras.
      */
-    public static function mapearExcecaoPDO(PDOException $pdoException, array $contexto = []): array
+    public static function mapearExcecaoPDO(PDOException $pdoException, array $params = []): array
     {
         $sqlStateCode    = $pdoException->errorInfo[0] ?? (string)$pdoException->getCode();
         $detailedMessage = $pdoException->errorInfo[2] ?? $pdoException->getMessage();
@@ -66,10 +67,10 @@ class Operations
                     foreach ($cols as $i => $col) {
                         $val = $vals[$i] ?? null;
 
-                        // tentar mapear valor pelo contexto (chaves exatas ou com prefixos comuns)
+                        // tentar mapear valor pelo params (chaves exatas ou com prefixos comuns)
                         $contextValue = null;
-                        if (array_key_exists($col, $contexto)) {
-                            $contextValue = $contexto[$col];
+                        if (array_key_exists($col, $params)) {
+                            $contextValue = $params[$col];
                         } else {
                             // variações comuns: sem prefixo 'txt_', remover aspas, usar nome em minúsculas
                             $candidates = [
@@ -78,8 +79,8 @@ class Operations
                                 mb_strtolower(trim($col, '"')),
                             ];
                             foreach ($candidates as $cand) {
-                                if ($cand !== '' && array_key_exists($cand, $contexto)) {
-                                    $contextValue = $contexto[$cand];
+                                if ($cand !== '' && array_key_exists($cand, $params)) {
+                                    $contextValue = $params[$cand];
                                     break;
                                 }
                             }
@@ -141,7 +142,12 @@ class Operations
                 break;
 
             case '42601': // syntax_error
-                // Detectar palavras-chave específicas no erro para dar mensagem mais direcionada
+                // Detectar palavras-chave ou token próximo ao erro para dar mensagem mais direcionada
+                $hint = null;
+                if (preg_match('/LINE \d+:\s*(.+)$/m', $detailedMessage, $mLine)) {
+                    $hint = trim($mLine[1]);
+                }
+
                 if (preg_match('/syntax error at or near ["\']?(order by|limit|offset)["\']?/i', $detailedMessage, $matches)) {
                     $keyword = strtolower($matches[1]);
                     $userFriendlyMessage = match ($keyword) {
@@ -150,11 +156,20 @@ class Operations
                         'offset' => "Erro no deslocamento de registros. Verifique se o valor do offset é um número válido.",
                         default => "Erro de sintaxe na consulta. Verifique os parâmetros de busca e tente novamente."
                     };
+                } elseif (preg_match('/syntax error at or near ["\']?([^"\']+)["\']?/i', $detailedMessage, $mToken)) {
+                    // captura o token próximo ao ponto do erro (ex: "WHERE", ")", "::text", nome de coluna etc.)
+                    $token = trim($mToken[1]);
+                    $userFriendlyMessage = "Erro de sintaxe próximo a '{$token}'. Verifique a consulta (nomes de colunas, aliases e parênteses) e os parâmetros enviados.";
                 } elseif (preg_match('/syntax error at or near/i', $detailedMessage)) {
                     $userFriendlyMessage = "Erro de sintaxe na consulta ao banco de dados. Verifique os parâmetros de busca e tente novamente.";
                 } else {
                     $userFriendlyMessage = "Consulta inválida. Verifique os dados enviados e tente novamente.";
                 }
+
+                if ($hint) {
+                    $userFriendlyMessage .= " Trecho provável do problema: '" . $hint . "'.";
+                }
+
                 $httpStatusCode = 400;
                 $errorCode = 'syntax_error';
                 break;
@@ -168,7 +183,7 @@ class Operations
                     $col = $m2[1];
                 }
 
-                // tentar extrair trecho da LINE para mostrar contexto do erro
+                // tentar extrair trecho da LINE para mostrar params do erro
                 $hint = null;
                 if (preg_match('/LINE \d+:\s*(.+)$/m', $detailedMessage, $mLine)) {
                     $hint = trim($mLine[1]);
@@ -197,10 +212,10 @@ class Operations
                     $offending = $m2[2];
                 }
 
-                // tentar inferir o nome do campo a partir do contexto (quando o valor coincide)
+                // tentar inferir o nome do campo a partir do params (quando o valor coincide)
                 $field = null;
                 if ($offending !== null) {
-                    foreach ($contexto as $k => $v) {
+                    foreach ($params as $k => $v) {
                         if ((string)$v === (string)$offending) {
                             $field = $k;
                             break;
@@ -221,20 +236,16 @@ class Operations
                 break;
 
             default:
-                $userFriendlyMessage = "Erro no banco de dados.";
+                $userFriendlyMessage = $detailedMessage;
                 $httpStatusCode = 500;
                 $errorCode = (string)$sqlStateCode;
                 break;
         }
 
         return [
-            'http_status' => $httpStatusCode,
-            'error_code'  => $errorCode,
-            'sqlstate'    => (string)$sqlStateCode,
-            'msg'     => $userFriendlyMessage,
-            // manter detalhe técnico para logs/telemetria
-            'detail'      => $detailedMessage,
-            'contexto'    => $contexto,
+            'pdo_status' => $httpStatusCode,
+            'message'     => "errorCode: $errorCode - $userFriendlyMessage",
+            'data'        =>  []
         ];
     }
 
@@ -434,29 +445,21 @@ class Operations
         }
 
         // filtrar apenas chaves que existem nas regras de validação
-        $contextoFiltrado = array_intersect_key($params, $regrasValidacao);
+        $data = array_intersect_key($params, $regrasValidacao);
 
         if (!empty($errors)) {
-            // pega a primeira mensagem amigável
-            $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
             return [
-                'http_status' => 422,
-                'error_code'  => 'validation_error',
-                'sqlstate'    => null,
-                'msg'     => $firstMessage,
-                'detail'      => $errors,
-                'contexto'    => $contextoFiltrado,
+                'params_status' => 422, // Unprocessable Entity Unidade não processada
+                'error_code'  => 'Erros de parametrização',
+                'message'     => $errors,
+                'data'    => $data,
             ];
         }
 
         // OK
         return [
-            'http_status' => 200,
-            'error_code'  => null,
-            'sqlstate'    => null,
-            'msg'     => 'Validação bem-sucedida.',
-            'detail'      => [],
-            'contexto'    => $contextoFiltrado,
+            'params_status' => 200,
+            'data'    => $data,
         ];
     }
 
@@ -654,7 +657,7 @@ class Operations
 
         return [
             'dados' => $dadosErro,
-            'status' => (int)$dadosErro['http_status'],
+            'status' => (int)$dadosErro['pdo_status'],
             'headers' => $headers
         ];
     }
@@ -682,14 +685,19 @@ class Operations
      * @param array $dados Dados da resposta para cálculo de paginação
      * @return array Headers completos
      */
-    public static function gerarHeadersCompletos(string $requestId, array $requestData, string $baseUrl, array $dados): array
+    public static function gerarHeadersCompletos(Request $request, array $retorno = []): array
     {
+        // Gerar ID único para rastreamento de logs
+        $requestId = $request->header('X-Request-Id', uniqid('pap-list-', true));
+
         // Headers de segurança base
         $headers = self::gerarHeadersSeguranca($requestId);
 
         // Adicionar headers de paginação se for listagem
-        if (is_array($dados) && !isset($dados['http_status'])) {
-            $headersPaginacao = self::gerarHeadersPaginacao($requestData, count($dados), $baseUrl);
+
+        // aplicar paginação quando $data for array e pdo_status não estiver definido ou for um código positivo
+        if ($retorno && $retorno["pdo_status"] && $retorno['pdo_status'] == 200) {
+            $headersPaginacao = self::gerarHeadersPaginacao($request->all(), count($retorno['data']), $request->url());
             $headers = array_merge($headers, $headersPaginacao);
         }
 

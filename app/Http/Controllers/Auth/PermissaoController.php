@@ -25,10 +25,10 @@ class PermissaoController extends Controller
         $resultadoPermissoes = $permissaoModel->Lista($request->all());
 
         // Verifica se houve erro na busca
-        if (is_array($resultadoPermissoes) && isset($resultadoPermissoes['http_status'])) {
+        if (is_array($resultadoPermissoes) && isset($resultadoPermissoes['pdo_status'])) {
             return response()->json(
                 data: $resultadoPermissoes,
-                status: (int)$resultadoPermissoes['http_status'],
+                status: (int)$resultadoPermissoes['pdo_status'],
                 options: JSON_UNESCAPED_UNICODE,
                 headers: [
                     'Content-Type' => 'application/problem+json; charset=utf-8',
@@ -70,8 +70,8 @@ class PermissaoController extends Controller
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
-        if ($validacao['http_status'] !== 200) {
-            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if ($validacao['pdo_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $pdo = DB::connection()->getPdo();
@@ -83,8 +83,8 @@ class PermissaoController extends Controller
             $request->boolean('flg_ativo_permissao', true)
         );
 
-        if (is_array($resultadoNovaPermissao) && isset($resultadoNovaPermissao['http_status'])) {
-            return response()->json($resultadoNovaPermissao, (int)$resultadoNovaPermissao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoNovaPermissao) && isset($resultadoNovaPermissao['pdo_status'])) {
+            return response()->json($resultadoNovaPermissao, (int)$resultadoNovaPermissao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $resposta = Operations::padronizarRespostaSucesso(
@@ -105,8 +105,8 @@ class PermissaoController extends Controller
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
-        if ($validacao['http_status'] !== 200) {
-            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if ($validacao['pdo_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $pdo = DB::connection()->getPdo();
@@ -115,8 +115,8 @@ class PermissaoController extends Controller
         $dados = $request->only(['cod_permissao','txt_descricao_permissao','flg_ativo_permissao']);
         $resultadoPermissaoAtualizada = $permissaoModel->atualizar($id, $dados);
 
-        if (is_array($resultadoPermissaoAtualizada) && isset($resultadoPermissaoAtualizada['http_status'])) {
-            return response()->json($resultadoPermissaoAtualizada, (int)$resultadoPermissaoAtualizada['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoPermissaoAtualizada) && isset($resultadoPermissaoAtualizada['pdo_status'])) {
+            return response()->json($resultadoPermissaoAtualizada, (int)$resultadoPermissaoAtualizada['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $resposta = Operations::padronizarRespostaSucesso(
@@ -134,8 +134,8 @@ class PermissaoController extends Controller
         $permissaoModel = new Permissao($pdo);
 
         $resultadoRemocaoPermissao = $permissaoModel->remover_logicamente($id);
-        if (is_array($resultadoRemocaoPermissao) && isset($resultadoRemocaoPermissao['http_status'])) {
-            return response()->json($resultadoRemocaoPermissao, (int)$resultadoRemocaoPermissao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoRemocaoPermissao) && isset($resultadoRemocaoPermissao['pdo_status'])) {
+            return response()->json($resultadoRemocaoPermissao, (int)$resultadoRemocaoPermissao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($resultadoRemocaoPermissao === false) {

@@ -19,7 +19,7 @@ Content-Type: {{contentType}}
     "locatario_id": 1,
     "flg_ativo_usuario": true,
     "order_by": "txt_nome_usuario ASC",
-    "limit": 10
+    "limit": 3
 }
 
 ### 3. Buscar usuário por email (sucesso)
@@ -38,7 +38,6 @@ Content-Type: {{contentType}}
 
 {
     "locatario_id": "texto_invalido",
-    "flg_ativo_usuario": "sim"
 }
 
 ### 5. Teste paginação (sucesso)

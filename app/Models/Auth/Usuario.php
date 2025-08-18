@@ -5,16 +5,16 @@ namespace App\Models\Auth;
 use InvalidArgumentException;
 use App\Services\Operations;
 use PDO;
+use Illuminate\Support\Facades\DB;
 
 class Usuario
 {
     private PDO $pdo;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
-        $this->pdo = $pdo;
+        $this->pdo = DB::connection()->getPdo();
     }
-
     public function Lista(array $params = []): array
     {
         // Parametriza os filtros de busca, ordenação e paginação
@@ -36,7 +36,11 @@ class Usuario
 
         try {
             $comando->execute($execParams);
-            return $comando->fetchAll(PDO::FETCH_ASSOC);
+            return [
+                'data' => $comando->fetchAll(PDO::FETCH_ASSOC),
+                'pdo_status' => 200,
+                'message' => 'Lista de usuários retornada com sucesso.'
+            ];
         } catch (\PDOException $excecaoPDO) {
             // Devolve mensagem de erro, ação e parâmetros recebidos
             return Operations::mapearExcecaoPDO(
@@ -45,66 +49,16 @@ class Usuario
             );
         }
     }
-
-    public function procurar_por_id(int $id_usuario): ?array
-    {
-        $contexto = ['id_usuario' => $id_usuario];
-        $sql = "SELECT * FROM auth.usuarios
-                WHERE id_usuario = :id AND dat_cancelamento_em IS NULL";
-        $st = $this->pdo->prepare($sql);
-        try {
-            $st->execute([':id' => $id_usuario]);
-            $row = $st->fetch(PDO::FETCH_ASSOC);
-            return $row ?: null;
-        } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
-        }
-    }
-
     function Criar($params): array
     {
-
-        // Aqui os parâmetros são dinâmicos porque a validação de regras como
-        // "required", "min", "max", etc., ocorre no Controller antes de chamar este método.
-
-        if (!is_array($params) || empty($params)) {
-            $errors = ['params' => ['Parâmetros inválidos para criação. Deve ser array não vazio.']];
-            // pega a primeira mensagem amigável
-            $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
-            $contextoFiltrado = is_array($params) ? $params : [];
-            return [
-                'http_status' => 422,
-                'error_code'  => 'validation_error',
-                'sqlstate'    => null,
-                'msg'     => $firstMessage,
-                'detail'      => $errors,
-                'contexto'    => $contextoFiltrado,
-            ];
-        }
-
         // remover campos imutáveis se enviados por engano
         unset($params['id_usuario'], $params['dat_criado_em'], $params['dat_atualizado_em'], $params['dat_cancelamento_em']);
-
-        if (empty($params)) {
-            $errors = ['params' => ['Nenhum campo restante para inserção.']];
-            // pega a primeira mensagem amigável
-            $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
-            $contextoFiltrado = $params;
-            return [
-                'http_status' => 422,
-                'error_code'  => 'validation_error',
-                'sqlstate'    => null,
-                'msg'     => $firstMessage,
-                'detail'      => $errors,
-                'contexto'    => $contextoFiltrado,
-            ];
-        }
 
         // montar colunas e placeholders dinamicamente
         $colunas = array_keys($params);
         $placeholders = array_map(fn($c) => ':' . $c, $colunas);
 
-        $sql = "INSERT INTO auth.usuarios (" . implode(', ', $colunas) . ")\n                VALUES (" . implode(', ', $placeholders) . ") RETURNING *";
+        $comandoSql = "INSERT INTO auth.usuarios (" . implode(', ', $colunas) . ")\n                VALUES (" . implode(', ', $placeholders) . ") RETURNING *";
 
         // preparar bindings com inferência de tipo pelo nome
         $bindings = [];
@@ -114,13 +68,62 @@ class Usuario
         }
 
         try {
-            $st = Operations::prepararEExecutarComando($this->pdo, $sql, $bindings, $params);
-            $dados = $st->fetch(PDO::FETCH_ASSOC);
-            return $dados ?: [];
+            $Comando = Operations::prepararEExecutarComando($this->pdo, $comandoSql, $bindings, $params);
+            return[
+                'data' => $Comando->fetch(PDO::FETCH_ASSOC),
+                'message' => 'Usuário criado com sucesso.',
+                'pdo_status' => 201
+            ];
+
         } catch (\PDOException $e) {
             return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
         }
     }
+
+
+
+    /** Atribui grupo a usuário */
+    function AtribuirGrupo($params): array
+    {
+        // Aqui os parâmetros são dinâmicos porque a validação de regras como
+        // "required", "min", "max", etc., ocorre no Controller antes de chamar este método.
+
+        $comandoSql = "INSERT INTO auth.usuarios_grupos (usuario_id, grupo_id)
+                VALUES (:usuario, :grupo)
+                ON CONFLICT (usuario_id, grupo_id) DO NOTHING RETURNING *";
+
+        $comando = $this->pdo->prepare($comandoSql);
+
+        try {
+            $comando->execute([':usuario' => $params['id_usuario'], ':grupo' => $params['grupo_id']]);
+            return [
+                'data' => $comando->fetch(PDO::FETCH_ASSOC),
+                'message' => 'Grupo atribuído ao usuário com sucesso.',
+                'pdo_status' => 201
+            ];
+        } catch (\PDOException $e) {
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
+        }
+    }
+
+
+
+    public function procurar_por_id(int $id_usuario): ?array
+    {
+        $contexto = ['id_usuario' => $id_usuario];
+        $comandoSql = "SELECT * FROM auth.usuarios
+                WHERE id_usuario = :id AND dat_cancelamento_em IS NULL";
+        $st = $this->pdo->prepare($comandoSql);
+        try {
+            $st->execute([':id' => $id_usuario]);
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\PDOException $e) {
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
+        }
+    }
+
+
 
     function atualizar(int $id_usuario, array $data): array
     {
@@ -163,25 +166,7 @@ class Usuario
         }
     }
 
-    /* ==============================
-       RELAÇÕES DE USUÁRIO
-       ============================== */
 
-    /** Atribui grupo a usuário */
-    function atribuir_grupo(int $id_usuario, int $id_grupo): bool
-    {
-        $contexto = ['id_usuario' => $id_usuario, 'grupo_id' => $id_grupo];
-        $sql = "INSERT INTO auth.usuarios_grupos (usuario_id, grupo_id)
-                VALUES (:usuario, :grupo)
-                ON CONFLICT (usuario_id, grupo_id) DO NOTHING";
-        $st = $this->pdo->prepare($sql);
-        try {
-            return $st->execute([':usuario' => $id_usuario, ':grupo' => $id_grupo]);
-        } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
-            return false;
-        }
-    }
 
     /** Remove grupo de usuário */
     function remover_grupo(int $id_usuario, int $id_grupo): bool

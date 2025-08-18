@@ -25,10 +25,10 @@ class GrupoController extends Controller
         $resultadosGrupos = $grupoModel->Lista($request->all());
 
         // Verifica se houve erro na busca
-        if (is_array($resultadosGrupos) && isset($resultadosGrupos['http_status'])) {
+        if (is_array($resultadosGrupos) && isset($resultadosGrupos['pdo_status'])) {
             return response()->json(
                 data: $resultadosGrupos,
-                status: (int)$resultadosGrupos['http_status'],
+                status: (int)$resultadosGrupos['pdo_status'],
                 options: JSON_UNESCAPED_UNICODE,
                 headers: [
                     'Content-Type' => 'application/problem+json; charset=utf-8',
@@ -40,9 +40,9 @@ class GrupoController extends Controller
         // Gerar headers completos
         $headers = Operations::gerarHeadersCompletos(
             requestId: $requestId,
-            requestData: $request->all(),
+            params: $request->all(),
             baseUrl: $request->url(),
-            dados: $resultadosGrupos
+            data: $resultadosGrupos
         );
 
         // Padronizar resposta de sucesso
@@ -75,8 +75,8 @@ class GrupoController extends Controller
         $parametrosValidados = Operations::validarRegras($request->all(), $regras);
 
         // Verifica se houve erro na validação
-        if ($parametrosValidados['http_status'] !== 200) {
-            return response()->json($parametrosValidados, (int)$parametrosValidados['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if ($parametrosValidados['pdo_status'] !== 200) {
+            return response()->json($parametrosValidados, (int)$parametrosValidados['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         // Conexão com o banco de dados
@@ -88,8 +88,8 @@ class GrupoController extends Controller
         // chamar o model para criar o grupo
         $resultadoNovoGrupo = $grupoModel->Criar($request->all());
 
-        if (is_array($resultadoNovoGrupo) && isset($resultadoNovoGrupo['http_status'])) {
-            return response()->json($resultadoNovoGrupo, (int)$resultadoNovoGrupo['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoNovoGrupo) && isset($resultadoNovoGrupo['pdo_status'])) {
+            return response()->json($resultadoNovoGrupo, (int)$resultadoNovoGrupo['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $resposta = Operations::padronizarRespostaSucesso(
@@ -110,8 +110,8 @@ class GrupoController extends Controller
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
-        if ($validacao['http_status'] !== 200) {
-            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if ($validacao['pdo_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $pdo = DB::connection()->getPdo();
@@ -120,8 +120,8 @@ class GrupoController extends Controller
         $dados = $request->only(['txt_nome_grupo', 'txt_descricao_grupo', 'flg_ativo_grupo']);
         $resultadoGrupoAtualizado = $grupoModel->atualizar($id, $dados);
 
-        if (is_array($resultadoGrupoAtualizado) && isset($resultadoGrupoAtualizado['http_status'])) {
-            return response()->json($resultadoGrupoAtualizado, (int)$resultadoGrupoAtualizado['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoGrupoAtualizado) && isset($resultadoGrupoAtualizado['pdo_status'])) {
+            return response()->json($resultadoGrupoAtualizado, (int)$resultadoGrupoAtualizado['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $resposta = Operations::padronizarRespostaSucesso(
@@ -139,8 +139,8 @@ class GrupoController extends Controller
         $grupoModel = new Grupo($pdo);
 
         $resultadoRemocaoGrupo = $grupoModel->remover_logicamente($id);
-        if (is_array($resultadoRemocaoGrupo) && isset($resultadoRemocaoGrupo['http_status'])) {
-            return response()->json($resultadoRemocaoGrupo, (int)$resultadoRemocaoGrupo['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoRemocaoGrupo) && isset($resultadoRemocaoGrupo['pdo_status'])) {
+            return response()->json($resultadoRemocaoGrupo, (int)$resultadoRemocaoGrupo['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($resultadoRemocaoGrupo === false) {
@@ -165,8 +165,8 @@ class GrupoController extends Controller
 
         $resultadoAtribuicaoPapel = $grupoModel->atribuir_papel($id_grupo, (int)$request->input('papel_id'));
 
-        if (is_array($resultadoAtribuicaoPapel) && isset($resultadoAtribuicaoPapel['http_status'])) {
-            return response()->json($resultadoAtribuicaoPapel, (int)$resultadoAtribuicaoPapel['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoAtribuicaoPapel) && isset($resultadoAtribuicaoPapel['pdo_status'])) {
+            return response()->json($resultadoAtribuicaoPapel, (int)$resultadoAtribuicaoPapel['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($resultadoAtribuicaoPapel === false) {
@@ -189,8 +189,8 @@ class GrupoController extends Controller
 
         $resultadoRemocaoPapel = $grupoModel->remover_papel($id_grupo, (int)$request->input('papel_id'));
 
-        if (is_array($resultadoRemocaoPapel) && isset($resultadoRemocaoPapel['http_status'])) {
-            return response()->json($resultadoRemocaoPapel, (int)$resultadoRemocaoPapel['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoRemocaoPapel) && isset($resultadoRemocaoPapel['pdo_status'])) {
+            return response()->json($resultadoRemocaoPapel, (int)$resultadoRemocaoPapel['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($resultadoRemocaoPapel === false) {
@@ -213,10 +213,10 @@ class GrupoController extends Controller
 
         $resultadoListaPapeisGrupo = $grupoModel->listar_papeis($id_grupo);
 
-        if (is_array($resultadoListaPapeisGrupo) && isset($resultadoListaPapeisGrupo['http_status'])) {
+        if (is_array($resultadoListaPapeisGrupo) && isset($resultadoListaPapeisGrupo['pdo_status'])) {
             return response()->json(
                 data: $resultadoListaPapeisGrupo,
-                status: (int)$resultadoListaPapeisGrupo['http_status'],
+                status: (int)$resultadoListaPapeisGrupo['pdo_status'],
                 options: JSON_UNESCAPED_UNICODE,
                 headers: [
                     'Content-Type' => 'application/problem+json; charset=utf-8'

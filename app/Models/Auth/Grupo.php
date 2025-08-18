@@ -72,7 +72,7 @@ class Grupo
                 $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
                 $contextoFiltrado = is_array($params) ? $params : [];
                 return [
-                    'http_status' => 422,
+                    'pdo_status' => 422,
                     'error_code'  => 'validation_error',
                     'sqlstate'    => null,
                     'msg'     => $firstMessage,
@@ -89,7 +89,7 @@ class Grupo
                 $firstMessage = reset($errors)[0] ?? 'Erro de validação nos dados enviados.';
                 $contextoFiltrado = $params;
                 return [
-                    'http_status' => 422,
+                    'pdo_status' => 422,
                     'error_code'  => 'validation_error',
                     'sqlstate'    => null,
                     'msg'     => $firstMessage,

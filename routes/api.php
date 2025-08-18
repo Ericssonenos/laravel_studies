@@ -10,7 +10,7 @@ Route::prefix('auth')->group(function () {
     // Usuarios
     Route::get('usuarios', [UsuarioController::class, 'Lista']);
     Route::post('usuarios', [UsuarioController::class, 'Criar']);
-    Route::post('usuarios/{id}/grupos', [UsuarioController::class, 'AtribuirGrupo']);
+    Route::post('usuarios/grupos', [UsuarioController::class, 'AtribuirGrupo']);
     Route::delete('usuarios/{id}/grupos', [UsuarioController::class, 'RemoverGrupo']);
     Route::get('usuarios/{id}/grupos', [UsuarioController::class, 'ListarGrupos']);
     Route::post('usuarios/{id}/papeis', [UsuarioController::class, 'AtribuirPapel']);

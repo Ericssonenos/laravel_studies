@@ -13,8 +13,7 @@ class PapelController extends Controller
     /** Lista papéis */
     public function Lista(Request $request)
     {
-        // Gerar ID único para rastreamento de logs
-        $requestId = $request->header('X-Request-Id', uniqid('pap-list-', true));
+
 
         // Conexão
         $pdo = DB::connection()->getPdo();
@@ -25,10 +24,10 @@ class PapelController extends Controller
         $resultadoPapeis = $papelModel->Lista($request->all());
 
         // Verifica se houve erro na busca
-        if (is_array($resultadoPapeis) && isset($resultadoPapeis['http_status'])) {
+        if (is_array($resultadoPapeis) && isset($resultadoPapeis['pdo_status'])) {
             return response()->json(
                 data: $resultadoPapeis,
-                status: (int)$resultadoPapeis['http_status'],
+                status: (int)$resultadoPapeis['pdo_status'],
                 options: JSON_UNESCAPED_UNICODE,
                 headers: [
                     'Content-Type' => 'application/problem+json; charset=utf-8',
@@ -40,9 +39,9 @@ class PapelController extends Controller
         // Gerar headers completos
         $headers = Operations::gerarHeadersCompletos(
             requestId: $requestId,
-            requestData: $request->all(),
+            params: $request->all(),
             baseUrl: $request->url(),
-            dados: $resultadoPapeis
+            data: $resultadoPapeis
         );
 
         // Padronizar resposta de sucesso
@@ -71,8 +70,8 @@ class PapelController extends Controller
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
-        if ($validacao['http_status'] !== 200) {
-            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if ($validacao['pdo_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $pdo = DB::connection()->getPdo();
@@ -85,8 +84,8 @@ class PapelController extends Controller
             $request->boolean('flg_ativo_papel', true)
         );
 
-        if (is_array($resultadoNovoPapel) && isset($resultadoNovoPapel['http_status'])) {
-            return response()->json($resultadoNovoPapel, (int)$resultadoNovoPapel['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoNovoPapel) && isset($resultadoNovoPapel['pdo_status'])) {
+            return response()->json($resultadoNovoPapel, (int)$resultadoNovoPapel['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $resposta = Operations::padronizarRespostaSucesso(
@@ -107,8 +106,8 @@ class PapelController extends Controller
         ];
 
         $validacao = Operations::validarRegras($request->all(), $regras);
-        if ($validacao['http_status'] !== 200) {
-            return response()->json($validacao, (int)$validacao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if ($validacao['pdo_status'] !== 200) {
+            return response()->json($validacao, (int)$validacao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $pdo = DB::connection()->getPdo();
@@ -117,8 +116,8 @@ class PapelController extends Controller
         $dados = $request->only(['txt_nome_papel','num_nivel_papel','flg_ativo_papel']);
         $resultadoPapelAtualizado = $papelModel->atualizar($id, $dados);
 
-        if (is_array($resultadoPapelAtualizado) && isset($resultadoPapelAtualizado['http_status'])) {
-            return response()->json($resultadoPapelAtualizado, (int)$resultadoPapelAtualizado['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoPapelAtualizado) && isset($resultadoPapelAtualizado['pdo_status'])) {
+            return response()->json($resultadoPapelAtualizado, (int)$resultadoPapelAtualizado['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         $resposta = Operations::padronizarRespostaSucesso(
@@ -136,8 +135,8 @@ class PapelController extends Controller
         $papelModel = new Papel($pdo);
 
         $resultadoRemocaoPapel = $papelModel->remover_logicamente($id);
-        if (is_array($resultadoRemocaoPapel) && isset($resultadoRemocaoPapel['http_status'])) {
-            return response()->json($resultadoRemocaoPapel, (int)$resultadoRemocaoPapel['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoRemocaoPapel) && isset($resultadoRemocaoPapel['pdo_status'])) {
+            return response()->json($resultadoRemocaoPapel, (int)$resultadoRemocaoPapel['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($resultadoRemocaoPapel === false) {
@@ -162,8 +161,8 @@ class PapelController extends Controller
 
         $resultadoAtribuicaoPermissao = $papelModel->atribuir_permissao($id_papel, (int)$request->input('permissao_id'));
 
-        if (is_array($resultadoAtribuicaoPermissao) && isset($resultadoAtribuicaoPermissao['http_status'])) {
-            return response()->json($resultadoAtribuicaoPermissao, (int)$resultadoAtribuicaoPermissao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoAtribuicaoPermissao) && isset($resultadoAtribuicaoPermissao['pdo_status'])) {
+            return response()->json($resultadoAtribuicaoPermissao, (int)$resultadoAtribuicaoPermissao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($resultadoAtribuicaoPermissao === false) {
@@ -186,8 +185,8 @@ class PapelController extends Controller
 
         $resultadoRemocaoPermissao = $papelModel->remover_permissao($id_papel, (int)$request->input('permissao_id'));
 
-        if (is_array($resultadoRemocaoPermissao) && isset($resultadoRemocaoPermissao['http_status'])) {
-            return response()->json($resultadoRemocaoPermissao, (int)$resultadoRemocaoPermissao['http_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoRemocaoPermissao) && isset($resultadoRemocaoPermissao['pdo_status'])) {
+            return response()->json($resultadoRemocaoPermissao, (int)$resultadoRemocaoPermissao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($resultadoRemocaoPermissao === false) {
@@ -210,10 +209,10 @@ class PapelController extends Controller
 
         $resultadoListaPermissoesPapel = $papelModel->listar_permissoes($id_papel);
 
-        if (is_array($resultadoListaPermissoesPapel) && isset($resultadoListaPermissoesPapel['http_status'])) {
+        if (is_array($resultadoListaPermissoesPapel) && isset($resultadoListaPermissoesPapel['pdo_status'])) {
             return response()->json(
                 data: $resultadoListaPermissoesPapel,
-                status: (int)$resultadoListaPermissoesPapel['http_status'],
+                status: (int)$resultadoListaPermissoesPapel['pdo_status'],
                 options: JSON_UNESCAPED_UNICODE,
                 headers: [
                     'Content-Type' => 'application/problem+json; charset=utf-8'

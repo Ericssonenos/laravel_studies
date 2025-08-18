@@ -6,4 +6,9 @@
 -- );
 --DELETE FROM auth.usuarios;
 
-SELECT * from auth.usuarios ORDER BY dat_criado_em DESC;
+--SELECT * from auth.usuarios ORDER BY dat_criado_em DESC;
+
+
+INSERT INTO auth.usuarios_grupos (usuario_id, grupo_id)
+                VALUES (1, 2)
+                ON CONFLICT (usuario_id, grupo_id) DO NOTHING RETURNING *

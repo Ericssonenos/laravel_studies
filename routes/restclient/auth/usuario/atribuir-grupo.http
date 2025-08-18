@@ -6,44 +6,49 @@
 @contentType = application/json
 
 ### 1. Atribuir grupo ao usuário (sucesso)
+### caminho do controller: - [ ].php
 # @name atribuirGrupoUsuarioSucesso
-POST {{baseUrl}}/usuarios/1/grupos HTTP/1.1
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "grupo_id": 1
+    "grupo_id": 2,
+    "id_usuario": 1
 }
 
 ### 2. TESTE FALHA - Usuário inexistente
 # @name atribuirGrupoUsuarioInexistente
-POST {{baseUrl}}/usuarios/9999/grupos HTTP/1.1
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "grupo_id": 1
+    "grupo_id": 1,
+    "id_usuario": 9999
 }
 
 ### 3. TESTE FALHA - Grupo inexistente
 # @name atribuirGrupoInexistente
-POST {{baseUrl}}/usuarios/1/grupos HTTP/1.1
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "grupo_id": 9999
+    "grupo_id": 9999,
+    "id_usuario": 1
 }
 
 ### 4. TESTE FALHA - Sem grupo_id
 # @name atribuirSemGrupoId
-POST {{baseUrl}}/usuarios/1/grupos HTTP/1.1
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {}
 
 ### 5. TESTE FALHA - Grupo de locatário diferente
 # @name atribuirGrupoLocatarioDiferente
-POST {{baseUrl}}/usuarios/1/grupos HTTP/1.1
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "grupo_id": 3
+    "grupo_id": "asdasd",
+    "id_usuario": 1
 }
