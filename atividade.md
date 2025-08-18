@@ -1,6 +1,6 @@
 -[] Criar Usuarios 20:35 
 -[] Listar Usuarios 20:37
--[] Criar Grupos
+-[] Criar Grupos 
 -[] Listar Grupos
 -[] Atribuir Grupo a Usuario
 -[] Atribuir Papel a Usuários 17:59 (40 min)

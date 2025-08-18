@@ -25,9 +25,9 @@ class Grupo
         $parametrizacao = Operations::Parametrizar($params);
 
         // Verifica se houve erro na parametrização
-        if ($parametrizacao['param_status'] !== 200) {
+        if ($parametrizacao['statusParams'] !== 200) {
             return [
-                'pdo_status' => $parametrizacao['param_status'],
+                'pdo_status' => $parametrizacao['statusParams'],
                 'message' => $parametrizacao['message'],
                 'data' => []
             ];

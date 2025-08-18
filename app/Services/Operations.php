@@ -589,7 +589,7 @@ class Operations
         // se há erros de validação, retornar erro
         if (!empty($errors)) {
             return [
-                'param_status' => 422,
+                'statusParams' => 422,
                 'error_code' => 'Erros de parametrização',
                 'message' => $errors,
                 'whereParams' => [],
@@ -600,7 +600,7 @@ class Operations
 
         // sucesso
         return [
-            'param_status' => 200,
+            'statusParams' => 200,
             'whereParams' => $whereParams,
             'execParams' => $execParams,
             'optsParams' => $optsParams
