@@ -170,19 +170,42 @@ class Grupo
        RELAÇÃO grupos_papeis
        ============================== */
 
-    /** Atribui um papel a um grupo (evita duplicata) */
-    function atribuir_papel(int $id_grupo, int $id_papel): bool
+    /** Atribui papel a grupo */
+    function AtribuirPapel($params): array
     {
-        $contexto = ['id_grupo' => $id_grupo, 'papel_id' => $id_papel];
-        $sql = "INSERT INTO auth.grupos_papeis (grupo_id, papel_id)
-                VALUES (:grupo, :papel)
-                ON CONFLICT (grupo_id, papel_id) DO NOTHING";
-        $st = $this->pdo->prepare($sql);
+        // gerar query
+        $comandoSql = "INSERT INTO auth.grupos_papeis (grupo_id, papel_id)
+                VALUES (:grupo_id, :papel_id)
+                ON CONFLICT (grupo_id, papel_id) DO NOTHING RETURNING *";
+
+        // Preparar comando
+        $comando = $this->pdo->prepare($comandoSql);
+
         try {
-            return $st->execute([':grupo' => $id_grupo, ':papel' => $id_papel]);
+            // Executar comando
+            $comando->execute([':grupo_id' => $params['grupo_id'], ':papel_id' => $params['papel_id']]);
+
+            // Obter retorno da atribuição
+            $retornoAtribuicao = $comando->fetch(PDO::FETCH_ASSOC);
+
+            // Verificar se a atribuição foi bem-sucedida
+            if (!$retornoAtribuicao) {
+                // Papel já atribuído ao grupo
+                return [
+                    'data' => null,
+                    'message' => 'Papel já atribuído ao grupo',
+                    'pdo_status' => 409 // Conflito
+                ];
+            }
+            // Papel atribuído com sucesso
+            return [
+                'data' => $retornoAtribuicao,
+                'message' => 'Papel atribuído ao grupo com sucesso.',
+                'pdo_status' => 201
+            ];
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
-            return false;
+            // Tratar exceção
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
         }
     }
 

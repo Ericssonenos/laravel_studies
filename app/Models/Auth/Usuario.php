@@ -93,25 +93,25 @@ class Usuario
         // Preparar comando
         $comando = $this->pdo->prepare($comandoSql);
 
-
         try {
             // Executar comando
-            $comando->execute([':usuario_id' => $params['id_usuario'], ':grupo_id' => $params['grupo_id']]);
+            $comando->execute([':usuario_id' => $params['usuario_id'], ':grupo_id' => $params['grupo_id']]);
 
-            // Verificar se a atribuição foi bem-sucedida
+            // Obter retorno da atribuição
             $retornoAtribuicao = $comando->fetch(PDO::FETCH_ASSOC);
 
-            // Papel já atribuído ao usuário
+            // Verificar se a atribuição foi bem-sucedida
             if (!$retornoAtribuicao) {
+                // Grupo já atribuído ao usuário
                 return [
                     'data' => null,
-                    'message' => 'Grupo já atribuído ao usuário.',
+                    'message' => 'Grupo já atribuído ao usuário',
                     'pdo_status' => 409 // Conflito
                 ];
             }
-            // Papel atribuído com sucesso
+            // Grupo atribuído com sucesso
             return [
-                'data' => $comando->fetch(PDO::FETCH_ASSOC),
+                'data' => $retornoAtribuicao,
                 'message' => 'Grupo atribuído ao usuário com sucesso.',
                 'pdo_status' => 201
             ];
@@ -150,7 +150,7 @@ class Usuario
             }
             // Papel atribuído com sucesso
             return [
-                'data' => $comando->fetch(PDO::FETCH_ASSOC),
+                'data' => $retornoAtribuicao,
                 'message' => 'Papel atribuído ao usuário com sucesso.',
                 'pdo_status' => 201
             ];
@@ -291,18 +291,41 @@ class Usuario
     }
 
     /** Atribui permissão a usuário */
-    function atribuir_permissao(int $id_usuario, int $id_permissao): bool
+    function AtribuirPermissao($params): array
     {
-        $contexto = ['id_usuario' => $id_usuario, 'permissao_id' => $id_permissao];
-        $sql = "INSERT INTO auth.usuarios_permissoes (usuario_id, permissao_id)
-                VALUES (:usuario, :permissao)
-                ON CONFLICT (usuario_id, permissao_id) DO NOTHING";
-        $st = $this->pdo->prepare($sql);
+        // gerar query
+        $comandoSql = "INSERT INTO auth.usuarios_permissoes (usuario_id, permissao_id)
+                VALUES (:usuario_id, :permissao_id)
+                ON CONFLICT (usuario_id, permissao_id) DO NOTHING RETURNING *";
+
+        // Preparar comando
+        $comando = $this->pdo->prepare($comandoSql);
+
         try {
-            return $st->execute([':usuario' => $id_usuario, ':permissao' => $id_permissao]);
+            // Executar comando
+            $comando->execute([':usuario_id' => $params['usuario_id'], ':permissao_id' => $params['permissao_id']]);
+
+            // Obter retorno da atribuição
+            $retornoAtribuicao = $comando->fetch(PDO::FETCH_ASSOC);
+
+            // Verificar se a atribuição foi bem-sucedida
+            if (!$retornoAtribuicao) {
+                // Permissão já atribuída ao usuário
+                return [
+                    'data' => null,
+                    'message' => 'Permissão já atribuída ao usuário',
+                    'pdo_status' => 409 // Conflito
+                ];
+            }
+            // Permissão atribuída com sucesso
+            return [
+                'data' => $retornoAtribuicao,
+                'message' => 'Permissão atribuída ao usuário com sucesso.',
+                'pdo_status' => 201
+            ];
         } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
-            return false;
+            // Tratar exceção
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
         }
     }
 

@@ -20,48 +20,21 @@ class PapelController extends Controller
     /** Lista papéis */
     public function Lista(Request $request)
     {
-
-
-        // Conexão
-        $pdo = DB::connection()->getPdo();
-        // Módulo Papel
-        $papelModel = new Papel($pdo);
-
         // Obter lista de papéis, passando parâmetros
-        $resultadoPapeis = $papelModel->Lista($request->all());
+        $resultadoPapeis = $this->papelModel->Lista($request->all());
 
-        // Verifica se houve erro na busca
-        if (is_array($resultadoPapeis) && isset($resultadoPapeis['pdo_status'])) {
-            return response()->json(
-                data: $resultadoPapeis,
-                status: (int)$resultadoPapeis['pdo_status'],
-                options: JSON_UNESCAPED_UNICODE,
-                headers: [
-                    'Content-Type' => 'application/problem+json; charset=utf-8',
-                    'X-Request-Id' => $requestId
-                ]
-            );
-        }
-
-        // Gerar headers completos
-        $headers = Operations::gerarHeadersCompletos(
-            requestId: $requestId,
-            params: $request->all(),
-            baseUrl: $request->url(),
-            data: $resultadoPapeis
-        );
-
-        // Padronizar resposta de sucesso
-        $respostaSucesso = Operations::padronizarRespostaSucesso(
-            data: $resultadoPapeis,
-            msg: 'Lista de papéis retornada com sucesso.',
-            contexto: $request->all()
-        );
-
+        // Retornar com a Lista
         return response()->json(
-            data: $respostaSucesso,
-            status: 200,
-            headers: $headers,
+            data: [
+                'data' => $resultadoPapeis['data'],
+                'message' => $resultadoPapeis['message'],
+                'params' => $request->all()
+            ],
+            status: $resultadoPapeis['pdo_status'],
+            headers: Operations::gerarHeadersCompletos(
+                request: $request,
+                retorno: $resultadoPapeis
+            ),
             options: JSON_UNESCAPED_UNICODE
         );
     }

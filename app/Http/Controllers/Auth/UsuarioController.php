@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Auth\Usuario;
 use App\Http\Controllers\Controller;
 use App\Services\Operations;
@@ -94,7 +95,7 @@ class UsuarioController extends Controller
         $resultadoDaValidacao = Operations::validarRegras(
             params: $request->all(),
             regrasValidacao: [
-                'id_usuario' => ['required', 'integer'],
+                'usuario_id' => ['required', 'integer'],
                 'grupo_id' => ['required', 'integer']
             ]
         );
@@ -112,19 +113,19 @@ class UsuarioController extends Controller
             );
         }
         // Chamar o método AtribuirGrupo
-        $Retorno_Grupo_atribuido = $this->usuarioModel->AtribuirGrupo($request->all());
+        $resultadoAtribuicaoGrupo = $this->usuarioModel->AtribuirGrupo($request->all());
 
         // Padronizar resposta
         return response()->json(
             data: [
-                'data' => $Retorno_Grupo_atribuido['data'],
-                'message' => $Retorno_Grupo_atribuido['message'],
+                'data' => $resultadoAtribuicaoGrupo['data'],
+                'message' => $resultadoAtribuicaoGrupo['message'],
                 'params' => $request->all()
             ],
-            status: $Retorno_Grupo_atribuido['pdo_status'],
+            status: $resultadoAtribuicaoGrupo['pdo_status'],
             headers: Operations::gerarHeadersCompletos(
                 request: $request,
-                retorno: $Retorno_Grupo_atribuido
+                retorno: $resultadoAtribuicaoGrupo
             ),
             options: JSON_UNESCAPED_UNICODE
         );
@@ -156,77 +157,77 @@ class UsuarioController extends Controller
         }
 
         // Chamar o método AtribuirPapel
-        $Retorno_Papel_atribuido = $this->usuarioModel->AtribuirPapel($request->all());
+        $resultadoAtribuicaoPapel = $this->usuarioModel->AtribuirPapel($request->all());
 
         // Padronizar resposta
         return response()->json(
             data: [
-                'data' => $Retorno_Papel_atribuido['data'],
-                'message' => $Retorno_Papel_atribuido['message'],
+                'data' => $resultadoAtribuicaoPapel['data'],
+                'message' => $resultadoAtribuicaoPapel['message'],
                 'params' => $request->all()
             ],
-            status: $Retorno_Papel_atribuido['pdo_status'],
+            status: $resultadoAtribuicaoPapel['pdo_status'],
             headers: Operations::gerarHeadersCompletos(
                 request: $request,
-                retorno: $Retorno_Papel_atribuido
+                retorno: $resultadoAtribuicaoPapel
             ),
             options: JSON_UNESCAPED_UNICODE
         );
     }
 
     /** Atribui permissão ao usuário */
-    public function AtribuirPermissao(Request $request, $id_usuario)
+    public function AtribuirPermissao(Request $request)
     {
-        // Gerar ID único para rastreamento
-        $requestId = $request->header('X-Request-Id', uniqid('usr-atrib-perm-', true));
-
-        $pdo = DB::connection()->getPdo();
-        $usuarioModel = new Usuario($pdo);
-        $Retorno_Permissao_atribuido = $usuarioModel->atribuir_permissao(
-            $id_usuario,
-            (int)$request->input('permissao_id')
+        // Validação dos dados de entrada
+        $resultadoDaValidacao = Operations::validarRegras(
+            params: $request->all(),
+            regrasValidacao: [
+                'usuario_id' => ['required', 'integer'],
+                'permissao_id' => ['required', 'integer']
+            ]
         );
 
-        if (is_array($Retorno_Permissao_atribuido) && isset($Retorno_Permissao_atribuido['pdo_status'])) {
+        // Verifica se houve erro na validação
+        if ($resultadoDaValidacao['params_status'] !== 200) {
             return response()->json(
-                data: $Retorno_Permissao_atribuido,
-                status: (int)$Retorno_Permissao_atribuido['pdo_status'],
-                options: JSON_UNESCAPED_UNICODE,
-                headers: [
-                    'Content-Type' => 'application/problem+json; charset=utf-8',
-                    'X-Request-Id' => $requestId
-                ]
+                data: $resultadoDaValidacao,
+                status: (int)$resultadoDaValidacao['params_status'],
+                headers: Operations::gerarHeadersCompletos(
+                    request: $request,
+                    retorno: []
+                ),
+                options: JSON_UNESCAPED_UNICODE
             );
         }
 
-        if ($Retorno_Permissao_atribuido === false) {
-            return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
-        }
+        // Chamar o método AtribuirPermissao
+        $resultadoAtribuicaoPermissao = $this->usuarioModel->AtribuirPermissao($request->all());
 
-        // sucesso - gerar headers
-        $headers = Operations::gerarHeadersSeguranca($requestId);
-
+        // Padronizar resposta
         return response()->json(
-            Operations::padronizarRespostaSucesso(
-                data: ['sucesso' => true],
-                msg: 'Permissão atribuída ao usuário com sucesso.',
-                contexto: ['id_usuario' => $id_usuario, 'permissao_id' => (int)$request->input('permissao_id')]
+            data: [
+                'data' => $resultadoAtribuicaoPermissao['data'],
+                'message' => $resultadoAtribuicaoPermissao['message'],
+                'params' => $request->all()
+            ],
+            status: $resultadoAtribuicaoPermissao['pdo_status'],
+            headers: Operations::gerarHeadersCompletos(
+                request: $request,
+                retorno: $resultadoAtribuicaoPermissao
             ),
-            200,
-            $headers,
-            JSON_UNESCAPED_UNICODE
+            options: JSON_UNESCAPED_UNICODE
         );
     }
 
     /** Lista grupos de um usuário */
-    public function ListarGrupos(Request $request, $id_usuario)
+    public function ListarGrupos(Request $request)
     {
         // Gerar ID único para rastreamento
         $requestId = $request->header('X-Request-Id', uniqid('usr-list-grp-', true));
 
         $pdo = DB::connection()->getPdo();
         $usuarioModel = new Usuario($pdo);
-        $grupos = $usuarioModel->listar_grupos($id_usuario);
+        $grupos = $usuarioModel->listar_grupos((int)$request->input('usuario_id'));
 
         if (is_array($grupos) && isset($grupos['pdo_status'])) {
             return response()->json(
@@ -247,7 +248,7 @@ class UsuarioController extends Controller
             Operations::padronizarRespostaSucesso(
                 data: $grupos,
                 msg: 'Grupos do usuário retornados com sucesso.',
-                contexto: ['id_usuario' => $id_usuario]
+                contexto: ['usuario_id' => (int)$request->input('usuario_id')]
             ),
             200,
             $headers,
@@ -256,14 +257,14 @@ class UsuarioController extends Controller
     }
 
     /** Lista papéis de um usuário */
-    public function ListarPapeis(Request $request, $id_usuario)
+    public function ListarPapeis(Request $request)
     {
         // Gerar ID único para rastreamento
         $requestId = $request->header('X-Request-Id', uniqid('usr-list-papel-', true));
 
         $pdo = DB::connection()->getPdo();
         $usuarioModel = new Usuario($pdo);
-        $papeis = $usuarioModel->listar_papeis($id_usuario);
+        $papeis = $usuarioModel->listar_papeis((int)$request->input('usuario_id'));
 
         if (is_array($papeis) && isset($papeis['pdo_status'])) {
             return response()->json(
@@ -284,7 +285,7 @@ class UsuarioController extends Controller
             Operations::padronizarRespostaSucesso(
                 data: $papeis,
                 msg: 'Papéis do usuário retornados com sucesso.',
-                contexto: ['id_usuario' => $id_usuario]
+                contexto: ['usuario_id' => (int)$request->input('usuario_id')]
             ),
             200,
             $headers,
@@ -293,14 +294,14 @@ class UsuarioController extends Controller
     }
 
     /** Lista permissões de um usuário */
-    public function ListarPermissoes(Request $request, $id_usuario)
+    public function ListarPermissoes(Request $request)
     {
         // Gerar ID único para rastreamento
         $requestId = $request->header('X-Request-Id', uniqid('usr-list-perm-', true));
 
         $pdo = DB::connection()->getPdo();
         $usuarioModel = new Usuario($pdo);
-        $permissoes = $usuarioModel->listar_permissoes($id_usuario);
+        $permissoes = $usuarioModel->listar_permissoes((int)$request->input('usuario_id'));
 
         if (is_array($permissoes) && isset($permissoes['pdo_status'])) {
             return response()->json(
@@ -321,7 +322,7 @@ class UsuarioController extends Controller
             Operations::padronizarRespostaSucesso(
                 data: $permissoes,
                 msg: 'Permissões do usuário retornadas com sucesso.',
-                contexto: ['id_usuario' => $id_usuario]
+                contexto: ['usuario_id' => (int)$request->input('usuario_id')]
             ),
             200,
             $headers,

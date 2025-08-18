@@ -9,52 +9,39 @@ use App\Http\Controllers\Auth\PermissaoController;
 Route::prefix('auth')->group(function () {
     // Usuarios
     Route::get('usuarios', [UsuarioController::class, 'Lista']);
-    Route::get('grupos', [GrupoController::class, 'Lista']);
-    Route::get('papeis', [PapelController::class, 'Lista']);
-
-
-
+    Route::post('usuarios', [UsuarioController::class, 'Criar']);
     Route::post('usuarios/grupos', [UsuarioController::class, 'AtribuirGrupo']);
     Route::post('usuarios/papeis', [UsuarioController::class, 'AtribuirPapel']);
-
-
-    Route::post('usuarios', [UsuarioController::class, 'Criar']);
-    Route::post('papeis', [PapelController::class, 'Criar']);
-    Route::post('grupos', [GrupoController::class, 'Criar']);
-
-
-
-
-    Route::delete('usuarios/{id}/grupos', [UsuarioController::class, 'RemoverGrupo']);
-    Route::get('usuarios/{id}/grupos', [UsuarioController::class, 'ListarGrupos']);
-
-    Route::delete('usuarios/{id}/papeis', [UsuarioController::class, 'RemoverPapel']);
-    Route::get('usuarios/{id}/papeis', [UsuarioController::class, 'ListarPapeis']);
-    Route::post('usuarios/{id}/permissoes', [UsuarioController::class, 'AtribuirPermissao']);
-    Route::delete('usuarios/{id}/permissoes', [UsuarioController::class, 'RemoverPermissao']);
-    Route::get('usuarios/{id}/permissoes', [UsuarioController::class, 'ListarPermissoes']);
+    Route::post('usuarios/permissoes', [UsuarioController::class, 'AtribuirPermissao']);
+    Route::delete('usuarios/grupos', [UsuarioController::class, 'RemoverGrupo']);
+    Route::get('usuarios/grupos', [UsuarioController::class, 'ListarGrupos']);
+    Route::delete('usuarios/papeis', [UsuarioController::class, 'RemoverPapel']);
+    Route::get('usuarios/papeis', [UsuarioController::class, 'ListarPapeis']);
+    Route::delete('usuarios/permissoes', [UsuarioController::class, 'RemoverPermissao']);
+    Route::get('usuarios/permissoes', [UsuarioController::class, 'ListarPermissoes']);
 
     // Grupos
-
-    Route::put('grupos/{id}', [GrupoController::class, 'update']);
-    Route::delete('grupos/{id}', [GrupoController::class, 'destroy']);
-    Route::post('grupos/{id}/papeis', [GrupoController::class, 'atribuirPapel']);
-    Route::delete('grupos/{id}/papeis', [GrupoController::class, 'removerPapel']);
-    Route::get('grupos/{id}/papeis', [GrupoController::class, 'listarPapeis']);
+    Route::get('grupos', [GrupoController::class, 'Lista']);
+    Route::post('grupos', [GrupoController::class, 'Criar']);
+    Route::put('grupos', [GrupoController::class, 'Update']);
+    Route::delete('grupos', [GrupoController::class, 'Destroy']);
+    Route::post('grupos/papeis', [GrupoController::class, 'AtribuirPapel']);
+    Route::delete('grupos/papeis', [GrupoController::class, 'RemoverPapel']);
+    Route::get('grupos/papeis', [GrupoController::class, 'ListarPapeis']);
 
     // Papeis
-
-
-    Route::put('papeis/{id}', [PapelController::class, 'update']);
-    Route::delete('papeis/{id}', [PapelController::class, 'destroy']);
-    Route::post('papeis/{id}/permissoes', [PapelController::class, 'atribuirPermissao']);
-    Route::delete('papeis/{id}/permissoes', [PapelController::class, 'removerPermissao']);
-    Route::get('papeis/{id}/permissoes', [PapelController::class, 'listarPermissoes']);
+    Route::get('papeis', [PapelController::class, 'Lista']);
+    Route::post('papeis', [PapelController::class, 'Criar']);
+    Route::put('papeis', [PapelController::class, 'Update']);
+    Route::delete('papeis', [PapelController::class, 'Destroy']);
+    Route::post('papeis/permissoes', [PapelController::class, 'AtribuirPermissao']);
+    Route::delete('papeis/permissoes', [PapelController::class, 'RemoverPermissao']);
+    Route::get('papeis/permissoes', [PapelController::class, 'ListarPermissoes']);
 
     // Permissoes
     Route::get('permissoes', [PermissaoController::class, 'Lista']);
     Route::post('permissoes', [PermissaoController::class, 'Criar']);
-    Route::put('permissoes/{id}', [PermissaoController::class, 'update']);
-    Route::delete('permissoes/{id}', [PermissaoController::class, 'destroy']);
+    Route::put('permissoes', [PermissaoController::class, 'Update']);
+    Route::delete('permissoes', [PermissaoController::class, 'Destroy']);
 });
 
