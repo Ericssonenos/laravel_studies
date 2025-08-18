@@ -10,6 +10,13 @@ use App\Services\Operations;
 
 class PapelController extends Controller
 {
+    private Papel $papelModel;
+
+    public function __construct()
+    {
+        $this->papelModel = new Papel(DB::connection()->getPdo());
+    }
+
     /** Lista papéis */
     public function Lista(Request $request)
     {
@@ -59,30 +66,32 @@ class PapelController extends Controller
         );
     }
 
-        /** Cria papel */
-    public function store(Request $request)
+    /** Cria papel */
+    public function Criar(Request $request)
     {
-        $regras = [
-            'locatario_id' => ['required', 'integer'],
-            'txt_nome_papel' => ['required', 'string', 'max:120'],
-            'num_nivel_papel' => ['required', 'integer'],
-            'flg_ativo_papel' => ['quandoPresente', 'boolean']
-        ];
+        // Validação dos dados de entrada
+        $resultadoDaValidacao = Operations::validarRegras(
+            params: $request->all(),
+            regrasValidacao: [
+                'locatario_id' => ['required', 'integer'],
+                'txt_nome_papel' => ['required', 'string', 'max:120'],
+                'num_nivel_papel' => ['required', 'integer'],
+                'flg_ativo_papel' => ['quandoPresente', 'boolean']
+            ]
+        );
 
-        $validacao = Operations::validarRegras($request->all(), $regras);
-        if ($validacao['pdo_status'] !== 200) {
-            return response()->json($validacao, (int)$validacao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
+        // Verifica se houve erro na validação
+        if ($resultadoDaValidacao['params_status'] !== 200) {
+            return response()->json(
+                data: $resultadoDaValidacao,
+                status: (int)$resultadoDaValidacao['params_status'],
+                headers: Operations::gerarHeadersCompletos($request),
+                options: JSON_UNESCAPED_UNICODE
+            );
         }
 
-        $pdo = DB::connection()->getPdo();
-        $papelModel = new Papel($pdo);
 
-        $resultadoNovoPapel = $papelModel->Criar(
-            (int)$request->input('locatario_id'),
-            (string)$request->input('txt_nome_papel'),
-            (int)$request->input('num_nivel_papel'),
-            $request->boolean('flg_ativo_papel', true)
-        );
+        $resultadoNovoPapel = $this->papelModel->Criar($request->all());
 
         if (is_array($resultadoNovoPapel) && isset($resultadoNovoPapel['pdo_status'])) {
             return response()->json($resultadoNovoPapel, (int)$resultadoNovoPapel['pdo_status'], [], JSON_UNESCAPED_UNICODE);
@@ -113,7 +122,7 @@ class PapelController extends Controller
         $pdo = DB::connection()->getPdo();
         $papelModel = new Papel($pdo);
 
-        $dados = $request->only(['txt_nome_papel','num_nivel_papel','flg_ativo_papel']);
+        $dados = $request->only(['txt_nome_papel', 'num_nivel_papel', 'flg_ativo_papel']);
         $resultadoPapelAtualizado = $papelModel->atualizar($id, $dados);
 
         if (is_array($resultadoPapelAtualizado) && isset($resultadoPapelAtualizado['pdo_status'])) {

@@ -66,24 +66,40 @@ class Permissao
         }
     }
 
-    /** Cria permissão */
-    function Criar(string $cod_permissao, ?string $txt_descricao_permissao = null, bool $flg_ativo_permissao = true): array
+    /** Cria permissão (padronizado) */
+    function Criar(array $params): array
     {
-        $contexto = ['cod_permissao' => $cod_permissao];
-        $sql = "INSERT INTO auth.permissoes (
-                    cod_permissao, txt_descricao_permissao, flg_ativo_permissao
-                ) VALUES (
-                    :cod_permissao, :txt_descricao_permissao, :flg_ativo_permissao
-                ) RETURNING *";
+        // remover campos imutáveis se enviados por engano
+        unset($params['id_permissao'], $params['dat_criado_em'], $params['dat_atualizado_em'], $params['dat_cancelamento_em']);
+
+        // montar colunas e placeholders dinamicamente
+        $colunas = array_keys($params);
+        $placeholders = array_map(fn($c) => ':' . $c, $colunas);
+
+        // montar comando SQL
+        $comandoSql = "INSERT INTO auth.permissoes (" . implode(', ', $colunas) . ")\n                VALUES (" . implode(', ', $placeholders) . ") RETURNING *";
+
+        // preparar bindings com inferência de tipo pelo nome
+        $bindings = [];
+        foreach ($params as $col => $valor) {
+            $tipo = Operations::inferirTipoPorNome($col);
+            $bindings[':' . $col] = ['value' => $valor, 'type' => $tipo];
+        }
+
         try {
-            $st = $this->pdo->prepare($sql);
-            $st->bindValue(':cod_permissao', $cod_permissao);
-            $st->bindValue(':txt_descricao_permissao', $txt_descricao_permissao);
-            $st->bindValue(':flg_ativo_permissao', $flg_ativo_permissao, PDO::PARAM_BOOL);
-            $st->execute();
-            return $st->fetch(PDO::FETCH_ASSOC);
+            $comando = Operations::prepararEExecutarComando(
+                pdo: $this->pdo,
+                consultaSql: $comandoSql,
+                bindings: $bindings
+            );
+
+            return [
+                'data' => $comando->fetch(PDO::FETCH_ASSOC),
+                'message' => 'Permissão criada com sucesso.',
+                'pdo_status' => 201
+            ];
         } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['função' => 'Permissao::Criar'], $contexto));
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => 'Permissao::Criar'], $params));
         }
     }
 

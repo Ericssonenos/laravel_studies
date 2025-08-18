@@ -49,7 +49,45 @@ class Papel
             );
         }
     }
+    function Criar($params): array
+    {
+        // montar colunas e placeholders dinamicos
+        $colunas = array_keys($params);
+        $placeholders = array_map(fn($col) => ":$col", $colunas);
 
+        // montar comando SQL
+        $comandoSql = "INSERT INTO auth.papeis (
+                    " . implode(', ', $colunas) . "
+                    )    VALUES (
+                    " . implode(', ', $placeholders) . "
+                    ) RETURNING *";
+
+        // preparar bindings com inferência de tipo pelo nome
+        $bindings = [];
+        foreach ($params as $col => $valor) {
+            $tipo = Operations::inferirTipoPorNome($col);
+            $bindings[':' . $col] = ['value' => $valor, 'type' => $tipo];
+        }
+
+        try {
+
+            // executar comando
+            $comando = Operations::prepararEExecutarComando(
+                pdo: $this->pdo,
+                consultaSql: $comandoSql,
+                bindings: $bindings
+            );
+
+            // retornar o resultado
+            return [
+                'data' => $comando->fetch(PDO::FETCH_ASSOC),
+                'message' => 'Papel criado com sucesso.',
+                'pdo_status' => 201
+            ];
+        } catch (\PDOException $e) {
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => 'Papel::Criar'], $params));
+        }
+    }
     function procurar_por_id(int $id_papel): ?array
     {
         $contexto = ['id_papel' => $id_papel];
@@ -65,26 +103,7 @@ class Papel
         }
     }
 
-    function Criar(int $locatario_id, string $txt_nome_papel, int $num_nivel_papel, bool $flg_ativo_papel = true): array
-    {
-        $contexto = ['locatario_id' => $locatario_id, 'txt_nome_papel' => $txt_nome_papel, 'num_nivel_papel' => $num_nivel_papel];
-        $sql = "INSERT INTO auth.papeis (
-                    locatario_id, txt_nome_papel, num_nivel_papel, flg_ativo_papel
-                ) VALUES (
-                    :locatario_id, :txt_nome_papel, :num_nivel_papel, :flg_ativo_papel
-                ) RETURNING *";
-        try {
-            $st = $this->pdo->prepare($sql);
-            $st->bindValue(':locatario_id',    $locatario_id, PDO::PARAM_INT);
-            $st->bindValue(':txt_nome_papel',  $txt_nome_papel);
-            $st->bindValue(':num_nivel_papel', $num_nivel_papel, PDO::PARAM_INT);
-            $st->bindValue(':flg_ativo_papel', $flg_ativo_papel, PDO::PARAM_BOOL);
-            $st->execute();
-            return $st->fetch(PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            return Operations::mapearExcecaoPDO($e, array_merge(['função' => 'Papel::Criar'], $contexto));
-        }
-    }
+
 
     function atualizar(int $id_papel, array $data): array
     {

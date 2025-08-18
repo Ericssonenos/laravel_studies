@@ -718,7 +718,7 @@ class Operations
      * @return PDOStatement
      * @throws PDOException
      */
-    public static function prepararEExecutarComando(PDO $pdo, string $consultaSql, array $bindings = [], array $contexto = []): PDOStatement
+    public static function prepararEExecutarComando(PDO $pdo, string $consultaSql, array $bindings = []): PDOStatement
     {
         $comando = $pdo->prepare($consultaSql);
 

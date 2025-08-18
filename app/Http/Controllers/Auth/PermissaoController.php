@@ -61,38 +61,50 @@ class PermissaoController extends Controller
     }
 
     /** Cria permissão */
-    public function store(Request $request)
+    public function Criar(Request $request)
     {
-        $regras = [
-            'cod_permissao' => ['required', 'string', 'max:160'],
-            'txt_descricao_permissao' => ['quandoPresente', 'string', 'max:255'],
-            'flg_ativo_permissao' => ['quandoPresente', 'boolean']
-        ];
+        // Validação dos dados de entrada (mesmo padrão de UsuarioController::Criar)
+        $resultadoDaValidacao = Operations::validarRegras(
+            params: $request->all(),
+            regrasValidacao: [
+                'cod_permissao' => ['required', 'string', 'max:160'],
+                'txt_descricao_permissao' => ['quandoPresente', 'string', 'max:255'],
+                'flg_ativo_permissao' => ['quandoPresente', 'boolean']
+            ]
+        );
 
-        $validacao = Operations::validarRegras($request->all(), $regras);
-        if ($validacao['pdo_status'] !== 200) {
-            return response()->json($validacao, (int)$validacao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
+        if ($resultadoDaValidacao['params_status'] !== 200) {
+            return response()->json(
+                data: $resultadoDaValidacao,
+                status: (int)$resultadoDaValidacao['params_status'],
+                headers: Operations::gerarHeadersCompletos($request),
+                options: JSON_UNESCAPED_UNICODE
+            );
         }
 
         $pdo = DB::connection()->getPdo();
         $permissaoModel = new Permissao($pdo);
 
-        $resultadoNovaPermissao = $permissaoModel->Criar(
-            (string)$request->input('cod_permissao'),
-            $request->input('txt_descricao_permissao'),
-            $request->boolean('flg_ativo_permissao', true)
-        );
+        $params = $request->all();
+        $resultadoInsercao = $permissaoModel->Criar($params);
 
-        if (is_array($resultadoNovaPermissao) && isset($resultadoNovaPermissao['pdo_status'])) {
-            return response()->json($resultadoNovaPermissao, (int)$resultadoNovaPermissao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
+        if (is_array($resultadoInsercao) && isset($resultadoInsercao['pdo_status']) && $resultadoInsercao['pdo_status'] !== 201) {
+            return response()->json($resultadoInsercao, (int)$resultadoInsercao['pdo_status'], [], JSON_UNESCAPED_UNICODE);
         }
 
-        $resposta = Operations::padronizarRespostaSucesso(
-            data: $resultadoNovaPermissao,
-            msg: 'Permissão criada com sucesso.',
-            contexto: ['cod_permissao' => (string)$request->input('cod_permissao')]
+        return response()->json(
+            data: [
+                'data' => $resultadoInsercao['data'] ?? $resultadoInsercao,
+                'params' => $request->all(),
+                'message' => $resultadoInsercao['message'] ?? 'Permissão criada com sucesso.'
+            ],
+            status: $resultadoInsercao['pdo_status'] ?? 201,
+            headers: Operations::gerarHeadersCompletos(
+                request: $request,
+                retorno: $resultadoInsercao
+            ),
+            options: JSON_UNESCAPED_UNICODE
         );
-        return response()->json($resposta, 201, [], JSON_UNESCAPED_UNICODE);
     }
 
     /** Atualiza permissão */

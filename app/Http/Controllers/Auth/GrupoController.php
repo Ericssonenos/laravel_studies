@@ -75,8 +75,13 @@ class GrupoController extends Controller
         $parametrosValidados = Operations::validarRegras($request->all(), $regras);
 
         // Verifica se houve erro na validação
-        if ($parametrosValidados['pdo_status'] !== 200) {
-            return response()->json($parametrosValidados, (int)$parametrosValidados['pdo_status'], [], JSON_UNESCAPED_UNICODE);
+        if ($parametrosValidados['params_status'] !== 200) {
+            return response()->json(
+                data: $parametrosValidados,
+                status: (int)$parametrosValidados['params_status'],
+                headers: Operations::gerarHeadersCompletos($request),
+                options: JSON_UNESCAPED_UNICODE
+            );
         }
 
         // Conexão com o banco de dados

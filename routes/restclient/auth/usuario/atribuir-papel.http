@@ -7,25 +7,27 @@
 
 ### 1. Atribuir papel ao usuário (sucesso)
 # @name atribuirPapelUsuarioSucesso
-POST {{baseUrl}}/usuarios/1/papeis HTTP/1.1
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "papel_id": 1
+    "papel_id": 1,
+    "usuario_id": 1
 }
 
 ### 2. TESTE FALHA - Papel inexistente
 # @name atribuirPapelInexistente
-POST {{baseUrl}}/usuarios/1/papeis HTTP/1.1
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "papel_id": 9999
+    "papel_id": 9999,
+    "usuario_id": 1
 }
 
 ### 3. TESTE FALHA - Papel já atribuído
 # @name atribuirPapelJaAtribuido
-POST {{baseUrl}}/usuarios/1/papeis HTTP/1.1
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -34,9 +36,18 @@ Content-Type: {{contentType}}
 
 ### 4. TESTE FALHA - Papel de locatário diferente
 # @name atribuirPapelLocatarioDiferente
-POST {{baseUrl}}/usuarios/1/papeis HTTP/1.1
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "papel_id": 5
+}
+
+### 4. TESTE FALHA - tipo invalido
+# @name atribuirPapelLocatarioDiferente
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": "asdfa"
 }

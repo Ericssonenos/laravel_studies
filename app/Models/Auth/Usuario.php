@@ -58,6 +58,7 @@ class Usuario
         $colunas = array_keys($params);
         $placeholders = array_map(fn($c) => ':' . $c, $colunas);
 
+        // montar comando SQL
         $comandoSql = "INSERT INTO auth.usuarios (" . implode(', ', $colunas) . ")\n                VALUES (" . implode(', ', $placeholders) . ") RETURNING *";
 
         // preparar bindings com inferência de tipo pelo nome
@@ -69,12 +70,11 @@ class Usuario
 
         try {
             $Comando = Operations::prepararEExecutarComando($this->pdo, $comandoSql, $bindings, $params);
-            return[
+            return [
                 'data' => $Comando->fetch(PDO::FETCH_ASSOC),
                 'message' => 'Usuário criado com sucesso.',
                 'pdo_status' => 201
             ];
-
         } catch (\PDOException $e) {
             return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
         }
@@ -85,28 +85,80 @@ class Usuario
     /** Atribui grupo a usuário */
     function AtribuirGrupo($params): array
     {
-        // Aqui os parâmetros são dinâmicos porque a validação de regras como
-        // "required", "min", "max", etc., ocorre no Controller antes de chamar este método.
-
+        // gerar query
         $comandoSql = "INSERT INTO auth.usuarios_grupos (usuario_id, grupo_id)
-                VALUES (:usuario, :grupo)
+                VALUES (:usuario_id, :grupo_id)
                 ON CONFLICT (usuario_id, grupo_id) DO NOTHING RETURNING *";
 
+        // Preparar comando
         $comando = $this->pdo->prepare($comandoSql);
 
+
         try {
-            $comando->execute([':usuario' => $params['id_usuario'], ':grupo' => $params['grupo_id']]);
+            // Executar comando
+            $comando->execute([':usuario_id' => $params['id_usuario'], ':grupo_id' => $params['grupo_id']]);
+
+            // Verificar se a atribuição foi bem-sucedida
+            $retornoAtribuicao = $comando->fetch(PDO::FETCH_ASSOC);
+
+            // Papel já atribuído ao usuário
+            if (!$retornoAtribuicao) {
+                return [
+                    'data' => null,
+                    'message' => 'Grupo já atribuído ao usuário.',
+                    'pdo_status' => 409 // Conflito
+                ];
+            }
+            // Papel atribuído com sucesso
             return [
                 'data' => $comando->fetch(PDO::FETCH_ASSOC),
                 'message' => 'Grupo atribuído ao usuário com sucesso.',
                 'pdo_status' => 201
             ];
         } catch (\PDOException $e) {
+            // Tratar exceção
             return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
         }
     }
 
+    /** Atribui papel a usuário */
+    function AtribuirPapel($params): array
+    {
+        // gerar query
+        $comandoSql = "INSERT INTO auth.usuarios_papeis (usuario_id, papel_id)
+                VALUES (:usuario_id, :papel_id)
+                ON CONFLICT (usuario_id, papel_id) DO NOTHING RETURNING *";
 
+        // Preparar comando
+        $comando = $this->pdo->prepare($comandoSql);
+
+        try {
+            // Executar comando
+             $comando->execute([':usuario_id' => $params['usuario_id'], ':papel_id' => $params['papel_id']]);
+
+            // Obter retorno da atribuição
+            $retornoAtribuicao = $comando->fetch(PDO::FETCH_ASSOC);
+
+            // Verificar se a atribuição foi bem-sucedida
+            if (!$retornoAtribuicao) {
+                // Papel já atribuído ao usuário
+                return [
+                    'data' => null,
+                    'message' => 'Papel já atribuído ao usuário',
+                    'pdo_status' => 409 // Conflito
+                ];
+            }
+            // Papel atribuído com sucesso
+            return [
+                'data' => $comando->fetch(PDO::FETCH_ASSOC),
+                'message' => 'Papel atribuído ao usuário com sucesso.',
+                'pdo_status' => 201
+            ];
+        } catch (\PDOException $e) {
+            // Tratar exceção
+            return Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $params));
+        }
+    }
 
     public function procurar_por_id(int $id_usuario): ?array
     {
@@ -202,21 +254,7 @@ class Usuario
         }
     }
 
-    /** Atribui papel a usuário */
-    function atribuir_papel(int $id_usuario, int $id_papel): bool
-    {
-        $contexto = ['id_usuario' => $id_usuario, 'papel_id' => $id_papel];
-        $sql = "INSERT INTO auth.usuarios_papeis (usuario_id, papel_id)
-                VALUES (:usuario, :papel)
-                ON CONFLICT (usuario_id, papel_id) DO NOTHING";
-        $st = $this->pdo->prepare($sql);
-        try {
-            return $st->execute([':usuario' => $id_usuario, ':papel' => $id_papel]);
-        } catch (\PDOException $e) {
-            Operations::mapearExcecaoPDO($e, array_merge(['função' => __METHOD__], $contexto));
-            return false;
-        }
-    }
+
 
     /** Remove papel de usuário */
     function remover_papel(int $id_usuario, int $id_papel): bool

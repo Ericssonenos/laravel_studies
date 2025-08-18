@@ -13,7 +13,7 @@ Content-Type: {{contentType}}
 
 {
     "grupo_id": 2,
-    "id_usuario": 1
+    "id_usuario": 6
 }
 
 ### 2. TESTE FALHA - Usuário inexistente

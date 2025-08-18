@@ -58,10 +58,7 @@ class UsuarioController extends Controller
             return response()->json(
                 data: $resultadoDaValidacao,
                 status: (int)$resultadoDaValidacao['params_status'],
-                headers: Operations::gerarHeadersCompletos(
-                    request: $request,
-                    retorno: []
-                ),
+                headers: Operations::gerarHeadersCompletos($request),
                 options: JSON_UNESCAPED_UNICODE
             );
         }
@@ -134,46 +131,46 @@ class UsuarioController extends Controller
     }
 
     /** Atribui papel ao usuário */
-    public function AtribuirPapel(Request $request, $id_usuario)
+    public function AtribuirPapel(Request $request)
     {
-        // Gerar ID único para rastreamento
-        $requestId = $request->header('X-Request-Id', uniqid('usr-atrib-papel-', true));
-
-        $pdo = DB::connection()->getPdo();
-        $usuarioModel = new Usuario($pdo);
-        $Retorno_Papel_atribuido = $usuarioModel->atribuir_papel(
-            $id_usuario,
-            (int)$request->input('papel_id')
+        // Validação dos dados de entrada
+        $resultadoDaValidacao = Operations::validarRegras(
+            params: $request->all(),
+            regrasValidacao: [
+                'papel_id' => ['required', 'integer'],
+                'usuario_id' => ['required', 'integer']
+            ]
         );
 
-        if (is_array($Retorno_Papel_atribuido) && isset($Retorno_Papel_atribuido['pdo_status'])) {
+        // Verifica se houve erro na validação
+        if ($resultadoDaValidacao['params_status']  !== 200) {
             return response()->json(
-                data: $Retorno_Papel_atribuido,
-                status: (int)$Retorno_Papel_atribuido['pdo_status'],
-                options: JSON_UNESCAPED_UNICODE,
-                headers: [
-                    'Content-Type' => 'application/problem+json; charset=utf-8',
-                    'X-Request-Id' => $requestId
-                ]
+                data: $resultadoDaValidacao,
+                status: (int)$resultadoDaValidacao['params_status'],
+                headers: Operations::gerarHeadersCompletos(
+                    request: $request,
+                    retorno: []
+                ),
+                options: JSON_UNESCAPED_UNICODE
             );
         }
 
-        if ($Retorno_Papel_atribuido === false) {
-            return response()->json(null, 500, [], JSON_UNESCAPED_UNICODE);
-        }
+        // Chamar o método AtribuirPapel
+        $Retorno_Papel_atribuido = $this->usuarioModel->AtribuirPapel($request->all());
 
-        // sucesso - gerar headers
-        $headers = Operations::gerarHeadersSeguranca($requestId);
-
+        // Padronizar resposta
         return response()->json(
-            Operations::padronizarRespostaSucesso(
-                data: ['sucesso' => true],
-                msg: 'Papel atribuído ao usuário com sucesso.',
-                contexto: ['id_usuario' => $id_usuario, 'papel_id' => (int)$request->input('papel_id')]
+            data: [
+                'data' => $Retorno_Papel_atribuido['data'],
+                'message' => $Retorno_Papel_atribuido['message'],
+                'params' => $request->all()
+            ],
+            status: $Retorno_Papel_atribuido['pdo_status'],
+            headers: Operations::gerarHeadersCompletos(
+                request: $request,
+                retorno: $Retorno_Papel_atribuido
             ),
-            200,
-            $headers,
-            JSON_UNESCAPED_UNICODE
+            options: JSON_UNESCAPED_UNICODE
         );
     }
 
