@@ -50,3 +50,14 @@ Content-Type: {{contentType}}
     "offset": 2,
     "order_by": "dat_criado_em DESC"
 }
+
+### 6. Teste paginação (falha)
+# @name testarPaginacaoUsuariosFalha
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "limit": "texto_invalido",
+    "offset": 2,
+    "order_by": "dat_criado_em DESC"
+}

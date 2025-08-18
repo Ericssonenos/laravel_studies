@@ -19,6 +19,16 @@ class Usuario
     {
         // Parametriza os filtros de busca, ordenação e paginação
         $parametrizacao = Operations::Parametrizar($params);
+
+        // Verifica se houve erro na parametrização
+        if ($parametrizacao['param_status'] !== 200) {
+            return [
+                'pdo_status' => $parametrizacao['param_status'],
+                'message' => $parametrizacao['message'],
+                'data' => []
+            ];
+        }
+
         $whereParams = $parametrizacao['whereParams'];
         $optsParams  = $parametrizacao['optsParams'];
         $execParams  = $parametrizacao['execParams'];

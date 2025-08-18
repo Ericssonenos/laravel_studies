@@ -486,6 +486,7 @@ class Operations
         $whereParams = [];
         $execParams = [];
         $optsParams = [];
+        $errors = [];
 
         foreach ($Params as $key => $val) {
             if ($val === null || $val === '') continue;
@@ -522,23 +523,60 @@ class Operations
                 $execParams[':' . $key] = (bool)$val;
                 continue;
             }
+
             // se o parametro for order_by, limit ou offset atribuir a optsParams
             if (in_array($key, ['order_by', 'limit', 'offset'])) {
-                // manter em optsParams para uso na query e também registrar em execParams caso exista
-                if (in_array($key, ['limit', 'offset'], true)) {
+                // validações específicas para cada tipo de parâmetro
+                if ($key === 'limit' || $key === 'offset') {
+                    // limit e offset devem ser números inteiros positivos
+                    if (!is_numeric($val) || filter_var($val, FILTER_VALIDATE_INT) === false) {
+                        $errors[$key] = "O parâmetro {$key} deve ser um número inteiro válido.";
+                        continue;
+                    }
+
+                    $intVal = (int)$val;
+                    if ($intVal < 0) {
+                        $errors[$key] = "O parâmetro {$key} deve ser um número inteiro não negativo.";
+                        continue;
+                    }
+
+                    // validação adicional para limit
+                    if ($key === 'limit' && $intVal > 1000) {
+                        $errors[$key] = "O parâmetro limit não pode exceder 1000 registros.";
+                        continue;
+                    }
+
                     $optsParams[$key] = " $key  :$key";
-                    $execParams[':' . $key] = (int)$val;
-                } else {
+                    $execParams[':' . $key] = $intVal;
+
+                } else { // order_by
+                    // order_by deve ser uma string válida
+                    if (is_numeric($val)) {
+                        $errors[$key] = "O parâmetro order_by deve ser uma string (nome da coluna), não um número.";
+                        continue;
+                    }
+
+                    if (!is_string($val)) {
+                        $errors[$key] = "O parâmetro order_by deve ser uma string válida.";
+                        continue;
+                    }
+
                     // verificar se val não é um sql injection
                     // se contem select, delete ou drop ou comandos perigosos
                     if (preg_match('/\b(SELECT|DELETE|DROP|INSERT|UPDATE|TRUNCATE|MERGE|EXEC)\b/i', $val)) {
-                        $optsParams[$key] = null;
-                        //[ ]: armazenar log de potencial SQL injection
-                    } else {
-                        // A chave vem como order_by , mas quando utilizada na query, deve ser substituída por "order by"
-                        $sql_key = str_replace('_', ' ', $key);
-                        $optsParams[$key] = " $sql_key  $val";
+                        $errors[$key] = "O parâmetro order_by contém comandos SQL não permitidos.";
+                        continue;
                     }
+
+                    // validar formato básico de order_by (coluna [ASC|DESC])
+                    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(\s+(ASC|DESC))?$/i', trim($val))) {
+                        $errors[$key] = "O parâmetro order_by deve seguir o formato: 'nome_coluna' ou 'nome_coluna ASC/DESC'.";
+                        continue;
+                    }
+
+                    // A chave vem como order_by , mas quando utilizada na query, deve ser substituída por "order by"
+                    $sql_key = str_replace('_', ' ', $key);
+                    $optsParams[$key] = " $sql_key  " . trim($val);
                 }
                 continue;
             }
@@ -548,7 +586,25 @@ class Operations
             $execParams[':' . $key] = $val;
         }
 
-        return ['whereParams' => $whereParams, 'execParams' => $execParams, 'optsParams' => $optsParams];
+        // se há erros de validação, retornar erro
+        if (!empty($errors)) {
+            return [
+                'param_status' => 422,
+                'error_code' => 'Erros de parametrização',
+                'message' => $errors,
+                'whereParams' => [],
+                'execParams' => [],
+                'optsParams' => []
+            ];
+        }
+
+        // sucesso
+        return [
+            'param_status' => 200,
+            'whereParams' => $whereParams,
+            'execParams' => $execParams,
+            'optsParams' => $optsParams
+        ];
     }
 
     /**
