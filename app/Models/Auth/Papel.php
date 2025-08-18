@@ -40,7 +40,12 @@ class Papel
 
         try {
             $comando->execute($execParams);
-            return $comando->fetchAll(PDO::FETCH_ASSOC);
+            $rows = $comando->fetchAll(PDO::FETCH_ASSOC);
+            return [
+                'data' => $rows,
+                'message' => 'Lista de papéis retornada com sucesso.',
+                'pdo_status' => 200
+            ];
         } catch (\PDOException $excecaoPDO) {
             // Devolve mensagem de erro, ação e parâmetros recebidos
             return Operations::mapearExcecaoPDO(
