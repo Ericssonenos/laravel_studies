@@ -1,10 +1,19 @@
--[] Criar Usuarios 20:35 
--[] Listar Usuarios 20:37
--[] Criar Grupos 
--[] Listar Grupos
--[] Atribuir Grupo a Usuario
--[] Atribuir Papel a Usuários 17:59 (40 min)
--[] Criar Papel 18:39 19:19 (40 min)
+-[ ] Criar Usuarios 20:35  (2m)
+-[ ] Listar Usuarios 20:37 (20m)
+-[ ] Criar Grupos 20:57 (3m)
+-[ ] Listar Grupos 21:12 (2m)
+
+-[ ] Atribuir Grupo a Usuario 21:10 (13m)
+
+
+-[ ] Criar Papel 21:20 (8min)
+-[ ] Listar Papéis 
+-[ ] Atribuir Papel a Usuários 21:39 (20m)
+
+-[ ] Criar Permissões 21:43 (5m)
+-[ ] Listar Permissões 21:48 ()
+
+
 
 
 -[ ] Listar Papéis 19:19

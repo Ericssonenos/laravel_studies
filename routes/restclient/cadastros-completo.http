@@ -1,0 +1,1923 @@
+### ========================================
+### CADASTROS COMPLETOS - SISTEMA DE AUTENTICAÇÃO
+### Laravel 11 + PostgreSQL + Multi-tenant
+### ========================================
+
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### ========================================
+### CENÁRIO 1: WELDMATE - EMPRESA REAL
+### Máquinas de soldas com estrutura departamental
+### Baseado na estrutura organizacional real da empresa
+### ========================================
+
+### 1.1. Criar Permissões por Departamento
+
+### ===== MÓDULO FINANCEIRO =====
+# Contas a Pagar
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.contaspagar.gerenciar",
+    "txt_descricao_permissao": "Gerenciar contas a pagar da empresa",
+}
+
+# Contas a Receber
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.contasreceber.gerenciar",
+    "txt_descricao_permissao": "Gerenciar contas a receber e cobranças",
+    "flg_ativo_permissao": true
+}
+
+# Fluxo de Caixa
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.fluxocaixa.visualizar",
+    "txt_descricao_permissao": "Visualizar e gerenciar fluxo de caixa",
+    "flg_ativo_permissao": true
+}
+
+# Notas Fiscais
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.notasfiscais.gerenciar",
+    "txt_descricao_permissao": "Emitir e gerenciar notas fiscais",
+    "flg_ativo_permissao": true
+}
+
+# Relatórios Financeiros
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.relatorios.visualizar",
+    "txt_descricao_permissao": "Visualizar relatórios financeiros",
+    "flg_ativo_permissao": true
+}
+
+# Documentos Bancários
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.bancarios.gerenciar",
+    "txt_descricao_permissao": "Gerenciar documentos e extratos bancários",
+    "flg_ativo_permissao": true
+}
+
+# Planejamento Orçamentário
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.orcamento.gerenciar",
+    "txt_descricao_permissao": "Planejar e controlar orçamentos",
+    "flg_ativo_permissao": true
+}
+
+### ===== MÓDULO COMERCIAL =====
+# Propostas Comerciais
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "comercial.propostas.gerenciar",
+    "txt_descricao_permissao": "Criar e gerenciar propostas comerciais",
+    "flg_ativo_permissao": true
+}
+
+# Cotações
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "comercial.cotacoes.gerenciar",
+    "txt_descricao_permissao": "Gerenciar cotações de produtos",
+    "flg_ativo_permissao": true
+}
+
+# Pedidos Clientes
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "comercial.pedidos.gerenciar",
+    "txt_descricao_permissao": "Processar pedidos de clientes",
+    "flg_ativo_permissao": true
+}
+
+# Tabelas de Preço
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "comercial.precos.gerenciar",
+    "txt_descricao_permissao": "Gerenciar tabelas de preços",
+    "flg_ativo_permissao": true
+}
+
+# Clientes
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "comercial.clientes.gerenciar",
+    "txt_descricao_permissao": "Cadastrar e gerenciar clientes",
+    "flg_ativo_permissao": true
+}
+
+# Vendedores
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "comercial.vendedores.gerenciar",
+    "txt_descricao_permissao": "Gerenciar vendedores e rotas",
+    "flg_ativo_permissao": true
+}
+
+# Relatórios de Vendas
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "comercial.relatorios.visualizar",
+    "txt_descricao_permissao": "Visualizar relatórios de vendas",
+    "flg_ativo_permissao": true
+}
+
+### ===== MÓDULO ADMINISTRATIVO =====
+# Contratos
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "administrativo.contratos.gerenciar",
+    "txt_descricao_permissao": "Gerenciar contratos e documentos jurídicos",
+    "flg_ativo_permissao": true
+}
+
+# Recursos Humanos
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "administrativo.rh.gerenciar",
+    "txt_descricao_permissao": "Gerenciar RH, folha de pagamento e ponto",
+    "flg_ativo_permissao": true
+}
+
+# Infraestrutura
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "administrativo.infraestrutura.gerenciar",
+    "txt_descricao_permissao": "Gerenciar infraestrutura e políticas",
+    "flg_ativo_permissao": true
+}
+
+### ===== MÓDULO GESTÃO ESTRATÉGICA =====
+# Reuniões de Diretoria
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "gestao.reunioes.participar",
+    "txt_descricao_permissao": "Participar de reuniões de diretoria",
+    "flg_ativo_permissao": true
+}
+
+# Planejamento Estratégico
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "gestao.planejamento.gerenciar",
+    "txt_descricao_permissao": "Gerenciar planejamento estratégico",
+    "flg_ativo_permissao": true
+}
+
+# KPIs e Análises
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "gestao.indicadores.visualizar",
+    "txt_descricao_permissao": "Visualizar KPIs e análises de desempenho",
+    "flg_ativo_permissao": true
+}
+
+### ===== MÓDULO COMPARTILHADO =====
+# Templates e Documentos
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "compartilhado.documentos.acessar",
+    "txt_descricao_permissao": "Acessar templates, manuais e catálogos",
+    "flg_ativo_permissao": true
+}
+
+# Treinamentos
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "compartilhado.treinamentos.acessar",
+    "txt_descricao_permissao": "Acessar treinamentos e apresentações",
+    "flg_ativo_permissao": true
+}
+
+### ===== MÓDULO ARQUIVO MORTO =====
+# Arquivos Históricos
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "arquivo.historico.acessar",
+    "txt_descricao_permissao": "Acessar arquivo morto e documentos históricos",
+    "flg_ativo_permissao": true
+}
+
+### 1.2. Criar Papéis Baseados na Estrutura Real
+# Papel: Diretor Executivo (Eliezer Begio)
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_papel": "Diretor Executivo",
+    "num_nivel_papel": 100,
+    "flg_ativo_papel": true
+}
+
+### Papel: Gerente Financeiro
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_papel": "Gerente Financeiro",
+    "num_nivel_papel": 80,
+    "flg_ativo_papel": true
+}
+
+### Papel: Gerente Comercial
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_papel": "Gerente Comercial",
+    "num_nivel_papel": 80,
+    "flg_ativo_papel": true
+}
+
+### Papel: Coordenador Administrativo
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_papel": "Coordenador Administrativo",
+    "num_nivel_papel": 60,
+    "flg_ativo_papel": true
+}
+
+### Papel: Analista Comercial
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_papel": "Analista Comercial",
+    "num_nivel_papel": 40,
+    "flg_ativo_papel": true
+}
+
+### Papel: Assistente Financeiro
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_papel": "Assistente Financeiro",
+    "num_nivel_papel": 30,
+    "flg_ativo_papel": true
+}
+
+### Papel: Vendedor Externo
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_papel": "Vendedor Externo",
+    "num_nivel_papel": 20,
+    "flg_ativo_papel": true
+}
+
+### 1.3. Atribuir Permissões aos Papéis
+
+### ===== DIRETOR EXECUTIVO - TODAS AS PERMISSÕES =====
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 1
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 2
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 3
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 4
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 5
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 6
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 7
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 8
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 9
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 10
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 11
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 12
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 13
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 14
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 15
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 16
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 17
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 18
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 19
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 20
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 21
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 22
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1,
+    "permissao_id": 23
+}
+
+### ===== GERENTE FINANCEIRO - MÓDULO FINANCEIRO + ESTRATÉGICO =====
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 1
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 2
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 3
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 4
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 5
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 6
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 7
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 18
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 19
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 2,
+    "permissao_id": 20
+}
+
+### ===== GERENTE COMERCIAL - MÓDULO COMERCIAL + ESTRATÉGICO =====
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 8
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 9
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 10
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 11
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 12
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 13
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 14
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 18
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 19
+}
+
+POST {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 3,
+    "permissao_id": 20
+}
+
+### 1.4. Criar Grupos por Departamento
+# Departamento Financeiro
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_grupo": "Departamento Financeiro",
+    "txt_descricao_grupo": "Contas a pagar/receber, fluxo de caixa, notas fiscais",
+    "flg_ativo_grupo": true
+}
+
+### Departamento Comercial
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_grupo": "Departamento Comercial",
+    "txt_descricao_grupo": "Propostas, cotações, pedidos e vendas",
+    "flg_ativo_grupo": true
+}
+
+### Departamento Administrativo
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_grupo": "Departamento Administrativo",
+    "txt_descricao_grupo": "Contratos, RH, infraestrutura e políticas",
+    "flg_ativo_grupo": true
+}
+
+### Gestão Estratégica
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_grupo": "Gestão Estratégica",
+    "txt_descricao_grupo": "Diretoria, planejamento e indicadores KPIs",
+    "flg_ativo_grupo": true
+}
+
+### Acesso Compartilhado
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_grupo": "Acesso Compartilhado",
+    "txt_descricao_grupo": "Templates, treinamentos, manuais e catálogos",
+    "flg_ativo_grupo": true
+}
+
+### 1.5. Atribuir Papéis aos Grupos
+# Grupo Administração - Proprietário e Gerente de Vendas
+POST {{baseUrl}}/grupos/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 1,
+    "papel_id": 1
+}
+
+POST {{baseUrl}}/grupos/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 1,
+    "papel_id": 2
+}
+
+### Grupo Comercial - Vendedor
+POST {{baseUrl}}/grupos/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 2,
+    "papel_id": 3
+}
+
+### Grupo Técnico - Técnico
+POST {{baseUrl}}/grupos/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 3,
+    "papel_id": 4
+}
+
+### 1.6. Cadastrar Usuários Reais da WeldMate
+# Eliezer Begio (Diretor Executivo - Conta Master)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "Eliezer Begio",
+    "txt_email_usuario": "eliezer.begio@weldmate.com.br",
+    "txt_senha_usuario": "EliezerMaster2024!",
+    "flg_ativo_usuario": true
+}
+
+### Sandra Begio (Gerente Financeiro/Administrativo)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "Sandra Begio",
+    "txt_email_usuario": "sandra.begio@sptek.com.br",
+    "txt_senha_usuario": "SandraFin2024@",
+    "flg_ativo_usuario": true
+}
+
+### Thiago Begio (Gerente Comercial/Estratégico)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "Thiago Begio",
+    "txt_email_usuario": "thiago.begio@sptek.com.br",
+    "txt_senha_usuario": "ThiagoGer2024!",
+    "flg_ativo_usuario": true
+}
+
+### Diego Hinata (Coordenador Comercial)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "Diego Hinata",
+    "txt_email_usuario": "diego.hinata@sptek.com.br",
+    "txt_senha_usuario": "DiegoCoord456@",
+    "flg_ativo_usuario": true
+}
+
+### Vinícius Melo (Analista Comercial)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "Vinícius Melo",
+    "txt_email_usuario": "vinicius.melo@sptek.com.br",
+    "txt_senha_usuario": "ViniciusAn789!",
+    "flg_ativo_usuario": true
+}
+
+### Gustavo Freitas (Vendedor Externo)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "Gustavo Freitas",
+    "txt_email_usuario": "gustavo.freitas@sptek.com.br",
+    "txt_senha_usuario": "GustavoVend123@",
+    "flg_ativo_usuario": true
+}
+
+### André Meneses (Vendedor Externo)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "André Meneses",
+    "txt_email_usuario": "andre.meneses@sptek.com.br",
+    "txt_senha_usuario": "AndreMen456!",
+    "flg_ativo_usuario": true
+}
+
+### Rafael Jota (Assistente Administrativo)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "Rafael Jota",
+    "txt_email_usuario": "rafael.jota@sptek.com.br",
+    "txt_senha_usuario": "RafaelAdm789@",
+    "flg_ativo_usuario": true
+}
+
+### Matheus Maitan (Analista Comercial)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "txt_nome_usuario": "Matheus Maitan",
+    "txt_email_usuario": "matheus.maitan@sptek.com.br",
+    "txt_senha_usuario": "MatheusAn2024!",
+    "flg_ativo_usuario": true
+}
+
+### 1.7. Atribuir Usuários aos Grupos Departamentais
+
+### ===== GESTÃO ESTRATÉGICA =====
+# Eliezer - Diretoria
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 1,
+    "grupo_id": 4
+}
+
+### Thiago - Gestão Estratégica + Comercial
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 3,
+    "grupo_id": 4
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 3,
+    "grupo_id": 2
+}
+
+### Sandra - Gestão Estratégica + Financeiro + Administrativo
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 2,
+    "grupo_id": 4
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 2,
+    "grupo_id": 1
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 2,
+    "grupo_id": 3
+}
+
+### ===== DEPARTAMENTO COMERCIAL =====
+# Diego - Comercial
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 4,
+    "grupo_id": 2
+}
+
+### Vinícius - Comercial
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 5,
+    "grupo_id": 2
+}
+
+### Gustavo - Comercial
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 6,
+    "grupo_id": 2
+}
+
+### André - Comercial
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 7,
+    "grupo_id": 2
+}
+
+### Matheus - Comercial
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 9,
+    "grupo_id": 2
+}
+
+### ===== DEPARTAMENTO ADMINISTRATIVO =====
+# Rafael - Administrativo
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 8,
+    "grupo_id": 3
+}
+
+### ===== ACESSO COMPARTILHADO (TODOS) =====
+# Todos os usuários têm acesso ao compartilhado
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 1,
+    "grupo_id": 5
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 2,
+    "grupo_id": 5
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 3,
+    "grupo_id": 5
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 4,
+    "grupo_id": 5
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 5,
+    "grupo_id": 5
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 6,
+    "grupo_id": 5
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 7,
+    "grupo_id": 5
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 8,
+    "grupo_id": 5
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 9,
+    "grupo_id": 5
+}
+
+### 1.8. Atribuir Papéis aos Usuários
+# Eliezer - Diretor Executivo
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 1,
+    "papel_id": 1
+}
+
+### Sandra - Gerente Financeiro
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 2,
+    "papel_id": 2
+}
+
+### Thiago - Gerente Comercial
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 3,
+    "papel_id": 3
+}
+
+### Diego - Coordenador Administrativo
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 4,
+    "papel_id": 4
+}
+
+### Vinícius - Analista Comercial
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 5,
+    "papel_id": 5
+}
+
+### Gustavo - Vendedor Externo
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 6,
+    "papel_id": 7
+}
+
+### André - Vendedor Externo
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 7,
+    "papel_id": 7
+}
+
+### Rafael - Assistente Financeiro
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 8,
+    "papel_id": 6
+}
+
+### Matheus - Analista Comercial
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 9,
+    "papel_id": 5
+}
+
+### ========================================
+### CENÁRIO 2: TECHCORP SOLUTIONS
+### Empresa média com múltiplos departamentos
+### ========================================
+
+### 2.1. Criar Permissões Empresariais
+# Módulo RH
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "rh.funcionarios.visualizar",
+    "txt_descricao_permissao": "Visualizar dados de funcionários",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "rh.funcionarios.gerenciar",
+    "txt_descricao_permissao": "Contratar e demitir funcionários",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "rh.avaliacoes.gerenciar",
+    "txt_descricao_permissao": "Gerenciar avaliações de desempenho",
+    "flg_ativo_permissao": true
+}
+
+### Módulo Financeiro
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.relatorios.visualizar",
+    "txt_descricao_permissao": "Visualizar relatórios financeiros",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.despesas.aprovar",
+    "txt_descricao_permissao": "Aprovar despesas e investimentos",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "financeiro.orcamento.gerenciar",
+    "txt_descricao_permissao": "Gerenciar orçamentos departamentais",
+    "flg_ativo_permissao": true
+}
+
+### Módulo TI
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "ti.sistemas.configurar",
+    "txt_descricao_permissao": "Configurar sistemas e aplicações",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "ti.backup.gerenciar",
+    "txt_descricao_permissao": "Gerenciar backups e recuperação",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "ti.deploy.executar",
+    "txt_descricao_permissao": "Executar deploys de aplicações",
+    "flg_ativo_permissao": true
+}
+
+### Módulo Comercial
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "vendas.leads.gerenciar",
+    "txt_descricao_permissao": "Gerenciar leads e oportunidades",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "vendas.contratos.aprovar",
+    "txt_descricao_permissao": "Aprovar contratos comerciais",
+    "flg_ativo_permissao": true
+}
+
+### 2.2. Criar Papéis Hierárquicos
+# CEO
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_papel": "CEO",
+    "num_nivel_papel": 100,
+    "flg_ativo_papel": true
+}
+
+### Diretor
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_papel": "Diretor",
+    "num_nivel_papel": 80,
+    "flg_ativo_papel": true
+}
+
+### Gerente
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_papel": "Gerente",
+    "num_nivel_papel": 50,
+    "flg_ativo_papel": true
+}
+
+### Coordenador
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_papel": "Coordenador",
+    "num_nivel_papel": 30,
+    "flg_ativo_papel": true
+}
+
+### Analista Senior
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_papel": "Analista Senior",
+    "num_nivel_papel": 20,
+    "flg_ativo_papel": true
+}
+
+### Analista Junior
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_papel": "Analista Junior",
+    "num_nivel_papel": 10,
+    "flg_ativo_papel": true
+}
+
+### 2.3. Criar Grupos por Departamento
+# Departamento RH
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_grupo": "Recursos Humanos",
+    "txt_descricao_grupo": "Departamento de Recursos Humanos",
+    "flg_ativo_grupo": true
+}
+
+### Departamento Financeiro
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_grupo": "Financeiro",
+    "txt_descricao_grupo": "Departamento Financeiro e Contabilidade",
+    "flg_ativo_grupo": true
+}
+
+### Departamento TI
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_grupo": "Tecnologia da Informação",
+    "txt_descricao_grupo": "Departamento de TI e Desenvolvimento",
+    "flg_ativo_grupo": true
+}
+
+### Departamento Comercial
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_grupo": "Comercial",
+    "txt_descricao_grupo": "Departamento de Vendas e Marketing",
+    "flg_ativo_grupo": true
+}
+
+### Diretoria
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_grupo": "Diretoria",
+    "txt_descricao_grupo": "Diretores e alta gerência",
+    "flg_ativo_grupo": true
+}
+
+### 2.4. Cadastrar Usuários TechCorp
+# Roberto (CEO)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "Roberto Almeida",
+    "txt_email_usuario": "roberto.ceo@techcorp.com.br",
+    "txt_senha_usuario": "RobertoCEO2024!",
+    "flg_ativo_usuario": true
+}
+
+### Fernanda (Diretora de RH)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "Fernanda Lima",
+    "txt_email_usuario": "fernanda.diretora@techcorp.com.br",
+    "txt_senha_usuario": "FernandaRH123@",
+    "flg_ativo_usuario": true
+}
+
+### Eduardo (Diretor Financeiro)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "Eduardo Santos",
+    "txt_email_usuario": "eduardo.financeiro@techcorp.com.br",
+    "txt_senha_usuario": "EduardoFin456!",
+    "flg_ativo_usuario": true
+}
+
+### Patrícia (Gerente de TI)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "Patrícia Rodrigues",
+    "txt_email_usuario": "patricia.ti@techcorp.com.br",
+    "txt_senha_usuario": "PatriciaTI789@",
+    "flg_ativo_usuario": true
+}
+
+### Marco (Gerente Comercial)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "Marco Antônio",
+    "txt_email_usuario": "marco.comercial@techcorp.com.br",
+    "txt_senha_usuario": "MarcoVendas2024!",
+    "flg_ativo_usuario": true
+}
+
+### Juliana (Analista RH Senior)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "Juliana Ferreira",
+    "txt_email_usuario": "juliana.rh@techcorp.com.br",
+    "txt_senha_usuario": "JulianaRH2024@",
+    "flg_ativo_usuario": true
+}
+
+### Lucas (Desenvolvedor Senior)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "txt_nome_usuario": "Lucas Pereira",
+    "txt_email_usuario": "lucas.dev@techcorp.com.br",
+    "txt_senha_usuario": "LucasDev456!",
+    "flg_ativo_usuario": true
+}
+
+### 2.5. Atribuir Usuários aos Grupos
+# Roberto - Diretoria
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 5,
+    "grupo_id": 7
+}
+
+### Fernanda - Diretoria e RH
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 6,
+    "grupo_id": 7
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 6,
+    "grupo_id": 3
+}
+
+### Eduardo - Diretoria e Financeiro
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 7,
+    "grupo_id": 7
+}
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 7,
+    "grupo_id": 4
+}
+
+### Patrícia - TI
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 8,
+    "grupo_id": 5
+}
+
+### Marco - Comercial
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 9,
+    "grupo_id": 6
+}
+
+### Juliana - RH
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 10,
+    "grupo_id": 3
+}
+
+### Lucas - TI
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 11,
+    "grupo_id": 5
+}
+
+### 2.6. Atribuir Papéis aos Usuários
+# Roberto - CEO
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 5,
+    "papel_id": 5
+}
+
+### Fernanda - Diretora
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 6,
+    "papel_id": 6
+}
+
+### Eduardo - Diretor
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 7,
+    "papel_id": 6
+}
+
+### Patrícia - Gerente
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 8,
+    "papel_id": 7
+}
+
+### Marco - Gerente
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 9,
+    "papel_id": 7
+}
+
+### Juliana - Analista Senior
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 10,
+    "papel_id": 9
+}
+
+### Lucas - Analista Senior
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 11,
+    "papel_id": 9
+}
+
+### ========================================
+### CENÁRIO 3: STARTUP E-COMMERCE
+### Estrutura ágil e flexível
+### ========================================
+
+### 3.1. Criar Permissões E-commerce
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "produtos.catalogo.gerenciar",
+    "txt_descricao_permissao": "Gerenciar catálogo de produtos",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "pedidos.processar",
+    "txt_descricao_permissao": "Processar pedidos de clientes",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "marketing.campanhas.criar",
+    "txt_descricao_permissao": "Criar e gerenciar campanhas de marketing",
+    "flg_ativo_permissao": true
+}
+
+POST {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "cod_permissao": "analytics.dashboards.visualizar",
+    "txt_descricao_permissao": "Visualizar dashboards de analytics",
+    "flg_ativo_permissao": true
+}
+
+### 3.2. Criar Papéis Startup
+# Founder
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_papel": "Founder",
+    "num_nivel_papel": 100,
+    "flg_ativo_papel": true
+}
+
+### Product Manager
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_papel": "Product Manager",
+    "num_nivel_papel": 70,
+    "flg_ativo_papel": true
+}
+
+### Marketing Specialist
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_papel": "Marketing Specialist",
+    "num_nivel_papel": 40,
+    "flg_ativo_papel": true
+}
+
+### Developer
+POST {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_papel": "Developer",
+    "num_nivel_papel": 30,
+    "flg_ativo_papel": true
+}
+
+### 3.3. Criar Grupos Startup
+# Squad Produto
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_grupo": "Squad Produto",
+    "txt_descricao_grupo": "Equipe responsável pelo desenvolvimento do produto",
+    "flg_ativo_grupo": true
+}
+
+### Squad Marketing
+POST {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_grupo": "Squad Marketing",
+    "txt_descricao_grupo": "Equipe de marketing e growth",
+    "flg_ativo_grupo": true
+}
+
+### 3.4. Cadastrar Usuários Startup
+# Carla (Founder)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_usuario": "Carla Mendes",
+    "txt_email_usuario": "carla@startup-ecommerce.com",
+    "txt_senha_usuario": "CarlaFounder2024!",
+    "flg_ativo_usuario": true
+}
+
+### Pedro (Product Manager)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_usuario": "Pedro Souza",
+    "txt_email_usuario": "pedro.pm@startup-ecommerce.com",
+    "txt_senha_usuario": "PedroPM123@",
+    "flg_ativo_usuario": true
+}
+
+### Sofia (Marketing)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_usuario": "Sofia Ribeiro",
+    "txt_email_usuario": "sofia.marketing@startup-ecommerce.com",
+    "txt_senha_usuario": "SofiaMkt456!",
+    "flg_ativo_usuario": true
+}
+
+### Daniel (Developer)
+POST {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 3,
+    "txt_nome_usuario": "Daniel Castro",
+    "txt_email_usuario": "daniel.dev@startup-ecommerce.com",
+    "txt_senha_usuario": "DanielDev789@",
+    "flg_ativo_usuario": true
+}
+
+### ========================================
+### CONSULTAS DE VERIFICAÇÃO
+### ========================================
+
+### Listar todos os usuários
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+### Listar usuários com filtros
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 1,
+    "flg_ativo_usuario": true,
+    "order_by": "txt_nome_usuario ASC",
+    "limit": 10
+}
+
+### Listar todos os grupos
+GET {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+### Listar grupos de um locatário
+GET {{baseUrl}}/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "locatario_id": 2,
+    "flg_ativo_grupo": true
+}
+
+### Listar todos os papéis
+GET {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+### Listar papéis ordenados por nível
+GET {{baseUrl}}/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "order_by": "num_nivel_papel DESC",
+    "flg_ativo_papel": true
+}
+
+### Listar todas as permissões
+GET {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+### Listar permissões ativas
+GET {{baseUrl}}/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "flg_ativo_permissao": true,
+    "order_by": "cod_permissao ASC"
+}
+
+### Verificar grupos de um usuário específico
+GET {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 1
+}
+
+### Verificar papéis de um usuário específico
+GET {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 1
+}
+
+### Verificar permissões de um usuário específico
+GET {{baseUrl}}/usuarios/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 1
+}
+
+### Verificar papéis de um grupo
+GET {{baseUrl}}/grupos/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "grupo_id": 1
+}
+
+### Verificar permissões de um papel
+GET {{baseUrl}}/papeis/permissoes HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "papel_id": 1
+}
+
+### ========================================
+### TESTES DE VALIDAÇÃO DE PARÂMETROS
+### ========================================
+
+### Teste: Parâmetro limit inválido (string)
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "limit": "abc",
+    "order_by": "txt_nome_usuario ASC"
+}
+
+### Teste: Parâmetro order_by inválido (número)
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "limit": 10,
+    "order_by": 123
+}
+
+### Teste: Parâmetro offset negativo
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "limit": 10,
+    "offset": -1
+}
+
+### Teste: SQL Injection em order_by
+GET {{baseUrl}}/usuarios HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "order_by": "txt_nome_usuario; DROP TABLE usuarios;--"
+}
+
+### ========================================
+### CENÁRIO DE LIMPEZA (OPCIONAL)
+### ========================================
+
+### Remover associações
+# DELETE {{baseUrl}}/usuarios/grupos HTTP/1.1
+# Content-Type: {{contentType}}
+#
+# {
+#     "usuario_id": 1,
+#     "grupo_id": 1
+# }
+
+### Desativar usuário
+# PUT {{baseUrl}}/usuarios HTTP/1.1
+# Content-Type: {{contentType}}
+#
+# {
+#     "id_usuario": 4,
+#     "flg_ativo_usuario": false
+# }

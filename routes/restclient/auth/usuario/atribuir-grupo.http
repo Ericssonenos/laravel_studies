@@ -5,15 +5,15 @@
 @baseUrl = http://localhost:8080/api/auth
 @contentType = application/json
 
-### 1. Atribuir grupo ao usuário (sucesso)
+### 1. Atribuir grupo ao usuário (sucesso) se já não foi atribuido
 ### caminho do controller: - [ ].php
 # @name atribuirGrupoUsuarioSucesso
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "grupo_id": 2,
-    "id_usuario": 6
+    "grupo_id": 4,
+    "usuario_id": 1
 }
 
 ### 2. TESTE FALHA - Usuário inexistente
@@ -23,7 +23,7 @@ Content-Type: {{contentType}}
 
 {
     "grupo_id": 1,
-    "id_usuario": 9999
+    "usuario_id": 9999
 }
 
 ### 3. TESTE FALHA - Grupo inexistente
@@ -33,7 +33,7 @@ Content-Type: {{contentType}}
 
 {
     "grupo_id": 9999,
-    "id_usuario": 1
+    "usuario_id": 1
 }
 
 ### 4. TESTE FALHA - Sem grupo_id
@@ -43,12 +43,12 @@ Content-Type: {{contentType}}
 
 {}
 
-### 5. TESTE FALHA - Grupo de locatário diferente
+### 5. TESTE FALHA - tipo de variável incorreto
 # @name atribuirGrupoLocatarioDiferente
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "grupo_id": "asdasd",
-    "id_usuario": 1
+    "usuario_id": 1
 }

@@ -16,5 +16,5 @@ GET {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "flg_ativo_permissao": "texto_invalido"
+    "id_permissao": "texto_invalido"
 }
