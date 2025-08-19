@@ -5,14 +5,15 @@ namespace App\Models\Auth;
 use InvalidArgumentException;
 use PDO;
 use App\Services\Operations;
+use Illuminate\Support\Facades\DB;
 
 class Permissao
 {
     private PDO $pdo;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
-        $this->pdo = $pdo;
+        $this->pdo = DB::connection()->getPdo();
     }
 
     /* ==============================

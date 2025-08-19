@@ -21,8 +21,11 @@ Content-Type: {{contentType}}
 
 {
     "cod_permissao": "financeiro.contaspagar.gerenciar",
-    "txt_descricao_permissao": "Gerenciar contas a pagar da empresa",
+    "txt_descricao_permissao": "Gerenciar contas a pagar da empresa"
 }
+
+###
+###
 
 # Contas a Receber
 POST {{baseUrl}}/permissoes HTTP/1.1
@@ -34,6 +37,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Fluxo de Caixa
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -43,6 +49,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Visualizar e gerenciar fluxo de caixa",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 # Notas Fiscais
 POST {{baseUrl}}/permissoes HTTP/1.1
@@ -54,6 +63,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Relatórios Financeiros
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -63,6 +75,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Visualizar relatórios financeiros",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 # Documentos Bancários
 POST {{baseUrl}}/permissoes HTTP/1.1
@@ -74,6 +89,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Planejamento Orçamentário
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -83,6 +101,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Planejar e controlar orçamentos",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 ### ===== MÓDULO COMERCIAL =====
 # Propostas Comerciais
@@ -95,6 +116,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Cotações
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -104,6 +128,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Gerenciar cotações de produtos",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 # Pedidos Clientes
 POST {{baseUrl}}/permissoes HTTP/1.1
@@ -115,6 +142,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Tabelas de Preço
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -124,6 +154,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Gerenciar tabelas de preços",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 # Clientes
 POST {{baseUrl}}/permissoes HTTP/1.1
@@ -135,6 +168,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Vendedores
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -145,6 +181,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Relatórios de Vendas
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -154,6 +193,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Visualizar relatórios de vendas",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 ### ===== MÓDULO ADMINISTRATIVO =====
 # Contratos
@@ -166,6 +208,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Recursos Humanos
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -176,6 +221,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Infraestrutura
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -185,6 +233,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Gerenciar infraestrutura e políticas",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 ### ===== MÓDULO GESTÃO ESTRATÉGICA =====
 # Reuniões de Diretoria
@@ -197,6 +248,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Planejamento Estratégico
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -207,6 +261,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # KPIs e Análises
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -216,6 +273,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Visualizar KPIs e análises de desempenho",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 ### ===== MÓDULO COMPARTILHADO =====
 # Templates e Documentos
@@ -228,6 +288,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 # Treinamentos
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -237,6 +300,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Acessar treinamentos e apresentações",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 ### ===== MÓDULO ARQUIVO MORTO =====
 # Arquivos Históricos
@@ -248,6 +314,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Acessar arquivo morto e documentos históricos",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 ### 1.2. Criar Papéis Baseados na Estrutura Real
 # Papel: Diretor Executivo (Eliezer Begio)
@@ -261,7 +330,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Papel: Gerente Financeiro
+###
+###
+
+# Papel: Gerente Financeiro
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -272,7 +344,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Papel: Gerente Comercial
+###
+###
+
+# Papel: Gerente Comercial
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -283,7 +358,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Papel: Coordenador Administrativo
+###
+###
+
+# Papel: Coordenador Administrativo
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -294,7 +372,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Papel: Analista Comercial
+###
+###
+
+# Papel: Analista Comercial
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -305,7 +386,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Papel: Assistente Financeiro
+###
+###
+
+# Papel: Assistente Financeiro
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -316,7 +400,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Papel: Vendedor Externo
+###
+###
+
+# Papel: Vendedor Externo
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -326,6 +413,9 @@ Content-Type: {{contentType}}
     "num_nivel_papel": 20,
     "flg_ativo_papel": true
 }
+
+###
+###
 
 ### 1.3. Atribuir Permissões aos Papéis
 
@@ -338,6 +428,9 @@ Content-Type: {{contentType}}
     "permissao_id": 1
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -345,6 +438,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 2
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -354,6 +450,9 @@ Content-Type: {{contentType}}
     "permissao_id": 3
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -361,6 +460,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 4
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -370,6 +472,9 @@ Content-Type: {{contentType}}
     "permissao_id": 5
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -377,6 +482,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 6
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -386,6 +494,9 @@ Content-Type: {{contentType}}
     "permissao_id": 7
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -393,6 +504,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 8
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -402,6 +516,9 @@ Content-Type: {{contentType}}
     "permissao_id": 9
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -409,6 +526,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 10
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -418,6 +538,9 @@ Content-Type: {{contentType}}
     "permissao_id": 11
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -425,6 +548,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 12
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -434,6 +560,9 @@ Content-Type: {{contentType}}
     "permissao_id": 13
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -441,6 +570,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 14
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -450,6 +582,9 @@ Content-Type: {{contentType}}
     "permissao_id": 15
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -457,6 +592,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 16
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -466,6 +604,9 @@ Content-Type: {{contentType}}
     "permissao_id": 17
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -473,6 +614,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 18
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -482,6 +626,9 @@ Content-Type: {{contentType}}
     "permissao_id": 19
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -489,6 +636,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 20
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -498,6 +648,9 @@ Content-Type: {{contentType}}
     "permissao_id": 21
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -506,6 +659,9 @@ Content-Type: {{contentType}}
     "permissao_id": 22
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -513,6 +669,9 @@ Content-Type: {{contentType}}
     "papel_id": 1,
     "permissao_id": 23
 }
+
+###
+###
 
 ### ===== GERENTE FINANCEIRO - MÓDULO FINANCEIRO + ESTRATÉGICO =====
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
@@ -523,6 +682,9 @@ Content-Type: {{contentType}}
     "permissao_id": 1
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -530,6 +692,9 @@ Content-Type: {{contentType}}
     "papel_id": 2,
     "permissao_id": 2
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -539,6 +704,9 @@ Content-Type: {{contentType}}
     "permissao_id": 3
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -546,6 +714,9 @@ Content-Type: {{contentType}}
     "papel_id": 2,
     "permissao_id": 4
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -555,6 +726,9 @@ Content-Type: {{contentType}}
     "permissao_id": 5
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -562,6 +736,9 @@ Content-Type: {{contentType}}
     "papel_id": 2,
     "permissao_id": 6
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -571,6 +748,9 @@ Content-Type: {{contentType}}
     "permissao_id": 7
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -578,6 +758,9 @@ Content-Type: {{contentType}}
     "papel_id": 2,
     "permissao_id": 18
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -587,6 +770,9 @@ Content-Type: {{contentType}}
     "permissao_id": 19
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -594,6 +780,9 @@ Content-Type: {{contentType}}
     "papel_id": 2,
     "permissao_id": 20
 }
+
+###
+###
 
 ### ===== GERENTE COMERCIAL - MÓDULO COMERCIAL + ESTRATÉGICO =====
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
@@ -604,6 +793,9 @@ Content-Type: {{contentType}}
     "permissao_id": 8
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -611,6 +803,9 @@ Content-Type: {{contentType}}
     "papel_id": 3,
     "permissao_id": 9
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -620,6 +815,9 @@ Content-Type: {{contentType}}
     "permissao_id": 10
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -627,6 +825,9 @@ Content-Type: {{contentType}}
     "papel_id": 3,
     "permissao_id": 11
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -636,6 +837,9 @@ Content-Type: {{contentType}}
     "permissao_id": 12
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -643,6 +847,9 @@ Content-Type: {{contentType}}
     "papel_id": 3,
     "permissao_id": 13
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -652,6 +859,9 @@ Content-Type: {{contentType}}
     "permissao_id": 14
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -659,6 +869,9 @@ Content-Type: {{contentType}}
     "papel_id": 3,
     "permissao_id": 18
 }
+
+###
+###
 
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -668,6 +881,9 @@ Content-Type: {{contentType}}
     "permissao_id": 19
 }
 
+###
+###
+
 POST {{baseUrl}}/papeis/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -675,6 +891,9 @@ Content-Type: {{contentType}}
     "papel_id": 3,
     "permissao_id": 20
 }
+
+###
+###
 
 ### 1.4. Criar Grupos por Departamento
 # Departamento Financeiro
@@ -688,7 +907,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Departamento Comercial
+###
+###
+
+# Departamento Comercial
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -699,7 +921,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Departamento Administrativo
+###
+###
+
+# Departamento Administrativo
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -710,7 +935,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Gestão Estratégica
+###
+###
+
+# Gestão Estratégica
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -721,7 +949,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Acesso Compartilhado
+###
+###
+
+# Acesso Compartilhado
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -731,6 +962,9 @@ Content-Type: {{contentType}}
     "txt_descricao_grupo": "Templates, treinamentos, manuais e catálogos",
     "flg_ativo_grupo": true
 }
+
+###
+###
 
 ### 1.5. Atribuir Papéis aos Grupos
 # Grupo Administração - Proprietário e Gerente de Vendas
@@ -742,6 +976,9 @@ Content-Type: {{contentType}}
     "papel_id": 1
 }
 
+###
+###
+
 POST {{baseUrl}}/grupos/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -750,7 +987,10 @@ Content-Type: {{contentType}}
     "papel_id": 2
 }
 
-### Grupo Comercial - Vendedor
+###
+###
+
+# Grupo Comercial - Vendedor
 POST {{baseUrl}}/grupos/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -759,7 +999,10 @@ Content-Type: {{contentType}}
     "papel_id": 3
 }
 
-### Grupo Técnico - Técnico
+###
+###
+
+# Grupo Técnico - Técnico
 POST {{baseUrl}}/grupos/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -767,6 +1010,9 @@ Content-Type: {{contentType}}
     "grupo_id": 3,
     "papel_id": 4
 }
+
+###
+###
 
 ### 1.6. Cadastrar Usuários Reais da WeldMate
 # Eliezer Begio (Diretor Executivo - Conta Master)
@@ -781,7 +1027,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Sandra Begio (Gerente Financeiro/Administrativo)
+###
+###
+
+# Sandra Begio (Gerente Financeiro/Administrativo)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -793,7 +1042,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Thiago Begio (Gerente Comercial/Estratégico)
+###
+###
+
+# Thiago Begio (Gerente Comercial/Estratégico)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -805,7 +1057,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Diego Hinata (Coordenador Comercial)
+###
+###
+
+# Diego Hinata (Coordenador Comercial)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -817,7 +1072,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Vinícius Melo (Analista Comercial)
+###
+###
+
+# Vinícius Melo (Analista Comercial)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -829,7 +1087,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Gustavo Freitas (Vendedor Externo)
+###
+###
+
+# Gustavo Freitas (Vendedor Externo)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -841,7 +1102,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### André Meneses (Vendedor Externo)
+###
+###
+
+# André Meneses (Vendedor Externo)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -853,7 +1117,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Rafael Jota (Assistente Administrativo)
+###
+###
+
+# Rafael Jota (Assistente Administrativo)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -865,7 +1132,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Matheus Maitan (Analista Comercial)
+###
+###
+
+# Matheus Maitan (Analista Comercial)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -876,6 +1146,9 @@ Content-Type: {{contentType}}
     "txt_senha_usuario": "MatheusAn2024!",
     "flg_ativo_usuario": true
 }
+
+###
+###
 
 ### 1.7. Atribuir Usuários aos Grupos Departamentais
 
@@ -889,7 +1162,10 @@ Content-Type: {{contentType}}
     "grupo_id": 4
 }
 
-### Thiago - Gestão Estratégica + Comercial
+###
+###
+
+# Thiago - Gestão Estratégica + Comercial
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -897,6 +1173,9 @@ Content-Type: {{contentType}}
     "usuario_id": 3,
     "grupo_id": 4
 }
+
+###
+###
 
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
@@ -906,7 +1185,10 @@ Content-Type: {{contentType}}
     "grupo_id": 2
 }
 
-### Sandra - Gestão Estratégica + Financeiro + Administrativo
+###
+###
+
+# Sandra - Gestão Estratégica + Financeiro + Administrativo
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -914,6 +1196,9 @@ Content-Type: {{contentType}}
     "usuario_id": 2,
     "grupo_id": 4
 }
+
+###
+###
 
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
@@ -923,6 +1208,9 @@ Content-Type: {{contentType}}
     "grupo_id": 1
 }
 
+###
+###
+
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -930,6 +1218,9 @@ Content-Type: {{contentType}}
     "usuario_id": 2,
     "grupo_id": 3
 }
+
+###
+###
 
 ### ===== DEPARTAMENTO COMERCIAL =====
 # Diego - Comercial
@@ -941,7 +1232,10 @@ Content-Type: {{contentType}}
     "grupo_id": 2
 }
 
-### Vinícius - Comercial
+###
+###
+
+# Vinícius - Comercial
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -950,7 +1244,10 @@ Content-Type: {{contentType}}
     "grupo_id": 2
 }
 
-### Gustavo - Comercial
+###
+###
+
+# Gustavo - Comercial
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -959,7 +1256,10 @@ Content-Type: {{contentType}}
     "grupo_id": 2
 }
 
-### André - Comercial
+###
+###
+
+# André - Comercial
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -968,7 +1268,10 @@ Content-Type: {{contentType}}
     "grupo_id": 2
 }
 
-### Matheus - Comercial
+###
+###
+
+# Matheus - Comercial
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -976,6 +1279,9 @@ Content-Type: {{contentType}}
     "usuario_id": 9,
     "grupo_id": 2
 }
+
+###
+###
 
 ### ===== DEPARTAMENTO ADMINISTRATIVO =====
 # Rafael - Administrativo
@@ -987,6 +1293,9 @@ Content-Type: {{contentType}}
     "grupo_id": 3
 }
 
+###
+###
+
 ### ===== ACESSO COMPARTILHADO (TODOS) =====
 # Todos os usuários têm acesso ao compartilhado
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
@@ -997,6 +1306,9 @@ Content-Type: {{contentType}}
     "grupo_id": 5
 }
 
+###
+###
+
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1004,6 +1316,9 @@ Content-Type: {{contentType}}
     "usuario_id": 2,
     "grupo_id": 5
 }
+
+###
+###
 
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
@@ -1013,6 +1328,9 @@ Content-Type: {{contentType}}
     "grupo_id": 5
 }
 
+###
+###
+
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1020,6 +1338,9 @@ Content-Type: {{contentType}}
     "usuario_id": 4,
     "grupo_id": 5
 }
+
+###
+###
 
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
@@ -1029,6 +1350,9 @@ Content-Type: {{contentType}}
     "grupo_id": 5
 }
 
+###
+###
+
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1036,6 +1360,9 @@ Content-Type: {{contentType}}
     "usuario_id": 6,
     "grupo_id": 5
 }
+
+###
+###
 
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
@@ -1045,6 +1372,9 @@ Content-Type: {{contentType}}
     "grupo_id": 5
 }
 
+###
+###
+
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1053,6 +1383,9 @@ Content-Type: {{contentType}}
     "grupo_id": 5
 }
 
+###
+###
+
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1060,6 +1393,9 @@ Content-Type: {{contentType}}
     "usuario_id": 9,
     "grupo_id": 5
 }
+
+###
+###
 
 ### 1.8. Atribuir Papéis aos Usuários
 # Eliezer - Diretor Executivo
@@ -1071,7 +1407,10 @@ Content-Type: {{contentType}}
     "papel_id": 1
 }
 
-### Sandra - Gerente Financeiro
+###
+###
+
+# Sandra - Gerente Financeiro
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1080,7 +1419,10 @@ Content-Type: {{contentType}}
     "papel_id": 2
 }
 
-### Thiago - Gerente Comercial
+###
+###
+
+# Thiago - Gerente Comercial
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1089,7 +1431,10 @@ Content-Type: {{contentType}}
     "papel_id": 3
 }
 
-### Diego - Coordenador Administrativo
+###
+###
+
+# Diego - Coordenador Administrativo
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1098,7 +1443,10 @@ Content-Type: {{contentType}}
     "papel_id": 4
 }
 
-### Vinícius - Analista Comercial
+###
+###
+
+# Vinícius - Analista Comercial
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1107,7 +1455,10 @@ Content-Type: {{contentType}}
     "papel_id": 5
 }
 
-### Gustavo - Vendedor Externo
+###
+###
+
+# Gustavo - Vendedor Externo
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1116,7 +1467,10 @@ Content-Type: {{contentType}}
     "papel_id": 7
 }
 
-### André - Vendedor Externo
+###
+###
+
+# André - Vendedor Externo
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1125,7 +1479,10 @@ Content-Type: {{contentType}}
     "papel_id": 7
 }
 
-### Rafael - Assistente Financeiro
+###
+###
+
+# Rafael - Assistente Financeiro
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1134,7 +1491,10 @@ Content-Type: {{contentType}}
     "papel_id": 6
 }
 
-### Matheus - Analista Comercial
+###
+###
+
+# Matheus - Analista Comercial
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1142,6 +1502,9 @@ Content-Type: {{contentType}}
     "usuario_id": 9,
     "papel_id": 5
 }
+
+###
+###
 
 ### ========================================
 ### CENÁRIO 2: TECHCORP SOLUTIONS
@@ -1159,6 +1522,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1167,6 +1533,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Contratar e demitir funcionários",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -1177,7 +1546,10 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
-### Módulo Financeiro
+###
+###
+
+# Módulo Financeiro
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1186,6 +1558,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Visualizar relatórios financeiros",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -1196,6 +1571,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1205,7 +1583,10 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
-### Módulo TI
+###
+###
+
+# Módulo TI
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1214,6 +1595,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Configurar sistemas e aplicações",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -1224,6 +1608,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1233,7 +1620,10 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
-### Módulo Comercial
+###
+###
+
+# Módulo Comercial
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1243,6 +1633,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1251,6 +1644,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Aprovar contratos comerciais",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 ### 2.2. Criar Papéis Hierárquicos
 # CEO
@@ -1264,7 +1660,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Diretor
+###
+###
+
+# Diretor
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1275,7 +1674,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Gerente
+###
+###
+
+# Gerente
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1286,7 +1688,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Coordenador
+###
+###
+
+# Coordenador
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1297,7 +1702,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Analista Senior
+###
+###
+
+# Analista Senior
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1308,7 +1716,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Analista Junior
+###
+###
+
+# Analista Junior
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1318,6 +1729,9 @@ Content-Type: {{contentType}}
     "num_nivel_papel": 10,
     "flg_ativo_papel": true
 }
+
+###
+###
 
 ### 2.3. Criar Grupos por Departamento
 # Departamento RH
@@ -1331,7 +1745,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Departamento Financeiro
+###
+###
+
+# Departamento Financeiro
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1342,7 +1759,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Departamento TI
+###
+###
+
+# Departamento TI
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1353,7 +1773,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Departamento Comercial
+###
+###
+
+# Departamento Comercial
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1364,7 +1787,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Diretoria
+###
+###
+
+# Diretoria
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1374,6 +1800,9 @@ Content-Type: {{contentType}}
     "txt_descricao_grupo": "Diretores e alta gerência",
     "flg_ativo_grupo": true
 }
+
+###
+###
 
 ### 2.4. Cadastrar Usuários TechCorp
 # Roberto (CEO)
@@ -1388,7 +1817,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Fernanda (Diretora de RH)
+###
+###
+
+# Fernanda (Diretora de RH)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1400,7 +1832,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Eduardo (Diretor Financeiro)
+###
+###
+
+# Eduardo (Diretor Financeiro)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1412,7 +1847,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Patrícia (Gerente de TI)
+###
+###
+
+# Patrícia (Gerente de TI)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1424,7 +1862,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Marco (Gerente Comercial)
+###
+###
+
+# Marco (Gerente Comercial)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1436,7 +1877,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Juliana (Analista RH Senior)
+###
+###
+
+# Juliana (Analista RH Senior)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1448,7 +1892,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Lucas (Desenvolvedor Senior)
+###
+###
+
+# Lucas (Desenvolvedor Senior)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1460,85 +1907,115 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
+###
+###
+
 ### 2.5. Atribuir Usuários aos Grupos
 # Roberto - Diretoria
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "usuario_id": 5,
-    "grupo_id": 7
-}
-
-### Fernanda - Diretoria e RH
-POST {{baseUrl}}/usuarios/grupos HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 6,
-    "grupo_id": 7
-}
-
-POST {{baseUrl}}/usuarios/grupos HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 6,
-    "grupo_id": 3
-}
-
-### Eduardo - Diretoria e Financeiro
-POST {{baseUrl}}/usuarios/grupos HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 7,
-    "grupo_id": 7
-}
-
-POST {{baseUrl}}/usuarios/grupos HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 7,
-    "grupo_id": 4
-}
-
-### Patrícia - TI
-POST {{baseUrl}}/usuarios/grupos HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 8,
-    "grupo_id": 5
-}
-
-### Marco - Comercial
-POST {{baseUrl}}/usuarios/grupos HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 9,
-    "grupo_id": 6
-}
-
-### Juliana - RH
-POST {{baseUrl}}/usuarios/grupos HTTP/1.1
-Content-Type: {{contentType}}
-
-{
     "usuario_id": 10,
-    "grupo_id": 3
+    "grupo_id": 10
 }
 
-### Lucas - TI
+###
+###
+
+# Fernanda - Diretoria e RH
 POST {{baseUrl}}/usuarios/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "usuario_id": 11,
-    "grupo_id": 5
+    "grupo_id": 10
 }
+
+###
+###
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 11,
+    "grupo_id": 6
+}
+
+###
+###
+
+# Eduardo - Diretoria e Financeiro
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 12,
+    "grupo_id": 10
+}
+
+###
+###
+
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 12,
+    "grupo_id": 7
+}
+
+###
+###
+
+# Patrícia - TI
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 13,
+    "grupo_id": 8
+}
+
+###
+###
+
+# Marco - Comercial
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 14,
+    "grupo_id": 9
+}
+
+###
+###
+
+# Juliana - RH
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 15,
+    "grupo_id": 6
+}
+
+###
+###
+
+# Lucas - TI
+POST {{baseUrl}}/usuarios/grupos HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 16,
+    "grupo_id": 8
+}
+
+###
+###
 
 ### 2.6. Atribuir Papéis aos Usuários
 # Roberto - CEO
@@ -1546,56 +2023,14 @@ POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-    "usuario_id": 5,
-    "papel_id": 5
-}
-
-### Fernanda - Diretora
-POST {{baseUrl}}/usuarios/papeis HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 6,
-    "papel_id": 6
-}
-
-### Eduardo - Diretor
-POST {{baseUrl}}/usuarios/papeis HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 7,
-    "papel_id": 6
-}
-
-### Patrícia - Gerente
-POST {{baseUrl}}/usuarios/papeis HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 8,
-    "papel_id": 7
-}
-
-### Marco - Gerente
-POST {{baseUrl}}/usuarios/papeis HTTP/1.1
-Content-Type: {{contentType}}
-
-{
-    "usuario_id": 9,
-    "papel_id": 7
-}
-
-### Juliana - Analista Senior
-POST {{baseUrl}}/usuarios/papeis HTTP/1.1
-Content-Type: {{contentType}}
-
-{
     "usuario_id": 10,
-    "papel_id": 9
+    "papel_id": 8
 }
 
-### Lucas - Analista Senior
+###
+###
+
+# Fernanda - Diretora
 POST {{baseUrl}}/usuarios/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1603,6 +2038,69 @@ Content-Type: {{contentType}}
     "usuario_id": 11,
     "papel_id": 9
 }
+
+###
+###
+
+# Eduardo - Diretor
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 12,
+    "papel_id": 9
+}
+
+###
+###
+
+# Patrícia - Gerente
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 13,
+    "papel_id": 10
+}
+
+###
+###
+
+# Marco - Gerente
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 14,
+    "papel_id": 10
+}
+
+###
+###
+
+# Juliana - Analista Senior
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 15,
+    "papel_id": 12
+}
+
+###
+###
+
+# Lucas - Analista Senior
+POST {{baseUrl}}/usuarios/papeis HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "usuario_id": 16,
+    "papel_id": 12
+}
+
+###
+###
 
 ### ========================================
 ### CENÁRIO 3: STARTUP E-COMMERCE
@@ -1619,6 +2117,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1627,6 +2128,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Processar pedidos de clientes",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
@@ -1637,6 +2141,9 @@ Content-Type: {{contentType}}
     "flg_ativo_permissao": true
 }
 
+###
+###
+
 POST {{baseUrl}}/permissoes HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1645,6 +2152,9 @@ Content-Type: {{contentType}}
     "txt_descricao_permissao": "Visualizar dashboards de analytics",
     "flg_ativo_permissao": true
 }
+
+###
+###
 
 ### 3.2. Criar Papéis Startup
 # Founder
@@ -1658,7 +2168,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Product Manager
+###
+###
+
+# Product Manager
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1669,7 +2182,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Marketing Specialist
+###
+###
+
+# Marketing Specialist
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1680,7 +2196,10 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Developer
+###
+###
+
+# Developer
 POST {{baseUrl}}/papeis HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1690,6 +2209,9 @@ Content-Type: {{contentType}}
     "num_nivel_papel": 30,
     "flg_ativo_papel": true
 }
+
+###
+###
 
 ### 3.3. Criar Grupos Startup
 # Squad Produto
@@ -1703,7 +2225,10 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Squad Marketing
+###
+###
+
+# Squad Marketing
 POST {{baseUrl}}/grupos HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1713,6 +2238,9 @@ Content-Type: {{contentType}}
     "txt_descricao_grupo": "Equipe de marketing e growth",
     "flg_ativo_grupo": true
 }
+
+###
+###
 
 ### 3.4. Cadastrar Usuários Startup
 # Carla (Founder)
@@ -1727,7 +2255,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Pedro (Product Manager)
+###
+###
+
+# Pedro (Product Manager)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1739,7 +2270,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Sofia (Marketing)
+###
+###
+
+# Sofia (Marketing)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1751,7 +2285,10 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
-### Daniel (Developer)
+###
+###
+
+# Daniel (Developer)
 POST {{baseUrl}}/usuarios HTTP/1.1
 Content-Type: {{contentType}}
 
@@ -1763,16 +2300,21 @@ Content-Type: {{contentType}}
     "flg_ativo_usuario": true
 }
 
+###
+###
+
 ### ========================================
 ### CONSULTAS DE VERIFICAÇÃO
 ### ========================================
 
-### Listar todos os usuários
+# Listar todos os usuários
 GET {{baseUrl}}/usuarios HTTP/1.1
-Content-Type: {{contentType}}
 
-### Listar usuários com filtros
-GET {{baseUrl}}/usuarios HTTP/1.1
+###
+###
+
+# Listar usuários com filtros
+POST {{baseUrl}}/usuarios/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -1782,12 +2324,17 @@ Content-Type: {{contentType}}
     "limit": 10
 }
 
-### Listar todos os grupos
-GET {{baseUrl}}/grupos HTTP/1.1
-Content-Type: {{contentType}}
+###
+###
 
-### Listar grupos de um locatário
+# Listar todos os grupos
 GET {{baseUrl}}/grupos HTTP/1.1
+
+###
+###
+
+# Listar grupos de um locatário
+POST {{baseUrl}}/grupos/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -1795,12 +2342,17 @@ Content-Type: {{contentType}}
     "flg_ativo_grupo": true
 }
 
-### Listar todos os papéis
-GET {{baseUrl}}/papeis HTTP/1.1
-Content-Type: {{contentType}}
+###
+###
 
-### Listar papéis ordenados por nível
+# Listar todos os papéis
 GET {{baseUrl}}/papeis HTTP/1.1
+
+###
+###
+
+# Listar papéis ordenados por nível
+POST {{baseUrl}}/papeis/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -1808,12 +2360,17 @@ Content-Type: {{contentType}}
     "flg_ativo_papel": true
 }
 
-### Listar todas as permissões
-GET {{baseUrl}}/permissoes HTTP/1.1
-Content-Type: {{contentType}}
+###
+###
 
-### Listar permissões ativas
+# Listar todas as permissões
 GET {{baseUrl}}/permissoes HTTP/1.1
+
+###
+###
+
+# Listar permissões ativas
+POST {{baseUrl}}/permissoes/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -1821,52 +2378,70 @@ Content-Type: {{contentType}}
     "order_by": "cod_permissao ASC"
 }
 
-### Verificar grupos de um usuário específico
-GET {{baseUrl}}/usuarios/grupos HTTP/1.1
+###
+###
+
+# Verificar grupos de um usuário específico
+POST {{baseUrl}}/usuarios/grupos/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "usuario_id": 1
 }
 
-### Verificar papéis de um usuário específico
-GET {{baseUrl}}/usuarios/papeis HTTP/1.1
+###
+###
+
+# Verificar papéis de um usuário específico
+POST {{baseUrl}}/usuarios/papeis/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "usuario_id": 1
 }
 
-### Verificar permissões de um usuário específico
-GET {{baseUrl}}/usuarios/permissoes HTTP/1.1
+###
+###
+
+# Verificar permissões de um usuário específico
+POST {{baseUrl}}/usuarios/permissoes/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "usuario_id": 1
 }
 
-### Verificar papéis de um grupo
-GET {{baseUrl}}/grupos/papeis HTTP/1.1
+###
+###
+
+# Verificar papéis de um grupo
+POST {{baseUrl}}/grupos/papeis/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "grupo_id": 1
 }
 
-### Verificar permissões de um papel
-GET {{baseUrl}}/papeis/permissoes HTTP/1.1
+###
+###
+
+# Verificar permissões de um papel
+POST {{baseUrl}}/papeis/permissoes/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "papel_id": 1
 }
 
+###
+###
+
 ### ========================================
 ### TESTES DE VALIDAÇÃO DE PARÂMETROS
 ### ========================================
 
-### Teste: Parâmetro limit inválido (string)
-GET {{baseUrl}}/usuarios HTTP/1.1
+# Teste: Parâmetro limit inválido (string)
+POST {{baseUrl}}/usuarios/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -1874,8 +2449,11 @@ Content-Type: {{contentType}}
     "order_by": "txt_nome_usuario ASC"
 }
 
-### Teste: Parâmetro order_by inválido (número)
-GET {{baseUrl}}/usuarios HTTP/1.1
+###
+###
+
+# Teste: Parâmetro order_by inválido (número)
+POST {{baseUrl}}/usuarios/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -1883,8 +2461,11 @@ Content-Type: {{contentType}}
     "order_by": 123
 }
 
-### Teste: Parâmetro offset negativo
-GET {{baseUrl}}/usuarios HTTP/1.1
+###
+###
+
+# Teste: Parâmetro offset negativo
+POST {{baseUrl}}/usuarios/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
@@ -1892,13 +2473,19 @@ Content-Type: {{contentType}}
     "offset": -1
 }
 
-### Teste: SQL Injection em order_by
-GET {{baseUrl}}/usuarios HTTP/1.1
+###
+###
+
+# Teste: SQL Injection em order_by
+POST {{baseUrl}}/usuarios/lista HTTP/1.1
 Content-Type: {{contentType}}
 
 {
     "order_by": "txt_nome_usuario; DROP TABLE usuarios;--"
 }
+
+###
+###
 
 ### ========================================
 ### CENÁRIO DE LIMPEZA (OPCIONAL)
